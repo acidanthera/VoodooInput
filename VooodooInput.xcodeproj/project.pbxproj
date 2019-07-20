@@ -29,6 +29,7 @@
 		7BBAB22622E3B35B00B2941A /* MultitouchHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultitouchHelpers.h; sourceTree = "<group>"; };
 		7BBAB22722E3B49C00B2941A /* MultitouchDigitiserTransducer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultitouchDigitiserTransducer.cpp; sourceTree = "<group>"; };
 		7BBAB22822E3B49C00B2941A /* MultitouchDigitiserTransducer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MultitouchDigitiserTransducer.hpp; sourceTree = "<group>"; };
+		7BBAB22B22E3C95300B2941A /* VoodooInputMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VoodooInputMessages.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +66,7 @@
 				7BBAB20F22E3AC7E00B2941A /* Native Simulator */,
 				7BBAB1FC22E3A2F800B2941A /* VooodooInput.hpp */,
 				7BBAB1FE22E3A2F800B2941A /* VooodooInput.cpp */,
+				7BBAB22B22E3C95300B2941A /* VoodooInputMessages.h */,
 				7BBAB20022E3A2F800B2941A /* Info.plist */,
 			);
 			path = VooodooInput;

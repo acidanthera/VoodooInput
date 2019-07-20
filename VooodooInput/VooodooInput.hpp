@@ -21,7 +21,6 @@ class VoodooInput : public IOService {
     UInt32 physicalMaxX = 0;
     UInt32 physicalMaxY = 0;
 public:
-    bool init(OSDictionary* properties) override;
     void free() override;
 
     bool start(IOService* provider) override;

@@ -1,25 +1,10 @@
 #include "VooodooInput.hpp"
+#include "VoodooInputMessages.h"
 #include "Native Simulator/VoodooActuatorDevice.hpp"
 #include "Native Simulator/VoodooSimulatorDevice.hpp"
 
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
-
-bool VoodooInput::init(OSDictionary *properties) {
-    if (!super::init(properties))
-        return false;
-    
-    simulator = OSTypeAlloc(VoodooSimulatorDevice);
-    actuator = OSTypeAlloc(VoodooActuatorDevice);
-    
-    if (!simulator || !actuator) {
-        OSSafeReleaseNULL(simulator);
-        OSSafeReleaseNULL(actuator);
-        return false;
-    }
-    
-    return true;
-}
 
 void VoodooInput::free() {
     OSSafeReleaseNULL(simulator);
@@ -30,6 +15,37 @@ void VoodooInput::free() {
 
 bool VoodooInput::start(IOService *provider) {
     if (!super::start(provider)) {
+        return false;
+    }
+    
+    OSNumber* transformNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_TRANSFORM_KEY));
+    
+    OSNumber* logicalMaxXNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_LOGICAL_MAX_X_KEY));
+
+    OSNumber* logicalMaxYNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_LOGICAL_MAX_Y_KEY));
+
+    OSNumber* physicalMaxXNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_PHYSICAL_MAX_X_KEY));
+
+    OSNumber* physicalMaxYNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_PHYSICAL_MAX_Y_KEY));
+    
+    if (!transformNumber || !logicalMaxXNumber || !logicalMaxYNumber
+            || !physicalMaxXNumber || !physicalMaxYNumber) {
+        return false;
+    }
+    
+    transformKey = transformNumber->unsigned8BitValue();
+    logicalMaxX = logicalMaxXNumber->unsigned32BitValue();
+    logicalMaxY = logicalMaxYNumber->unsigned32BitValue();
+    physicalMaxX = physicalMaxXNumber->unsigned32BitValue();
+    physicalMaxY = physicalMaxYNumber->unsigned32BitValue();
+    
+    // Allocate the simulator and actuator devices
+    simulator = OSTypeAlloc(VoodooSimulatorDevice);
+    actuator = OSTypeAlloc(VoodooActuatorDevice);
+    
+    if (!simulator || !actuator) {
+        OSSafeReleaseNULL(simulator);
+        OSSafeReleaseNULL(actuator);
         return false;
     }
     
