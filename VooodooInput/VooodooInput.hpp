@@ -3,11 +3,20 @@
 
 #include <IOKit/IOService.h>
 
+#include "Native Simulator/VoodooActuatorDevice.hpp"
+#include "Native Simulator/VoodooSimulatorDevice.hpp"
+
 class VoodooInput : public IOService {
     OSDeclareDefaultStructors(VoodooInput);
     
-    IOService* provider;
+    IOService* parentProvider;
+    
+    VoodooSimulatorDevice* simulator;
+    VoodooActuatorDevice* actuator;
 public:
+    bool init(OSDictionary* properties) override;
+    void free() override;
+
     bool start(IOService* provider) override;
     void stop(IOService* device) override;
     
