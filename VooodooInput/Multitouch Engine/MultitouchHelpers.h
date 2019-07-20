@@ -38,12 +38,6 @@ typedef struct {
 
 typedef UInt32 MultitouchReturn;
 
-UInt16 abs(SInt16 x) {
-    if (x < 0)
-        return x * -1;
-    return x;
-}
-
 static IOPMPowerState PMPowerStates[kIOPMNumberPowerStates] = {
     {1, kIOPMPowerOff, kIOPMPowerOff, kIOPMPowerOff, 0, 0, 0, 0, 0, 0, 0, 0},
     {1, kIOPMPowerOn, kIOPMPowerOn, kIOPMPowerOn, 0, 0, 0, 0, 0, 0, 0, 0}

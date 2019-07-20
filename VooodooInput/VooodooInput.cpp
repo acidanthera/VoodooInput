@@ -1,7 +1,9 @@
 #include "VooodooInput.hpp"
+#include "Native Simulator/VoodooActuatorDevice.hpp"
+#include "Native Simulator/VoodooSimulatorDevice.hpp"
 
 #define super IOService
-
+OSDefineMetaClassAndStructors(VoodooInput, IOService);
 
 bool VoodooInput::init(OSDictionary *properties) {
     if (!super::init(properties))

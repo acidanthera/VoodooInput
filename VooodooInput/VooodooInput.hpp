@@ -3,8 +3,8 @@
 
 #include <IOKit/IOService.h>
 
-#include "Native Simulator/VoodooActuatorDevice.hpp"
-#include "Native Simulator/VoodooSimulatorDevice.hpp"
+class VoodooSimulatorDevice;
+class VoodooActuatorDevice;
 
 class VoodooInput : public IOService {
     OSDeclareDefaultStructors(VoodooInput);

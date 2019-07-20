@@ -117,8 +117,6 @@ public:
     
     UInt32 event_mask;
     AbsoluteTime timestamp;
-    
-    bool serialize(OSSerialize* serializer);
 
     static MultitouchDigitiserTransducer* transducer(DigitiserTransducerType transducer_type, IOHIDElement* digitizer_collection);
 protected:

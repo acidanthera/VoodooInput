@@ -9,6 +9,8 @@
 
 #include <kern/clock.h>
 
+
+#include "../VooodooInput.hpp"
 #include "../Multitouch Engine/MultitouchHelpers.h"
 #include "../Multitouch Engine/MultitouchDigitiserTransducer.hpp"
 
@@ -38,8 +40,6 @@ struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT {
     
     MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[12]; // May support more fingers
 };
-
-class VoodooInput;
 
 class VoodooSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooSimulatorDevice);
