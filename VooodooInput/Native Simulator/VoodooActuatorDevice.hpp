@@ -1,13 +1,5 @@
-//
-//  VoodooI2CMT2ActuatorDevice.hpp
-//  VoodooI2C
-//
-//  Created by CoolStar on 12/19/18.
-//  Copyright © 2018 Alexandre Daoud. All rights reserved.
-//
-
-#ifndef VoodooI2CMT2ActuatorDevice_hpp
-#define VoodooI2CMT2ActuatorDevice_hpp
+#ifndef VOODOO_ACTUATOR_DEVICE_HPP
+#define VOODOO_ACTUATOR_DEVICE_HPP
 
 #include <IOKit/IOLib.h>
 #include <IOKit/IOKitKeys.h>
@@ -15,11 +7,11 @@
 
 #include <IOKit/hid/IOHIDDevice.h>
 
-class VoodooI2CMT2ActuatorDevice : public IOHIDDevice {
-    OSDeclareDefaultStructors(VoodooI2CMT2ActuatorDevice);
+class VoodooActuatorDevice : public IOHIDDevice {
+    OSDeclareDefaultStructors(VoodooActuatorDevice);
     
 public:
-    IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options);
+    IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
     
     IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
     OSNumber* newVendorIDNumber() const override;
@@ -48,4 +40,4 @@ public:
 };
 
 
-#endif /* VoodooI2CMT2ActuatorDevice_hpp */
+#endif

@@ -7,8 +7,8 @@ bool VoodooInput::init(OSDictionary *properties) {
     if (!super::init(properties))
         return false;
     
-    simulator = OSTypeAlloc(VoodooI2CMT2SimulatorDevice);
-    actuator = OSTypeAlloc(VoodooI2CMT2ActuatorDevice);
+    simulator = OSTypeAlloc(VoodooSimulatorDevice);
+    actuator = OSTypeAlloc(VoodooActuatorDevice);
     
     if (!simulator || !actuator) {
         OSSafeReleaseNULL(simulator);
@@ -53,8 +53,38 @@ exit:
     return false;
 }
 
-void VoodooInput::stop(IOService *device) {
-    super::stop(device);
+void VoodooInput::stop(IOService *provider) {
+    if (simulator) {
+        simulator->stop(this);
+        simulator->detach(this);
+    }
+    
+    if (actuator) {
+        actuator->stop(this);
+        actuator->detach(this);
+    }
+    
+    super::stop(provider);
+}
+
+UInt8 VoodooInput::getTransformKey() {
+    return transformKey;
+}
+
+UInt32 VoodooInput::getPhysicalMaxX() {
+    return physicalMaxX;
+}
+
+UInt32 VoodooInput::getPhysicalMaxY() {
+    return physicalMaxY;
+}
+
+UInt32 VoodooInput::getLogicalMaxX() {
+    return logicalMaxX;
+}
+
+UInt32 VoodooInput::getLogicalMaxY() {
+    return logicalMaxY;
 }
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {

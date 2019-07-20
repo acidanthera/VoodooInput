@@ -1,5 +1,5 @@
 //
-//  VoodooI2CMT2ActuatorDevice.cpp
+//  VoodooActuatorDevice.cpp
 //  VoodooI2C
 //
 //  Created by CoolStar on 12/19/18.
@@ -9,16 +9,15 @@
 #include "VoodooActuatorDevice.hpp"
 
 #define super IOHIDDevice
-OSDefineMetaClassAndStructors(VoodooI2CMT2ActuatorDevice, IOHIDDevice);
+OSDefineMetaClassAndStructors(VoodooActuatorDevice, IOHIDDevice);
 
 unsigned char actuator_report_descriptor[] = {0x06, 0x00, 0xff, 0x09, 0x0d, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0d, 0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x85, 0x3f, 0x96, 0x0f, 0x00, 0x81, 0x02, 0x09, 0x0d, 0x85, 0x53, 0x96, 0x3f, 0x00, 0x91, 0x02, 0xc0};
 
-IOReturn VoodooI2CMT2ActuatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
+IOReturn VoodooActuatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
     return kIOReturnSuccess;
 }
 
-
-IOReturn VoodooI2CMT2ActuatorDevice::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
+IOReturn VoodooActuatorDevice::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
     IOBufferMemoryDescriptor* report_descriptor_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, sizeof(actuator_report_descriptor));
     
     if (!report_descriptor_buffer) {
@@ -32,42 +31,42 @@ IOReturn VoodooI2CMT2ActuatorDevice::newReportDescriptor(IOMemoryDescriptor** de
     return kIOReturnSuccess;
 }
 
-OSString* VoodooI2CMT2ActuatorDevice::newManufacturerString() const {
+OSString* VoodooActuatorDevice::newManufacturerString() const {
     return OSString::withCString("Apple Inc.");
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newPrimaryUsageNumber() const {
+OSNumber* VoodooActuatorDevice::newPrimaryUsageNumber() const {
     return OSNumber::withNumber(0xd, 32);
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newPrimaryUsagePageNumber() const {
+OSNumber* VoodooActuatorDevice::newPrimaryUsagePageNumber() const {
     return OSNumber::withNumber(0xff00, 32);
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newProductIDNumber() const {
+OSNumber* VoodooActuatorDevice::newProductIDNumber() const {
     return OSNumber::withNumber(0x272, 32);
 }
 
-OSString* VoodooI2CMT2ActuatorDevice::newProductString() const {
+OSString* VoodooActuatorDevice::newProductString() const {
     return OSString::withCString("Magic Trackpad 2");
 }
 
-OSString* VoodooI2CMT2ActuatorDevice::newSerialNumberString() const {
+OSString* VoodooActuatorDevice::newSerialNumberString() const {
     return OSString::withCString("VoodooI2C Magic Trackpad 2 Simulator");
 }
 
-OSString* VoodooI2CMT2ActuatorDevice::newTransportString() const {
+OSString* VoodooActuatorDevice::newTransportString() const {
     return OSString::withCString("I2C");
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newVendorIDNumber() const {
+OSNumber* VoodooActuatorDevice::newVendorIDNumber() const {
     return OSNumber::withNumber(0x5ac, 16);
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newLocationIDNumber() const {
+OSNumber* VoodooActuatorDevice::newLocationIDNumber() const {
     return OSNumber::withNumber(0x14400000, 32);
 }
 
-OSNumber* VoodooI2CMT2ActuatorDevice::newVersionNumber() const {
+OSNumber* VoodooActuatorDevice::newVersionNumber() const {
     return OSNumber::withNumber(0x804, 32);
 }

@@ -41,6 +41,8 @@
 	<string>Copyright © 2019 Kishor Prins. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
 	<dict>
+		<key>com.apple.iokit.IOHIDFamily</key>
+		<string>2.0</string>
 		<key>com.apple.kpi.iokit</key>
 		<string>14</string>
 		<key>com.apple.kpi.libkern</key>
