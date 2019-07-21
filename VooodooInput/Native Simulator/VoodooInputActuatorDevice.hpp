@@ -7,8 +7,8 @@
 
 #include <IOKit/hid/IOHIDDevice.h>
 
-class VoodooActuatorDevice : public IOHIDDevice {
-    OSDeclareDefaultStructors(VoodooActuatorDevice);
+class VoodooInputActuatorDevice : public IOHIDDevice {
+    OSDeclareDefaultStructors(VoodooInputActuatorDevice);
     
 public:
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;

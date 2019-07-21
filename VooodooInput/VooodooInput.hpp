@@ -3,16 +3,16 @@
 
 #include <IOKit/IOService.h>
 
-class VoodooSimulatorDevice;
-class VoodooActuatorDevice;
+class VoodooInputSimulatorDevice;
+class VoodooInputActuatorDevice;
 
 class VoodooInput : public IOService {
     OSDeclareDefaultStructors(VoodooInput);
     
     IOService* parentProvider;
     
-    VoodooSimulatorDevice* simulator;
-    VoodooActuatorDevice* actuator;
+    VoodooInputSimulatorDevice* simulator;
+    VoodooInputActuatorDevice* actuator;
     
     UInt8 transformKey;
     

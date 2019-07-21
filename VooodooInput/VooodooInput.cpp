@@ -1,7 +1,7 @@
 #include "VooodooInput.hpp"
 #include "VoodooInputMessages.h"
-#include "Native Simulator/VoodooActuatorDevice.hpp"
-#include "Native Simulator/VoodooSimulatorDevice.hpp"
+#include "Native Simulator/VoodooInputActuatorDevice.hpp"
+#include "Native Simulator/VoodooInputSimulatorDevice.hpp"
 
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
@@ -42,8 +42,8 @@ bool VoodooInput::start(IOService *provider) {
     physicalMaxY = physicalMaxYNumber->unsigned32BitValue();
     
     // Allocate the simulator and actuator devices
-    simulator = OSTypeAlloc(VoodooSimulatorDevice);
-    actuator = OSTypeAlloc(VoodooActuatorDevice);
+    simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
+    actuator = OSTypeAlloc(VoodooInputActuatorDevice);
     
     if (!simulator || !actuator) {
         OSSafeReleaseNULL(simulator);
@@ -109,35 +109,10 @@ UInt32 VoodooInput::getLogicalMaxY() {
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
     if (type == kIOMessageVoodooInputMessage && provider == parentProvider) {
-        VoodooInputMessage* inputs = (VoodooInputMessage*)argument;
+        VoodooInputEvent* input = (VoodooInputEvent*)argument;
         
-        MultitouchEvent event;
-        event.contact_count = inputs->numTransducers;
-        event.transducers = OSArray::withCapacity(0);
-        
-        for(int i = 0; i < event.contact_count; i++) {
-            MultitouchDigitiserTransducer* transducer = OSTypeAlloc(MultitouchDigitiserTransducer);
-            VoodooInputTransducer& inputTransducer = inputs->transducers[i];
-            
-            transducer->id = inputTransducer.id;
-            transducer->secondary_id = inputTransducer.secondary_id;
-            
-            transducer->is_valid = inputTransducer.valid;
-            transducer->tip_switch.current.value = inputTransducer.tipswitch;
-            transducer->physical_button.current.value = inputTransducer.physicalButton;
-            
-            transducer->coordinates.x.current.value = inputTransducer.xValue;
-            transducer->coordinates.y.current.value = inputTransducer.yValue;
-            
-            transducer->coordinates.x.last.value = inputTransducer.previousXValue;
-            transducer->coordinates.y.last.value = inputTransducer.previousYValue;
-            
-            event.transducers->setObject(transducer);
-            transducer->release();
-        }
-        
-        if (simulator) {
-            simulator->constructReport(event, inputs->timestamp);
+        if (input && simulator) {
+            simulator->constructReport(*input);
         }
         
     }

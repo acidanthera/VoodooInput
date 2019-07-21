@@ -11,8 +11,8 @@
 
 
 #include "../VooodooInput.hpp"
+#include "../Multitouch Engine/VoodooInputTransducer.hpp"
 #include "../Multitouch Engine/MultitouchHelpers.h"
-#include "../Multitouch Engine/MultitouchDigitiserTransducer.hpp"
 
 #define MT2_MAX_X 7612
 #define MT2_MAX_Y 5065
@@ -41,11 +41,11 @@ struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT {
     MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[12]; // May support more fingers
 };
 
-class VoodooSimulatorDevice : public IOHIDDevice {
-    OSDeclareDefaultStructors(VoodooSimulatorDevice);
+class VoodooInputSimulatorDevice : public IOHIDDevice {
+    OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
-    void constructReport(MultitouchEvent multitouch_event, AbsoluteTime timestamp);
+    void constructReport(VoodooInputEvent multitouch_event);
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
 
     IOReturn getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
@@ -95,7 +95,7 @@ private:
     IOCommandGate* command_gate;
     MAGIC_TRACKPAD_INPUT_REPORT input_report;
 
-    void constructReportGated(MultitouchEvent& multitouch_event, AbsoluteTime& timestamp);
+    void constructReportGated(VoodooInputEvent& multitouch_event);
 };
 
 
