@@ -133,6 +133,11 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
             transducer->coordinates.y.last.value = inputTransducer.previousYValue;
             
             event.transducers->setObject(transducer);
+            transducer->release();
+        }
+        
+        if (simulator) {
+            simulator->constructReport(event, inputs->timestamp);
         }
         
     }
