@@ -11,8 +11,9 @@
 
 
 #include "../VooodooInput.hpp"
-#include "../Multitouch Engine/VoodooInputTransducer.hpp"
-#include "../Multitouch Engine/MultitouchHelpers.h"
+#include "../VoodooInputMultitouch/VoodooInputTransducer.h"
+#include "../VoodooInputMultitouch/VoodooInputEvent.h"
+#include "../VoodooInputMultitouch/MultitouchHelpers.h"
 
 #define MT2_MAX_X 7612
 #define MT2_MAX_Y 5065

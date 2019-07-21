@@ -8,7 +8,7 @@
 
 #include "VooodooInput.hpp"
 #include "VoodooInputSimulatorDevice.hpp"
-#include "../Multitouch Engine/MultitouchHelpers.h"
+#include "../VoodooInputMultitouch/MultitouchHelpers.h"
 
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>

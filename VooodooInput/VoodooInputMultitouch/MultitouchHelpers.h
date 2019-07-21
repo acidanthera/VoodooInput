@@ -8,8 +8,6 @@
 #ifndef MULTITOUCH_HELPERS_H
 #define MULTITOUCH_HELPERS_H
 
-#include "VoodooInputTransducer.hpp"
-
 #define AbsoluteTime_to_scalar(x)    (*(uint64_t *)(x))
 
 #define SUB_ABSOLUTETIME(t1, t2)                \
@@ -32,14 +30,6 @@ enum {
     kIOFBRotate180                      = kIOFBInvertX  | kIOFBInvertY,
     kIOFBRotate270                      = kIOFBSwapAxes | kIOFBInvertY
 };
-
-typedef struct {
-    UInt8 contact_count;
-    AbsoluteTime timestamp;
-    VoodooInputTransducer transducers[VOODOO_INPUT_MAX_TRANSDUCERS];
-} VoodooInputEvent;
-
-typedef UInt32 MultitouchReturn;
 
 static IOPMPowerState PMPowerStates[kIOPMNumberPowerStates] = {
     {1, kIOPMPowerOff, kIOPMPowerOff, kIOPMPowerOff, 0, 0, 0, 0, 0, 0, 0, 0},

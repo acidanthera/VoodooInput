@@ -21,6 +21,7 @@
 #define kVoodooInputTransducerFingerType 1
 #define kVoodooInputTransducerStylusType 2
 
-#include "Multitouch Engine/MultitouchHelpers.h"
+#include "VoodooInputTransducer.h"
+#include "VoodooInputEvent.h"
 
 #endif /* VoodooInputMessages_h */

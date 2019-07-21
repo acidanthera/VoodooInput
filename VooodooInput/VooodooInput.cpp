@@ -1,7 +1,7 @@
 #include "VooodooInput.hpp"
 #include "VoodooInputMessages.h"
-#include "Native Simulator/VoodooInputActuatorDevice.hpp"
-#include "Native Simulator/VoodooInputSimulatorDevice.hpp"
+#include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
+#include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
 
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
