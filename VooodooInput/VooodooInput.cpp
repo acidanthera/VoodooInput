@@ -18,6 +18,8 @@ bool VoodooInput::start(IOService *provider) {
         return false;
     }
     
+    parentProvider = provider;
+    
     OSNumber* transformNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_TRANSFORM_KEY));
     
     OSNumber* logicalMaxXNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_LOGICAL_MAX_X_KEY));
@@ -106,7 +108,34 @@ UInt32 VoodooInput::getLogicalMaxY() {
 }
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
-    IOReturn retValue = super::message(type, provider, argument);
+    if (type == kIOMessageVoodooInputMessage && provider == parentProvider) {
+        VoodooInputMessage* inputs = (VoodooInputMessage*)argument;
+        
+        MultitouchEvent event;
+        event.contact_count = inputs->numTransducers;
+        event.transducers = OSArray::withCapacity(0);
+        
+        for(int i = 0; i < event.contact_count; i++) {
+            MultitouchDigitiserTransducer* transducer = OSTypeAlloc(MultitouchDigitiserTransducer);
+            VoodooInputTransducer& inputTransducer = inputs->transducers[i];
+            
+            transducer->id = inputTransducer.id;
+            transducer->secondary_id = inputTransducer.secondary_id;
+            
+            transducer->is_valid = inputTransducer.valid;
+            transducer->tip_switch.current.value = inputTransducer.tipswitch;
+            transducer->physical_button.current.value = inputTransducer.physicalButton;
+            
+            transducer->coordinates.x.current.value = inputTransducer.xValue;
+            transducer->coordinates.y.current.value = inputTransducer.yValue;
+            
+            transducer->coordinates.x.last.value = inputTransducer.previousXValue;
+            transducer->coordinates.y.last.value = inputTransducer.previousYValue;
+            
+            event.transducers->setObject(transducer);
+        }
+        
+    }
     
-    return retValue;
+    return super::message(type, provider, argument);
 }
