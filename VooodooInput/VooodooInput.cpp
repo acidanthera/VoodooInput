@@ -67,6 +67,13 @@ bool VoodooInput::start(IOService *provider) {
         goto exit;
     }
     
+    setProperty(VOOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
+    
+    if (!parentProvider->open(this)) {
+        IOLog("Kishor VoodooInput could not open!\n");
+        return false;
+    };
+    
     return true;
 
 exit:
@@ -82,6 +89,10 @@ void VoodooInput::stop(IOService *provider) {
     if (actuator) {
         actuator->stop(this);
         actuator->detach(this);
+    }
+    
+    if (parentProvider->isOpen(this)) {
+        parentProvider->close(this);
     }
     
     super::stop(provider);
@@ -109,10 +120,11 @@ UInt32 VoodooInput::getLogicalMaxY() {
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
     if (type == kIOMessageVoodooInputMessage && provider == parentProvider) {
-        VoodooInputEvent* input = (VoodooInputEvent*)argument;
+        VoodooInputEvent input;
+        memcpy(&input, argument, sizeof(VoodooInputEvent));
         
-        if (input && simulator) {
-            simulator->constructReport(*input);
+        if (simulator) {
+            simulator->constructReport(input);
         }
         
     }

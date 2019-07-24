@@ -9,6 +9,8 @@
 #ifndef VOODOO_INPUT_MESSAGES_H
 #define VOODOO_INPUT_MESSAGES_H
 
+#define VOOODOO_INPUT_IDENTIFIER "VoodooInput Instance"
+
 #define VOODOO_INPUT_TRANSFORM_KEY "IOFBTransform"
 #define VOODOO_INPUT_LOGICAL_MAX_X_KEY "Logical Max X"
 #define VOODOO_INPUT_LOGICAL_MAX_Y_KEY "Logical Max Y"
