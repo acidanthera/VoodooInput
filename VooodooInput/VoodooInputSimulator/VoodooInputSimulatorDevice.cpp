@@ -6,7 +6,7 @@
 //  Copyright © 2018 Alexandre Daoud and Kishor Prins. All rights reserved.
 //
 
-#include "VooodooInput.hpp"
+#include "VoodooInput.hpp"
 #include "VoodooInputSimulatorDevice.hpp"
 #include "../VoodooInputMultitouch/MultitouchHelpers.h"
 

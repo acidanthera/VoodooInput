@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:VooodooInput.xcodeproj">
+      location = "self:/Users/kprinssu/Documents/VooodooInput/VoodooInput.xcodeproj">
    </FileRef>
 </Workspace>

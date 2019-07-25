@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7BBAB1FD22E3A2F800B2941A /* VooodooInput.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB1FC22E3A2F800B2941A /* VooodooInput.hpp */; };
-		7BBAB1FF22E3A2F800B2941A /* VooodooInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB1FE22E3A2F800B2941A /* VooodooInput.cpp */; };
+		7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */; };
+		7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */; };
 		7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21122E3AD0D00B2941A /* VoodooInputSimulatorDevice.hpp */; };
 		7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB21222E3AD0D00B2941A /* VoodooInputSimulatorDevice.cpp */; };
 		7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB21322E3AD0D00B2941A /* VoodooInputActuatorDevice.cpp */; };
@@ -18,9 +18,9 @@
 
 /* Begin PBXFileReference section */
 		7B49AC3022E4A09C00E50879 /* VoodooInputEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VoodooInputEvent.h; sourceTree = "<group>"; };
-		7BBAB1F922E3A2F800B2941A /* VooodooInput.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VooodooInput.kext; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BBAB1FC22E3A2F800B2941A /* VooodooInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VooodooInput.hpp; sourceTree = "<group>"; };
-		7BBAB1FE22E3A2F800B2941A /* VooodooInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VooodooInput.cpp; sourceTree = "<group>"; };
+		7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoodooInput.kext; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInput.hpp; sourceTree = "<group>"; };
+		7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInput.cpp; sourceTree = "<group>"; };
 		7BBAB20022E3A2F800B2941A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7BBAB21122E3AD0D00B2941A /* VoodooInputSimulatorDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputSimulatorDevice.hpp; sourceTree = "<group>"; };
 		7BBAB21222E3AD0D00B2941A /* VoodooInputSimulatorDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputSimulatorDevice.cpp; sourceTree = "<group>"; };
@@ -53,7 +53,7 @@
 		7BBAB1FA22E3A2F800B2941A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7BBAB1F922E3A2F800B2941A /* VooodooInput.kext */,
+				7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -63,8 +63,8 @@
 			children = (
 				7BBAB21C22E3B1DE00B2941A /* VoodooInputMultitouch */,
 				7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */,
-				7BBAB1FC22E3A2F800B2941A /* VooodooInput.hpp */,
-				7BBAB1FE22E3A2F800B2941A /* VooodooInput.cpp */,
+				7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */,
+				7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */,
 				7BBAB20022E3A2F800B2941A /* Info.plist */,
 			);
 			path = VooodooInput;
@@ -102,16 +102,16 @@
 				7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
 				7BBAB22A22E3B49C00B2941A /* VoodooInputTransducer.h in Headers */,
-				7BBAB1FD22E3A2F800B2941A /* VooodooInput.hpp in Headers */,
+				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		7BBAB1F822E3A2F800B2941A /* VooodooInput */ = {
+		7BBAB1F822E3A2F800B2941A /* VoodooInput */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7BBAB20322E3A2F800B2941A /* Build configuration list for PBXNativeTarget "VooodooInput" */;
+			buildConfigurationList = 7BBAB20322E3A2F800B2941A /* Build configuration list for PBXNativeTarget "VoodooInput" */;
 			buildPhases = (
 				7BBAB1F422E3A2F800B2941A /* Headers */,
 				7BBAB1F522E3A2F800B2941A /* Sources */,
@@ -122,9 +122,9 @@
 			);
 			dependencies = (
 			);
-			name = VooodooInput;
+			name = VoodooInput;
 			productName = VooodooInput;
-			productReference = 7BBAB1F922E3A2F800B2941A /* VooodooInput.kext */;
+			productReference = 7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */;
 			productType = "com.apple.product-type.kernel-extension";
 		};
 /* End PBXNativeTarget section */
@@ -141,7 +141,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7BBAB1F322E3A2F800B2941A /* Build configuration list for PBXProject "VooodooInput" */;
+			buildConfigurationList = 7BBAB1F322E3A2F800B2941A /* Build configuration list for PBXProject "VoodooInput" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -153,7 +153,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7BBAB1F822E3A2F800B2941A /* VooodooInput */,
+				7BBAB1F822E3A2F800B2941A /* VoodooInput */,
 			);
 		};
 /* End PBXProject section */
@@ -173,7 +173,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7BBAB1FF22E3A2F800B2941A /* VooodooInput.cpp in Sources */,
+				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
 			);
@@ -326,7 +326,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7BBAB1F322E3A2F800B2941A /* Build configuration list for PBXProject "VooodooInput" */ = {
+		7BBAB1F322E3A2F800B2941A /* Build configuration list for PBXProject "VoodooInput" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BBAB20122E3A2F800B2941A /* Debug */,
@@ -335,7 +335,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7BBAB20322E3A2F800B2941A /* Build configuration list for PBXNativeTarget "VooodooInput" */ = {
+		7BBAB20322E3A2F800B2941A /* Build configuration list for PBXNativeTarget "VoodooInput" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BBAB20422E3A2F800B2941A /* Debug */,
