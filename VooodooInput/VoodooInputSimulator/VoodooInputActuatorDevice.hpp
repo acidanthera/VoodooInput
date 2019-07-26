@@ -7,7 +7,11 @@
 
 #include <IOKit/hid/IOHIDDevice.h>
 
-class VoodooInputActuatorDevice : public IOHIDDevice {
+#ifndef EXPORT
+#define EXPORT __attribute__((visibility("default")))
+#endif
+
+class EXPORT VoodooInputActuatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputActuatorDevice);
     
 public:

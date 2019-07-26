@@ -9,11 +9,14 @@
 
 #include <kern/clock.h>
 
-
-#include "../VooodooInput.hpp"
+#include "../VoodooInput.hpp"
 #include "../VoodooInputMultitouch/VoodooInputTransducer.h"
 #include "../VoodooInputMultitouch/VoodooInputEvent.h"
 #include "../VoodooInputMultitouch/MultitouchHelpers.h"
+
+#ifndef EXPORT
+#define EXPORT __attribute__((visibility("default")))
+#endif
 
 #define MT2_MAX_X 7612
 #define MT2_MAX_Y 5065
@@ -42,7 +45,7 @@ struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT {
     MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[12]; // May support more fingers
 };
 
-class VoodooInputSimulatorDevice : public IOHIDDevice {
+class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
