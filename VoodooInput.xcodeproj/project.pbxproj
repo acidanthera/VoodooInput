@@ -45,7 +45,7 @@
 		7BBAB1EF22E3A2F800B2941A = {
 			isa = PBXGroup;
 			children = (
-				7BBAB1FB22E3A2F800B2941A /* VooodooInput */,
+				7BBAB1FB22E3A2F800B2941A /* VoodooInput */,
 				7BBAB1FA22E3A2F800B2941A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,7 +58,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7BBAB1FB22E3A2F800B2941A /* VooodooInput */ = {
+		7BBAB1FB22E3A2F800B2941A /* VoodooInput */ = {
 			isa = PBXGroup;
 			children = (
 				7BBAB21C22E3B1DE00B2941A /* VoodooInputMultitouch */,
@@ -67,7 +67,7 @@
 				7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */,
 				7BBAB20022E3A2F800B2941A /* Info.plist */,
 			);
-			path = VooodooInput;
+			path = VoodooInput;
 			sourceTree = "<group>";
 		};
 		7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */ = {
