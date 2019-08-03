@@ -67,7 +67,7 @@ bool VoodooInput::start(IOService *provider) {
         goto exit;
     }
     
-    setProperty(VOOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
+    setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
     
     if (!parentProvider->open(this)) {
         IOLog("Kishor VoodooInput could not open!\n");
