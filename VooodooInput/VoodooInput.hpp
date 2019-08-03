@@ -6,7 +6,11 @@
 class VoodooInputSimulatorDevice;
 class VoodooInputActuatorDevice;
 
-class VoodooInput : public IOService {
+#ifndef EXPORT
+#define EXPORT __attribute__((visibility("default")))
+#endif
+
+class EXPORT VoodooInput : public IOService {
     OSDeclareDefaultStructors(VoodooInput);
     
     IOService* parentProvider;
