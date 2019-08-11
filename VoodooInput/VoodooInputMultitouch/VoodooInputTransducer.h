@@ -31,7 +31,7 @@ struct VoodooInputTransducer {
     bool isPhysicalButtonDown;
     bool isTransducerActive;
     
-    TouchCoordinates currentCordinates;
+    TouchCoordinates currentCoordinates;
     TouchCoordinates previousCoordinates;
     
     UInt32 maxPressure;

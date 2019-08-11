@@ -109,8 +109,8 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
         SInt16 x_min = 3678;
         SInt16 y_min = 2479;
         
-        IOFixed scaled_x = ((transducer->currentCordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
-        IOFixed scaled_y = ((transducer->currentCordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
+        IOFixed scaled_x = ((transducer->currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
+        IOFixed scaled_y = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
 
         if (scaled_x < 1 && scaled_y >= MT2_MAX_Y) {
             is_error_input_active = true;
@@ -123,8 +123,8 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
         
         if (transform) {
             if (transform & kIOFBSwapAxes) {
-                scaled_x = ((transducer->currentCordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_X;
-                scaled_y = ((transducer->currentCordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_Y;
+                scaled_x = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_X;
+                scaled_y = ((transducer->currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_Y;
             }
             
             if (transform & kIOFBInvertX) {
@@ -203,7 +203,7 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
         }
         
         
-        if (transducer->currentCordinates.pressure || (input_report.Button)) {
+        if (transducer->currentCoordinates.pressure || (input_report.Button)) {
             finger_data.Pressure = 120;
         }
         
