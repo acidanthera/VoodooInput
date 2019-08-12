@@ -15,6 +15,7 @@ void VoodooInput::free() {
 
 bool VoodooInput::start(IOService *provider) {
     if (!super::start(provider)) {
+        IOLog("Kishor VoodooInput could not super::start!\n");
         return false;
     }
     
@@ -32,6 +33,7 @@ bool VoodooInput::start(IOService *provider) {
     
     if (!transformNumber || !logicalMaxXNumber || !logicalMaxYNumber
             || !physicalMaxXNumber || !physicalMaxYNumber) {
+        IOLog("Kishor VoodooInput could not get provider properties!\n");
         return false;
     }
     
@@ -46,23 +48,30 @@ bool VoodooInput::start(IOService *provider) {
     actuator = OSTypeAlloc(VoodooInputActuatorDevice);
     
     if (!simulator || !actuator) {
+        IOLog("Kishor VoodooInput could not alloc simulator or actuator!\n");
         OSSafeReleaseNULL(simulator);
         OSSafeReleaseNULL(actuator);
         return false;
     }
     
     // Initialize simulator device
-    if (!simulator->init(NULL) || !simulator->attach(this))
+    if (!simulator->init(NULL) || !simulator->attach(this)) {
+        IOLog("Kishor VoodooInput could not attach simulator!\n");
         goto exit;
+    }
     else if (!simulator->start(this)) {
+        IOLog("Kishor VoodooInput could not start simulator!\n");
         simulator->detach(this);
         goto exit;
     }
     
     // Initialize actuator device
-    if (!actuator->init(NULL) || !actuator->attach(this))
+    if (!actuator->init(NULL) || !actuator->attach(this)) {
+        IOLog("Kishor VoodooInput could not init or attach actuator!\n");
         goto exit;
+    }
     else if (!actuator->start(this)) {
+        IOLog("Kishor VoodooInput could not start actuator!\n");
         actuator->detach(this);
         goto exit;
     }

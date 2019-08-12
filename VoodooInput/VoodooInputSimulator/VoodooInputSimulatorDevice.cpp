@@ -172,38 +172,13 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
             first_unknownbit = newunknown;
         }
         newunknown = first_unknownbit - (4 * i);
-        
-        if (new_touch_state[i] > 4) {
-            finger_data.Size = 10;
-            finger_data.Pressure = 10;
-            finger_data.Touch_Minor = 32;
-            finger_data.Touch_Major = 32;
-        } else if (new_touch_state[i] == 1) {
-            newunknown = 0x20;
-            finger_data.Size = 0;
-            finger_data.Pressure = 0x0;
-            finger_data.Touch_Minor = 0x0;
-            finger_data.Touch_Major = 0x0;
-        } else if (new_touch_state[i] == 2) {
-            newunknown = 0x70;
-            finger_data.Size = 8;
-            finger_data.Pressure = 10;
-            finger_data.Touch_Minor = 16;
-            finger_data.Touch_Major = 16;
-        } else if (new_touch_state[i] == 3) {
-            finger_data.Size = 10;
-            finger_data.Pressure = 10;
-            finger_data.Touch_Minor = 32;
-            finger_data.Touch_Major = 32;
-        } else if (new_touch_state[i] == 4) {
-            finger_data.Size = 10;
-            finger_data.Pressure = 10;
-            finger_data.Touch_Minor = 32;
-            finger_data.Touch_Major = 32;
-        }
-        
-        
-        if (transducer->currentCoordinates.pressure || (input_report.Button)) {
+
+        finger_data.Pressure = transducer->currentCoordinates.pressure;
+        finger_data.Size = transducer->currentCoordinates.width;
+        finger_data.Touch_Major = transducer->currentCoordinates.width;
+        finger_data.Touch_Minor = transducer->currentCoordinates.width;
+
+        if (input_report.Button) {
             finger_data.Pressure = 120;
         }
         
@@ -426,7 +401,20 @@ IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHID
         }
         
         if (value == 0xD9) {
-            unsigned char buffer[] = {0x1, 0xD9, 0x00, 0x10, 0x00};
+            //Sensor Surface Width = 0x3cf0 (0xf0, 0x3c) = 15.600 cm
+            //Sensor Surface Height = 0x2b20 (0x20, 0x2b) = 11.040 cm
+
+            // It's already in 0.01 mm units
+            uint32_t rawWidth = engine->getPhysicalMaxX();
+            uint32_t rawHeight = engine->getPhysicalMaxY();
+
+            uint8_t rawWidthLower = rawWidth & 0xff;
+            uint8_t rawWidthHigher = (rawWidth >> 8) & 0xff;
+
+            uint8_t rawHeightLower = rawHeight & 0xff;
+            uint8_t rawHeightHigher = (rawHeight >> 8) & 0xff;
+
+            unsigned char buffer[] = {0xD9, rawWidthLower, rawWidthHigher, 0x00, 0x00, rawHeightLower, rawHeightHigher, 0x00, 0x00, 0x44, 0xE3, 0x52, 0xFF, 0xBD, 0x1E, 0xE4, 0x26}; //Sensor Surface Description
             new_get_report_buffer->appendBytes(buffer, sizeof(buffer));
         }
         
@@ -524,8 +512,8 @@ IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHID
     }
     
     if (report_id == 0xDB) {
-        uint32_t rawWidth = engine->getPhysicalMaxX() * 10;
-        uint32_t rawHeight = engine->getPhysicalMaxY() * 10;
+        uint32_t rawWidth = engine->getPhysicalMaxX();
+        uint32_t rawHeight = engine->getPhysicalMaxY();
         
         uint8_t rawWidthLower = rawWidth & 0xff;
         uint8_t rawWidthHigher = (rawWidth >> 8) & 0xff;

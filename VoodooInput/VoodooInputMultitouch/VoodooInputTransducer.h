@@ -17,7 +17,8 @@ enum VoodooInputTransducerType {
 struct TouchCoordinates {
     UInt32 x;
     UInt32 y;
-    UInt32 pressure;
+    UInt8 pressure;
+    UInt8 width;
 };
 
 struct VoodooInputTransducer {
