@@ -42,14 +42,15 @@ struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT {
     UInt8 multitouch_report_id;
     UInt8 timestamp_buffer[3];
     
-    MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[12]; // May support more fingers
+    MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[VOODOO_INPUT_MAX_TRANSDUCERS]; // May support more fingers
 };
 
 class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
-    void constructReport(VoodooInputEvent multitouch_event);
+    void constructReport(const VoodooInputEvent& multitouch_event);
+
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
 
     IOReturn getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
@@ -99,7 +100,7 @@ private:
     IOCommandGate* command_gate;
     MAGIC_TRACKPAD_INPUT_REPORT input_report;
 
-    void constructReportGated(VoodooInputEvent& multitouch_event);
+    void constructReportGated(const VoodooInputEvent& multitouch_event);
 };
 
 

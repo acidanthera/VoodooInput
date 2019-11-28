@@ -132,9 +132,15 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
         if (argument && simulator) {
             simulator->constructReport(*(VoodooInputEvent*)argument);
         }
-        
     }
-    
+    else if (type == kIOMessageVoodooInputUpdateDimensionsMessage && provider == parentProvider) {
+        if (argument) {
+            const VoodooInputDimensions& dimensions = *(VoodooInputDimensions*)argument;
+            logicalMaxX = dimensions.max_x - dimensions.min_x;
+            logicalMaxY = dimensions.max_y - dimensions.min_y;
+        }
+    }
+
     return super::message(type, provider, argument);
 }
 
