@@ -15,4 +15,11 @@ typedef struct {
     VoodooInputTransducer transducers[VOODOO_INPUT_MAX_TRANSDUCERS];
 } VoodooInputEvent;
 
+typedef struct {
+    SInt32 min_x;
+    SInt32 max_x;
+    SInt32 min_y;
+    SInt32 max_y;
+} VoodooInputDimensions;
+
 #endif /* VoodooInputEvent_h */

@@ -24,14 +24,14 @@ UInt16 abs(SInt16 x) {
 
 const unsigned char report_descriptor[] = {0x05, 0x01, 0x09, 0x02, 0xa1, 0x01, 0x09, 0x01, 0xa1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x85, 0x02, 0x95, 0x03, 0x75, 0x01, 0x81, 0x02, 0x95, 0x01, 0x75, 0x05, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x02, 0x81, 0x06, 0x95, 0x04, 0x75, 0x08, 0x81, 0x01, 0xc0, 0xc0, 0x05, 0x0d, 0x09, 0x05, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0c, 0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x95, 0x10, 0x85, 0x3f, 0x81, 0x22, 0xc0, 0x06, 0x00, 0xff, 0x09, 0x0c, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0c, 0x15, 0x00, 0x26, 0xff, 0x00, 0x85, 0x44, 0x75, 0x08, 0x96, 0x6b, 0x05, 0x81, 0x00, 0xc0};
 
-void VoodooInputSimulatorDevice::constructReport(VoodooInputEvent multitouch_event) {
+void VoodooInputSimulatorDevice::constructReport(const VoodooInputEvent& multitouch_event) {
     if (!ready_for_reports)
         return;
 
-    command_gate->runAction(OSMemberFunctionCast(IOCommandGate::Action, this, &VoodooInputSimulatorDevice::constructReportGated), &multitouch_event);
+    command_gate->runAction(OSMemberFunctionCast(IOCommandGate::Action, this, &VoodooInputSimulatorDevice::constructReportGated), (void*)&multitouch_event);
 }
 
-void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitouch_event) {
+void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& multitouch_event) {
     if (!ready_for_reports)
         return;
     
@@ -44,7 +44,7 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
     input_report.Unused[3] = 0;
     input_report.Unused[4] = 0;
     
-    VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
+    const VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
     
     if (!transducer)
         return;
@@ -85,7 +85,7 @@ void VoodooInputSimulatorDevice::constructReportGated(VoodooInputEvent& multitou
     bool is_error_input_active = false;
     
     for (int i = 0; i < multitouch_event.contact_count + 1; i++) {
-        VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
+        const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
         
         new_touch_state[i] = touch_state[i];
         touch_state[i] = 0;
