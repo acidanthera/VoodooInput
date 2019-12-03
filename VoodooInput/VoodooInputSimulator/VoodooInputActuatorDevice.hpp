@@ -1,11 +1,8 @@
 #ifndef VOODOO_ACTUATOR_DEVICE_HPP
 #define VOODOO_ACTUATOR_DEVICE_HPP
 
-#include <IOKit/IOLib.h>
-#include <IOKit/IOKitKeys.h>
-#include <IOKit/IOService.h>
-
-#include <IOKit/hid/IOHIDDevice.h>
+#include <LegacyIOService.h>
+#include <LegacyIOHIDDevice.h>
 
 #ifndef EXPORT
 #define EXPORT __attribute__((visibility("default")))

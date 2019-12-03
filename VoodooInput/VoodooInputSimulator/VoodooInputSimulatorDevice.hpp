@@ -1,11 +1,8 @@
 #ifndef VOODOO_SIMULATOR_DEVICE_HPP
 #define VOODOO_SIMULATOR_DEVICE_HPP
 
-#include <IOKit/IOLib.h>
-#include <IOKit/IOKitKeys.h>
-#include <IOKit/IOService.h>
-
-#include <IOKit/hid/IOHIDDevice.h>
+#include <LegacyIOService.h>
+#include <LegacyIOHIDDevice.h>
 
 #include <kern/clock.h>
 

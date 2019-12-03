@@ -1,7 +1,7 @@
 #ifndef VOODOO_INPUT_H
 #define VOODOO_INPUT_H
 
-#include <IOKit/IOService.h>
+#include <LegacyIOService.h>
 
 class VoodooInputSimulatorDevice;
 class VoodooInputActuatorDevice;

@@ -14,6 +14,13 @@
 		7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB21322E3AD0D00B2941A /* VoodooInputActuatorDevice.cpp */; };
 		7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21522E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp */; };
 		7BBAB22A22E3B49C00B2941A /* VoodooInputTransducer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB22822E3B49C00B2941A /* VoodooInputTransducer.h */; };
+		CEFB080E2396534B00215B0B /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFB08072396534B00215B0B /* libkmod.a */; };
+		CEFB080F2396534B00215B0B /* compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEFB08082396534B00215B0B /* compat.cpp */; };
+		CEFB08102396534B00215B0B /* LegacyIOHIKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = CEFB08092396534B00215B0B /* LegacyIOHIKeyboard.h */; };
+		CEFB08112396534B00215B0B /* LegacyIOHIPointing.h in Headers */ = {isa = PBXBuildFile; fileRef = CEFB080A2396534B00215B0B /* LegacyIOHIPointing.h */; };
+		CEFB08122396534B00215B0B /* LegacyLibkernMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = CEFB080B2396534B00215B0B /* LegacyLibkernMacros.h */; };
+		CEFB08132396534B00215B0B /* LegacyIOService.h in Headers */ = {isa = PBXBuildFile; fileRef = CEFB080C2396534B00215B0B /* LegacyIOService.h */; };
+		CEFB08142396534B00215B0B /* LegacyIOHIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CEFB080D2396534B00215B0B /* LegacyIOHIDDevice.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +36,14 @@
 		7BBAB22622E3B35B00B2941A /* MultitouchHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultitouchHelpers.h; sourceTree = "<group>"; };
 		7BBAB22822E3B49C00B2941A /* VoodooInputTransducer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoodooInputTransducer.h; sourceTree = "<group>"; };
 		7BBAB22B22E3C95300B2941A /* VoodooInputMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VoodooInputMessages.h; sourceTree = "<group>"; };
+		CEFB08072396534B00215B0B /* libkmod.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libkmod.a; sourceTree = "<group>"; };
+		CEFB08082396534B00215B0B /* compat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = compat.cpp; sourceTree = "<group>"; };
+		CEFB08092396534B00215B0B /* LegacyIOHIKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyIOHIKeyboard.h; sourceTree = "<group>"; };
+		CEFB080A2396534B00215B0B /* LegacyIOHIPointing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyIOHIPointing.h; sourceTree = "<group>"; };
+		CEFB080B2396534B00215B0B /* LegacyLibkernMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyLibkernMacros.h; sourceTree = "<group>"; };
+		CEFB080C2396534B00215B0B /* LegacyIOService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyIOService.h; sourceTree = "<group>"; };
+		CEFB080D2396534B00215B0B /* LegacyIOHIDDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyIOHIDDevice.h; sourceTree = "<group>"; };
+		CEFB081B239658DB00215B0B /* Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Changelog.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEFB080E2396534B00215B0B /* libkmod.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +61,9 @@
 		7BBAB1EF22E3A2F800B2941A = {
 			isa = PBXGroup;
 			children = (
+				CEFB08182396586D00215B0B /* Docs */,
 				7BBAB1FB22E3A2F800B2941A /* VoodooInput */,
+				CEFB08062396534B00215B0B /* Library */,
 				7BBAB1FA22E3A2F800B2941A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,6 +110,30 @@
 			path = VoodooInputMultitouch;
 			sourceTree = "<group>";
 		};
+		CEFB08062396534B00215B0B /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				CEFB08072396534B00215B0B /* libkmod.a */,
+				CEFB08082396534B00215B0B /* compat.cpp */,
+				CEFB08092396534B00215B0B /* LegacyIOHIKeyboard.h */,
+				CEFB080A2396534B00215B0B /* LegacyIOHIPointing.h */,
+				CEFB080B2396534B00215B0B /* LegacyLibkernMacros.h */,
+				CEFB080C2396534B00215B0B /* LegacyIOService.h */,
+				CEFB080D2396534B00215B0B /* LegacyIOHIDDevice.h */,
+			);
+			name = Library;
+			path = VoodooInput/Library;
+			sourceTree = "<group>";
+		};
+		CEFB08182396586D00215B0B /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				CEFB081B239658DB00215B0B /* Changelog.md */,
+			);
+			name = Docs;
+			path = VoodooInput;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -101,7 +143,12 @@
 			files = (
 				7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
+				CEFB08102396534B00215B0B /* LegacyIOHIKeyboard.h in Headers */,
+				CEFB08122396534B00215B0B /* LegacyLibkernMacros.h in Headers */,
 				7BBAB22A22E3B49C00B2941A /* VoodooInputTransducer.h in Headers */,
+				CEFB08132396534B00215B0B /* LegacyIOService.h in Headers */,
+				CEFB08112396534B00215B0B /* LegacyIOHIPointing.h in Headers */,
+				CEFB08142396534B00215B0B /* LegacyIOHIDDevice.h in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,7 +180,7 @@
 		7BBAB1F022E3A2F800B2941A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Kishor Prins";
 				TargetAttributes = {
 					7BBAB1F822E3A2F800B2941A = {
@@ -147,6 +194,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 7BBAB1EF22E3A2F800B2941A;
 			productRefGroup = 7BBAB1FA22E3A2F800B2941A /* Products */;
@@ -176,6 +224,7 @@
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
+				CEFB080F2396534B00215B0B /* compat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,10 +347,14 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.0d1;
+				CURRENT_PROJECT_VERSION = "$(MODULE_VERSION)";
 				INFOPLIST_FILE = VoodooInput/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VoodooInput/Library",
+				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.0d1;
+				MODULE_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
@@ -313,10 +366,14 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.0d1;
+				CURRENT_PROJECT_VERSION = "$(MODULE_VERSION)";
 				INFOPLIST_FILE = VoodooInput/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VoodooInput/Library",
+				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.0d1;
+				MODULE_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
