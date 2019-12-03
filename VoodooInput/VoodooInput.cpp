@@ -31,8 +31,8 @@ bool VoodooInput::start(IOService *provider) {
 
     OSNumber* physicalMaxYNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_PHYSICAL_MAX_Y_KEY));
     
-    if (!transformNumber || !logicalMaxXNumber || !logicalMaxYNumber
-            || !physicalMaxXNumber || !physicalMaxYNumber) {
+    if (transformNumber == nullptr || logicalMaxXNumber == nullptr || logicalMaxYNumber == nullptr ||
+		physicalMaxXNumber == nullptr || physicalMaxYNumber == nullptr) {
         IOLog("Kishor VoodooInput could not get provider properties!\n");
         return false;
     }
