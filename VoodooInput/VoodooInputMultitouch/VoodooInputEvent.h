@@ -9,17 +9,17 @@
 
 #include "VoodooInputTransducer.h"
 
-typedef struct {
+struct VoodooInputEvent {
     UInt8 contact_count;
     AbsoluteTime timestamp;
     VoodooInputTransducer transducers[VOODOO_INPUT_MAX_TRANSDUCERS];
-} VoodooInputEvent;
+};
 
-typedef struct {
+struct VoodooInputDimensions {
     SInt32 min_x;
     SInt32 max_x;
     SInt32 min_y;
     SInt32 max_y;
-} VoodooInputDimensions;
+};
 
 #endif /* VoodooInputEvent_h */
