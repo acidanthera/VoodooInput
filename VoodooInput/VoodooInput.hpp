@@ -25,8 +25,6 @@ class EXPORT VoodooInput : public IOService {
     UInt32 physicalMaxX = 0;
     UInt32 physicalMaxY = 0;
 public:
-    void free() override;
-
     bool start(IOService* provider) override;
     void stop(IOService* provider) override;
     

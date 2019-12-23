@@ -6,13 +6,6 @@
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
 
-void VoodooInput::free() {
-    OSSafeReleaseNULL(simulator);
-    OSSafeReleaseNULL(actuator);
-    
-    super::free();
-}
-
 bool VoodooInput::start(IOService *provider) {
     if (!super::start(provider)) {
         IOLog("Kishor VoodooInput could not super::start!\n");
@@ -93,11 +86,13 @@ void VoodooInput::stop(IOService *provider) {
     if (simulator) {
         simulator->stop(this);
         simulator->detach(this);
+        OSSafeReleaseNULL(simulator);
     }
     
     if (actuator) {
         actuator->stop(this);
         actuator->detach(this);
+        OSSafeReleaseNULL(actuator);
     }
     
     if (parentProvider->isOpen(this)) {
