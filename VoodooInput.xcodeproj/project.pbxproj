@@ -185,7 +185,7 @@
 		7BBAB1F022E3A2F800B2941A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Kishor Prins";
 				TargetAttributes = {
 					7BBAB1F822E3A2F800B2941A = {
@@ -380,7 +380,7 @@
 					"$(PROJECT_DIR)/VoodooInput/Library",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.2;
+				MODULE_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
@@ -399,7 +399,7 @@
 					"$(PROJECT_DIR)/VoodooInput/Library",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.2;
+				MODULE_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;

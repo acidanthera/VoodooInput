@@ -1,6 +1,9 @@
 VoodooInput Changelog
 =====================
 
+#### v1.0.3
+- Fixed interpreting transducer type data
+
 #### v1.0.2
 - Minor deployment fixes
 - Resolved loading issues on some configurations (thx @Sniki)

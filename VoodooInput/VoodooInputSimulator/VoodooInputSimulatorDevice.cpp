@@ -46,10 +46,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     
     const VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
     
-    if (!transducer)
-        return;
-    
-    if (transducer->type == VoodooInputTransducerType::STYLUS)
+    if (transducer->isValid && transducer->type == VoodooInputTransducerType::STYLUS)
         stylus_check = 1;
     
     // physical button
