@@ -35,6 +35,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     if (!ready_for_reports)
         return;
     
+    IOLog("VoodooInput got input, count: %d\n", multitouch_event.contact_count);
+    
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
     input_report.ReportID = 0x02;
@@ -170,10 +172,41 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         }
         newunknown = first_unknownbit - (4 * i);
 
-        finger_data.Pressure = transducer->currentCoordinates.pressure;
-        finger_data.Size = transducer->currentCoordinates.width;
-        finger_data.Touch_Major = transducer->currentCoordinates.width;
-        finger_data.Touch_Minor = transducer->currentCoordinates.width;
+        if (transducer->supportsPressure) {
+            finger_data.Pressure = transducer->currentCoordinates.pressure;
+            finger_data.Size = transducer->currentCoordinates.width;
+            finger_data.Touch_Major = transducer->currentCoordinates.width;
+            finger_data.Touch_Minor = transducer->currentCoordinates.width;
+        } else {
+            if (new_touch_state[i] > 4) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+             } else if (new_touch_state[i] == 1) {
+                 newunknown = 0x20;
+                 finger_data.Size = 0;
+                 finger_data.Pressure = 0x0;
+                 finger_data.Touch_Minor = 0x0;
+                 finger_data.Touch_Major = 0x0;
+            } else if (new_touch_state[i] == 2) {
+                 newunknown = 0x70;
+                 finger_data.Size = 8;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 16;
+                 finger_data.Touch_Major = 16;
+            } else if (new_touch_state[i] == 3) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+            } else if (new_touch_state[i] == 4) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+            }
+        }
 
         if (input_report.Button) {
             finger_data.Pressure = 120;
