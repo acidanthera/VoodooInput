@@ -26,7 +26,7 @@ bool VoodooInput::start(IOService *provider) {
     
     if (transformNumber == nullptr || logicalMaxXNumber == nullptr || logicalMaxYNumber == nullptr ||
 		physicalMaxXNumber == nullptr || physicalMaxYNumber == nullptr) {
-        IOLog("Kishor VoodooInput could not get provider properties!\n");
+        IOLog("VoodooInput could not get provider properties!\n");
         return false;
     }
     
@@ -41,7 +41,7 @@ bool VoodooInput::start(IOService *provider) {
     actuator = OSTypeAlloc(VoodooInputActuatorDevice);
     
     if (!simulator || !actuator) {
-        IOLog("Kishor VoodooInput could not alloc simulator or actuator!\n");
+        IOLog("VoodooInput could not alloc simulator or actuator!\n");
         OSSafeReleaseNULL(simulator);
         OSSafeReleaseNULL(actuator);
         return false;
@@ -49,22 +49,22 @@ bool VoodooInput::start(IOService *provider) {
     
     // Initialize simulator device
     if (!simulator->init(NULL) || !simulator->attach(this)) {
-        IOLog("Kishor VoodooInput could not attach simulator!\n");
+        IOLog("VoodooInput could not attach simulator!\n");
         goto exit;
     }
     else if (!simulator->start(this)) {
-        IOLog("Kishor VoodooInput could not start simulator!\n");
+        IOLog("VoodooInput could not start simulator!\n");
         simulator->detach(this);
         goto exit;
     }
     
     // Initialize actuator device
     if (!actuator->init(NULL) || !actuator->attach(this)) {
-        IOLog("Kishor VoodooInput could not init or attach actuator!\n");
+        IOLog("VoodooInput could not init or attach actuator!\n");
         goto exit;
     }
     else if (!actuator->start(this)) {
-        IOLog("Kishor VoodooInput could not start actuator!\n");
+        IOLog("VoodooInput could not start actuator!\n");
         actuator->detach(this);
         goto exit;
     }
@@ -72,7 +72,7 @@ bool VoodooInput::start(IOService *provider) {
     setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
     
     if (!parentProvider->open(this)) {
-        IOLog("Kishor VoodooInput could not open!\n");
+        IOLog("VoodooInput could not open!\n");
         return false;
     };
     
