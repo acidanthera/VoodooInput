@@ -79,16 +79,12 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
     
     // finger data
-    int first_unknownbit = -1;
     bool input_active = false;
     bool is_error_input_active = false;
     
     for (int i = 0; i < multitouch_event.contact_count + 1; i++) {
         const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
-        
-        new_touch_state[i] = touch_state[i];
-        touch_state[i] = 0;
-        
+
         if (!transducer || !transducer->isValid)
             continue;
 
@@ -96,17 +92,18 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             continue;
         }
         
+        // in case the obtained id is greater than 14, usually 0~4 for common devices.
+        UInt16 finger_id = transducer->secondaryId % 15;
         if (!transducer->isTransducerActive) {
-            new_touch_state[i] = 0;
-            touch_state[i] = 0;
+            touch_state[finger_id] = 0;
         } else {
             input_active = true;
         }
 
         MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report.FINGERS[i];
         
-        SInt16 x_min = 3678;
-        SInt16 y_min = 2479;
+        SInt16 x_min = MT2_MAX_X / 2;;
+        SInt16 y_min = MT2_MAX_Y / 2;;
         
         IOFixed scaled_x = ((transducer->currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
         IOFixed scaled_y = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
@@ -116,8 +113,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         }
         
         IOFixed scaled_old_x = ((transducer->previousCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
-        
-        uint8_t scaled_old_x_truncated = scaled_old_x;
+        IOFixed scaled_old_y = ((transducer->previousCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
 
         
         if (transform) {
@@ -134,118 +130,119 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             }
         }
 
-        new_touch_state[i]++;
-        touch_state[i] = new_touch_state[i];
-        
-        int newunknown = stashed_unknown[i];
-        
-        
-        
-        if (abs(scaled_x - scaled_old_x_truncated) > 50) {
-            if (scaled_x <= 23) {
-                newunknown = 0x44;
-            } else if (scaled_x <= 27) {
-                newunknown = 0x64;
-            } else if (scaled_x <= 37) {
-                newunknown = 0x84;
-            } else if (scaled_x <= 2307) {
-                newunknown = 0x94;
-            } else if (scaled_x <= 3059) {
-                newunknown = 0x90;
-            } else if (scaled_x <= 4139) {
-                newunknown = 0x8c;
-            } else if (scaled_x <= 5015) {
-                newunknown = 0x88;
-            } else if (scaled_x <= 7553) {
-                newunknown = 0x94;
-            } else if (scaled_x <= 7600) {
-                newunknown = 0x84;
-            } else if (scaled_x <= 7605) {
-                newunknown = 0x64;
+        UInt8 angle_bits = 0;
+        IOFixed x_diff = scaled_x - scaled_old_x;
+        IOFixed y_diff = (scaled_y - scaled_old_y) * -1;
+        if (x_diff > 0) {
+            if (y_diff <= -5.027f * x_diff) {
+                // if: y_diff/x_diff <= tan(pi/2 + pi/8 * 1/2) < 0
+                // then: angle ~= (pi/2), angle_bits = (pi/2) / pi * 8
+                angle_bits = 0x4;
+            } else if (y_diff <= -1.497f * x_diff) {
+                // if: y_diff/x_diff <= tan(5pi/8 + pi/8 * 1/2) < 0
+                // then: angle ~= (5pi/8), angle_bits = (5pi/8) / pi * 8
+                angle_bits = 0x5;
+            } else if (y_diff <= -0.668f * x_diff) {
+                angle_bits = 0x6;
+            } else if (y_diff <= -0.199f * x_diff) {
+                angle_bits = 0x7;
+            } else if (y_diff <= 0.199f * x_diff) {
+                angle_bits = 0x0;
+            } else if (y_diff <= 0.668f * x_diff) {
+                angle_bits = 0x1;
+            } else if (y_diff <= 1.497f * x_diff) {
+                angle_bits = 0x2;
+            } else if (y_diff <= 5.027f * x_diff) {
+                angle_bits = 0x3;
             } else {
-                newunknown = 0x44;
+                angle_bits = 0x4;
             }
-        }
-
-        if (first_unknownbit == -1) {
-            first_unknownbit = newunknown;
-        }
-        newunknown = first_unknownbit - (4 * i);
-
-        if (transducer->supportsPressure) {
-            finger_data.Pressure = transducer->currentCoordinates.pressure;
-            finger_data.Size = transducer->currentCoordinates.width;
-            finger_data.Touch_Major = transducer->currentCoordinates.width;
-            finger_data.Touch_Minor = transducer->currentCoordinates.width;
         } else {
-            if (new_touch_state[i] > 4) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
-             } else if (new_touch_state[i] == 1) {
-                 newunknown = 0x20;
-                 finger_data.Size = 0;
-                 finger_data.Pressure = 0x0;
-                 finger_data.Touch_Minor = 0x0;
-                 finger_data.Touch_Major = 0x0;
-            } else if (new_touch_state[i] == 2) {
-                 newunknown = 0x70;
-                 finger_data.Size = 8;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 16;
-                 finger_data.Touch_Major = 16;
-            } else if (new_touch_state[i] == 3) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
-            } else if (new_touch_state[i] == 4) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
+            if (y_diff >= -5.027f * x_diff) {
+                angle_bits = 0x4;
+            } else if (y_diff >= -1.497f * x_diff) {
+                angle_bits = 0x5;
+            } else if (y_diff >= -0.668f * x_diff) {
+                angle_bits = 0x6;
+            } else if (y_diff >= -0.199f * x_diff) {
+                angle_bits = 0x7;
+            } else if (y_diff >= 0.199f * x_diff) {
+                angle_bits = 0x0;
+            } else if (y_diff >= 0.668f * x_diff) {
+                angle_bits = 0x1;
+            } else if (y_diff >= 1.497f * x_diff) {
+                angle_bits = 0x2;
+            } else if (y_diff >= 5.027f * x_diff) {
+                angle_bits = 0x3;
+            } else {
+                angle_bits = 0x4;
             }
-        }
-
-        if (input_report.Button) {
-            finger_data.Pressure = 120;
         }
         
-
+        touch_state[finger_id]++;
+        if (touch_state[finger_id] > 4) {
+            finger_data.State = 0x4;
+        } else {
+            finger_data.State = touch_state[finger_id];
+        }
+        
+        finger_data.Priority = 4 - i;
+        finger_data.Size = 10;
+        finger_data.Touch_Minor = 20;
+        finger_data.Touch_Major = 20;
+        
+        static bool hold_drag = false;
+        if (input_report.Button) {
+            input_report.Button = false;
+            finger_data.Pressure = 0xff;
+        } else if (!input_report.Button && multitouch_event.contact_count == 1) {
+            static IOFixed first_scaled_x = 0, first_scaled_y = 0;
+            static uint64_t press_start_ns;
+            uint64_t now_abs;
+            clock_get_uptime(&now_abs);
+            uint64_t now_ns;
+            absolutetime_to_nanoseconds(now_abs, &now_ns);
+            if (touch_state[i] == 1) {
+                if (transducer->isTransducerActive) {
+                    first_scaled_x = scaled_x;
+                    first_scaled_y = scaled_y;
+                    press_start_ns = now_ns;
+                    hold_drag = true;
+                } else {
+                    hold_drag = false;
+                }
+            } else if (press_start_ns && hold_drag && now_ns - press_start_ns < 500e6) {
+                if (abs(scaled_x - first_scaled_x) > MT2_MAX_X / 50 || abs(scaled_y - first_scaled_y) > MT2_MAX_Y / 50) {
+                    hold_drag = false;
+                }
+            } else if (hold_drag) {
+                finger_data.Pressure = 100;
+            }
+        } else {
+            hold_drag = false;
+        }
+        
         if (!transducer->isTransducerActive) {
-            newunknown = 0xF4;
+            finger_data.State = 0x7;
+            finger_data.Priority = 0x5;
             finger_data.Size = 0x0;
             finger_data.Pressure = 0x0;
             finger_data.Touch_Minor = 0;
             finger_data.Touch_Major = 0;
         }
+        
+        if (transducer->supportsPressure) {
+            finger_data.Pressure = transducer->currentCoordinates.pressure;
+            finger_data.Size = transducer->currentCoordinates.width;
+            finger_data.Touch_Major = transducer->currentCoordinates.width;
+            finger_data.Touch_Minor = transducer->currentCoordinates.width;
+        }
 
-        stashed_unknown[i] = newunknown;
+        finger_data.X = (SInt16)(scaled_x - x_min);
+        finger_data.Y = (SInt16)(scaled_y - y_min) * -1;
         
-        SInt16 adjusted_x = scaled_x - x_min;
-        SInt16 adjusted_y = scaled_y - y_min;
-        adjusted_y = adjusted_y * -1;
-        
-        uint16_t rawx = *(uint16_t *)&adjusted_x;
-        uint16_t rawy = *(uint16_t *)&adjusted_y;
-        
-        finger_data.AbsX = rawx & 0xff;
-        
-        finger_data.AbsXY = 0;
-        finger_data.AbsXY |= (rawx >> 8) & 0x0f;
-        if ((rawx >> 15) & 0x01)
-            finger_data.AbsXY |= 0x10;
-        
-        finger_data.AbsXY |= (rawy << 5) & 0xe0;
-        finger_data.AbsY[0] = (rawy >> 3) & 0xff;
-        finger_data.AbsY[1] = (rawy >> 11) & 0x01;
-        if ((rawy >> 15) & 0x01)
-            finger_data.AbsY[1] |= 0x02;
-        
-        finger_data.AbsY[1] |= newunknown;
-        
-        finger_data.Orientation_Origin = (128 & 0xF0) | ((transducer->secondaryId + 1) & 0xF);
+        finger_data.Angle = angle_bits;
+        finger_data.Identifier = finger_id + 1;
     }
 
     if (input_active)
@@ -265,6 +262,10 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     buffer_report = NULL;
 
     if (!input_active) {
+        for (int i = 0; i < 15; i++) {
+            touch_state[i] = 0;
+        }
+
         input_report.FINGERS[0].Size = 0x0;
         input_report.FINGERS[0].Pressure = 0x0;
         input_report.FINGERS[0].Touch_Major = 0x0;
@@ -281,8 +282,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         handleReport(buffer_report, kIOHIDReportTypeInput);
         buffer_report->release();
         
-        input_report.FINGERS[0].AbsY[1] &= ~0xF4;
-        input_report.FINGERS[0].AbsY[1] |= 0x14;
+        input_report.FINGERS[0].Priority = 0x5;
+        input_report.FINGERS[0].State = 0x0;
         
         buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
         buffer_report->writeBytes(0, &input_report, total_report_len);
@@ -339,7 +340,6 @@ bool VoodooInputSimulatorDevice::start(IOService* provider) {
 
     for (int i = 0; i < 15; i++) {
         touch_state[i] = 0;
-        new_touch_state[i] = 0;
     }
     
     stylus_check = 0;
