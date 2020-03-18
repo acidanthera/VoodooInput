@@ -191,35 +191,42 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.Touch_Minor = 20;
         finger_data.Touch_Major = 20;
         
-        static bool hold_drag = false;
-        if (input_report.Button) {
-            input_report.Button = false;
-            finger_data.Pressure = 0xff;
-        } else if (!input_report.Button && multitouch_event.contact_count == 1) {
-            static IOFixed first_scaled_x = 0, first_scaled_y = 0;
-            static uint64_t press_start_ns;
-            uint64_t now_abs;
-            clock_get_uptime(&now_abs);
-            uint64_t now_ns;
-            absolutetime_to_nanoseconds(now_abs, &now_ns);
-            if (touch_state[i] == 1) {
-                if (transducer->isTransducerActive) {
-                    first_scaled_x = scaled_x;
-                    first_scaled_y = scaled_y;
-                    press_start_ns = now_ns;
-                    hold_drag = true;
-                } else {
-                    hold_drag = false;
-                }
-            } else if (press_start_ns && hold_drag && now_ns - press_start_ns < 500e6) {
-                if (abs(scaled_x - first_scaled_x) > MT2_MAX_X / 50 || abs(scaled_y - first_scaled_y) > MT2_MAX_Y / 50) {
-                    hold_drag = false;
-                }
-            } else if (hold_drag) {
-                finger_data.Pressure = 100;
-            }
+        if (transducer->supportsPressure) {
+            finger_data.Pressure = transducer->currentCoordinates.pressure;
+            finger_data.Size = transducer->currentCoordinates.width;
+            finger_data.Touch_Major = transducer->currentCoordinates.width;
+            finger_data.Touch_Minor = transducer->currentCoordinates.width;
         } else {
-            hold_drag = false;
+            if (touch_state[i] > 4) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+             } else if (touch_state[i] == 1) {
+                 finger_data.Size = 0;
+                 finger_data.Pressure = 0x0;
+                 finger_data.Touch_Minor = 0x0;
+                 finger_data.Touch_Major = 0x0;
+            } else if (touch_state[i] == 2) {
+                 finger_data.Size = 8;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 16;
+                 finger_data.Touch_Major = 16;
+            } else if (touch_state[i] == 3) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+            } else if (touch_state[i] == 4) {
+                 finger_data.Size = 10;
+                 finger_data.Pressure = 10;
+                 finger_data.Touch_Minor = 32;
+                 finger_data.Touch_Major = 32;
+            }
+        }
+        
+        if (input_report.Button) {
+            finger_data.Pressure = 120;
         }
         
         if (!transducer->isTransducerActive) {
@@ -229,13 +236,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Pressure = 0x0;
             finger_data.Touch_Minor = 0;
             finger_data.Touch_Major = 0;
-        }
-        
-        if (transducer->supportsPressure) {
-            finger_data.Pressure = transducer->currentCoordinates.pressure;
-            finger_data.Size = transducer->currentCoordinates.width;
-            finger_data.Touch_Major = transducer->currentCoordinates.width;
-            finger_data.Touch_Minor = transducer->currentCoordinates.width;
         }
 
         finger_data.X = (SInt16)(scaled_x - x_min);
