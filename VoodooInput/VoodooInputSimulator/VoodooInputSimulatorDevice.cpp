@@ -187,42 +187,16 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         }
         
         finger_data.Priority = 4 - i;
-        finger_data.Size = 10;
-        finger_data.Touch_Minor = 20;
-        finger_data.Touch_Major = 20;
-        
+
         if (transducer->supportsPressure) {
             finger_data.Pressure = transducer->currentCoordinates.pressure;
             finger_data.Size = transducer->currentCoordinates.width;
             finger_data.Touch_Major = transducer->currentCoordinates.width;
             finger_data.Touch_Minor = transducer->currentCoordinates.width;
         } else {
-            if (touch_state[i] > 4) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
-             } else if (touch_state[i] == 1) {
-                 finger_data.Size = 0;
-                 finger_data.Pressure = 0x0;
-                 finger_data.Touch_Minor = 0x0;
-                 finger_data.Touch_Major = 0x0;
-            } else if (touch_state[i] == 2) {
-                 finger_data.Size = 8;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 16;
-                 finger_data.Touch_Major = 16;
-            } else if (touch_state[i] == 3) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
-            } else if (touch_state[i] == 4) {
-                 finger_data.Size = 10;
-                 finger_data.Pressure = 10;
-                 finger_data.Touch_Minor = 32;
-                 finger_data.Touch_Major = 32;
-            }
+            finger_data.Size = 10;
+            finger_data.Touch_Minor = 20;
+            finger_data.Touch_Major = 20;
         }
         
         if (input_report.Button) {
