@@ -102,8 +102,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
 
         MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report.FINGERS[i];
         
-        SInt16 x_min = MT2_MAX_X / 2;;
-        SInt16 y_min = MT2_MAX_Y / 2;;
+        SInt16 x_min = MT2_MAX_X / 2;
+        SInt16 y_min = MT2_MAX_Y / 2;
         
         IOFixed scaled_x = ((transducer->currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
         IOFixed scaled_y = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
