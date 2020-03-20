@@ -35,7 +35,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     if (!ready_for_reports)
         return;
     
-    IOLog("VoodooInput got input, count: %d\n", multitouch_event.contact_count);
+    //IOLog("VoodooInput got input, count: %d\n", multitouch_event.contact_count);
     
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
@@ -52,7 +52,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         stylus_check = 1;
     
     // physical button
-    input_report.Button = transducer->isPhysicalButtonDown;
+    UInt8 Button = transducer->isPhysicalButtonDown;
     
     // touch active
 
@@ -81,6 +81,25 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     // finger data
     bool input_active = false;
     bool is_error_input_active = false;
+
+    for (int i = 0; i < multitouch_event.contact_count + 1; i++) {
+        const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
+
+        if (!transducer || !transducer->isValid)
+            continue;
+
+        if (transducer->type == VoodooInputTransducerType::STYLUS) {
+            continue;
+        }
+
+        // in case the obtained id is greater than 14, usually 0~4 for common devices.
+        UInt16 finger_id = transducer->secondaryId % 15;
+        if (!transducer->isTransducerActive) {
+            touch_state[finger_id] = 0;
+        } else {
+            input_active = true;
+        }
+    }
     
     for (int i = 0; i < multitouch_event.contact_count + 1; i++) {
         const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
@@ -94,11 +113,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
         UInt16 finger_id = transducer->secondaryId % 15;
-        if (!transducer->isTransducerActive) {
-            touch_state[finger_id] = 0;
-        } else {
-            input_active = true;
-        }
 
         MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report.FINGERS[i];
         
@@ -199,11 +213,13 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Touch_Major = 20;
         }
         
-        if (input_report.Button) {
+        if (Button && input_active && i==0) {
+            finger_data.Size = 10;
             finger_data.Pressure = 120;
+            finger_data.Touch_Minor = 32;
+            finger_data.Touch_Major = 32;
         }
-        
-        if (!transducer->isTransducerActive) {
+        else if (!transducer->isTransducerActive) {
             finger_data.State = 0x7;
             finger_data.Priority = 0x5;
             finger_data.Size = 0x0;
@@ -219,7 +235,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.Identifier = finger_id + 1;
     }
 
-    if (input_active)
+    if (Button && input_active)
         input_report.TouchActive = 0x3;
     else
         input_report.TouchActive = 0x2;
@@ -228,6 +244,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     IOBufferMemoryDescriptor* buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
 
     if (!is_error_input_active) {
+      if (Button && input_active)
+          input_report.Button = Button;
       buffer_report->writeBytes(0, &input_report, total_report_len);
       handleReport(buffer_report, kIOHIDReportTypeInput);
     }
