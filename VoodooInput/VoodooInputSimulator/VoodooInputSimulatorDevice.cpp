@@ -34,7 +34,7 @@ void VoodooInputSimulatorDevice::constructReport(const VoodooInputEvent& multito
 void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& multitouch_event) {
     if (!ready_for_reports)
         return;
-
+    
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
     input_report.ReportID = 0x02;
