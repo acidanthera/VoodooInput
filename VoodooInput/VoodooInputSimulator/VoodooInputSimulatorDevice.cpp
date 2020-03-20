@@ -52,7 +52,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         stylus_check = 1;
     
     // physical button
-    UInt8 Button = transducer->isPhysicalButtonDown;
+    UInt8 button = transducer->isPhysicalButtonDown;
     
     // touch active
 
@@ -213,7 +213,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Touch_Major = 20;
         }
         
-        if (Button && input_active && i==0) {
+        if (button && input_active && i==0) {
             finger_data.Size = 10;
             finger_data.Pressure = 120;
             finger_data.Touch_Minor = 32;
@@ -235,7 +235,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.Identifier = finger_id + 1;
     }
 
-    if (Button && input_active)
+    if (button && input_active)
         input_report.TouchActive = 0x3;
     else
         input_report.TouchActive = 0x2;
@@ -244,8 +244,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     IOBufferMemoryDescriptor* buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
 
     if (!is_error_input_active) {
-      if (Button && input_active)
-          input_report.Button = Button;
+      if (button && input_active)
+          input_report.Button = button;
       buffer_report->writeBytes(0, &input_report, total_report_len);
       handleReport(buffer_report, kIOHIDReportTypeInput);
     }
