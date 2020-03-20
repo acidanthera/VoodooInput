@@ -50,7 +50,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         stylus_check = 1;
     
     // physical button
-    UInt8 button = transducer->isPhysicalButtonDown;
+    bool button = transducer->isPhysicalButtonDown;
     
     // touch active
 
