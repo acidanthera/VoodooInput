@@ -35,8 +35,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     if (!ready_for_reports)
         return;
     
-    IOLog("VoodooInput got input, count: %d\n", multitouch_event.contact_count);
-    
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
     input_report.ReportID = 0x02;
