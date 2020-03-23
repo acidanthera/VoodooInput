@@ -112,7 +112,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         
         IOFixed scaled_old_x = ((transducer->previousCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
         IOFixed scaled_old_y = ((transducer->previousCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
-
         
         if (transform) {
             if (transform & kIOFBSwapAxes) {
@@ -195,6 +194,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Size = 10;
             finger_data.Touch_Minor = 20;
             finger_data.Touch_Major = 20;
+            finger_data.Pressure = 10;
         }
         
         if (input_report.Button) {
