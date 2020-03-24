@@ -192,9 +192,10 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Touch_Major = transducer->currentCoordinates.width;
             finger_data.Touch_Minor = transducer->currentCoordinates.width;
         } else {
+            finger_data.Pressure = 10;
             finger_data.Size = 10;
-            finger_data.Touch_Minor = 20;
             finger_data.Touch_Major = 20;
+            finger_data.Touch_Minor = 20;
         }
         
         if (input_report.Button) {
