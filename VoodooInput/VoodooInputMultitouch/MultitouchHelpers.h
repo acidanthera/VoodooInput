@@ -1,8 +1,8 @@
 //
 //  MultitouchHelpers.hpp
+//  VooodooInput
 //
-//  Created by Alexandre on 31/07/2017.
-//  Copyright © 2017 Alexandre Daoud. All rights reserved.
+//  Copyright © 2019 Alexandre Daoud. All rights reserved.
 //
 
 #ifndef MULTITOUCH_HELPERS_H

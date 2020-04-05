@@ -1,8 +1,7 @@
 //
 //  VoodooInputActuatorDevice.cpp
-//  VoodooI2C
+//  VoodooInput
 //
-//  Created by CoolStar on 12/19/18.
 //  Copyright © 2018 Alexandre Daoud. All rights reserved.
 //
 

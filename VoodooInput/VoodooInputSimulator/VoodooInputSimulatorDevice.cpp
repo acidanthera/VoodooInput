@@ -1,8 +1,7 @@
 //
 //  VoodooInputSimulatorDevice.cpp
-//  VoodooI2C
+//  VoodooInput
 //
-//  Created by Alexandre on 10/02/2018.
 //  Copyright © 2018 Alexandre Daoud and Kishor Prins. All rights reserved.
 //
 

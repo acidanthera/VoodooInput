@@ -1,5 +1,12 @@
+//
+//  VoodooInput.сpp
+//  VoodooInput
+//
+//  Copyright © 2019 Kishor Prins. All rights reserved.
+//
+
 #include "VoodooInput.hpp"
-#include "VoodooInputMessages.h"
+#include "VoodooInputMultitouch/VoodooInputMessages.h"
 #include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
 

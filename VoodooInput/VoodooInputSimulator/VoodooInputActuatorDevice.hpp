@@ -1,3 +1,10 @@
+//
+//  VoodooInputActuatorDevice.hpp
+//  VoodooInput
+//
+//  Copyright © 2019 Alexandre Daoud and Kishor Prins. All rights reserved.
+//
+
 #ifndef VOODOO_ACTUATOR_DEVICE_HPP
 #define VOODOO_ACTUATOR_DEVICE_HPP
 

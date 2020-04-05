@@ -1,3 +1,10 @@
+//
+//  VoodooInputSimulatorDevice.hpp
+//  VoodooInput
+//
+//  Copyright © 2019 Alexandre Daoud and Kishor Prins. All rights reserved.
+//
+
 #ifndef VOODOO_SIMULATOR_DEVICE_HPP
 #define VOODOO_SIMULATOR_DEVICE_HPP
 

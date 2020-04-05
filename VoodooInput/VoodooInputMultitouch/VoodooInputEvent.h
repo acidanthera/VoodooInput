@@ -1,5 +1,6 @@
 //
 //  VoodooInputEvent.h
+//  VooodooInput
 //
 //  Copyright © 2019 Kishor Prins. All rights reserved.
 //

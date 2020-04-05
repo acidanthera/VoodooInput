@@ -2,7 +2,6 @@
 //  VoodooInputMessages.h
 //  VooodooInput
 //
-//  Created by Kishor Prins on 2019-07-20.
 //  Copyright © 2019 Kishor Prins. All rights reserved.
 //
 

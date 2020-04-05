@@ -1,5 +1,12 @@
-#ifndef VOODOO_INPUT_H
-#define VOODOO_INPUT_H
+//
+//  VoodooInput.hpp
+//  VoodooInput
+//
+//  Copyright © 2019 Kishor Prins. All rights reserved.
+//
+
+#ifndef VOODOO_INPUT_HPP
+#define VOODOO_INPUT_HPP
 
 #include <LegacyIOService.h>
 

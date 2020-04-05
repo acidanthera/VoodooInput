@@ -1,11 +1,12 @@
 //
 //  VoodooInputTransducer.hpp
+//  VooodooInput
 //
 //  Copyright © 2019 Kishor Prins. All rights reserved.
 //
 
-#ifndef VOODOO_INPUT_TRANSDUCER_HPP
-#define VOODOO_INPUT_TRANSDUCER_HPP
+#ifndef VOODOO_INPUT_TRANSDUCER_H
+#define VOODOO_INPUT_TRANSDUCER_H
 
 #define VOODOO_INPUT_MAX_TRANSDUCERS 10
 

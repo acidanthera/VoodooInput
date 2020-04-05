@@ -4,6 +4,7 @@ VoodooInput Changelog
 - Improved compatibility with MT2 emulation (thx @Goshin)
 - Improved compatibility with VoodooI2C (thx @kprinssu)
 - Fix dragging/selection instability while touchpad button is pressed
+- Bundle SDK in resources for DEBUG builds
 
 #### v1.0.3
 - Fixed interpreting transducer type data
