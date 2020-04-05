@@ -21,6 +21,7 @@
 
 REPO_PATH="acidanthera/VoodooInput"
 SDK_PATH="VoodooInput.kext"
+DSYM_PATH="VoodooInput.kext.dSYM"
 SDK_CHECK_PATH="${SDK_PATH}/Contents/Resources/VoodooInputMultitouch/VoodooInputMessages.h"
 
 PROJECT_PATH="$(pwd)"
@@ -232,6 +233,14 @@ install_prebuilt_sdk() {
       return 1
     fi
 
+    if [ -d "${DSYM_PATH}" ]; then
+      "${MV}" "${DSYM_PATH}" "${PROJECT_PATH}/VoodooInput/${CONFDESTS[$i]}/${DSYM_PATH}" || ret=$?
+      if [ $ret -ne 0 ]; then
+        echo "ERROR: Failed to install SDK dSYM with code ${ret}!"
+        return 1
+      fi
+    fi
+
     echo "Installed prebuilt SDK ${CONFS[$i]}/${vers}!"
   done
 
@@ -296,6 +305,14 @@ install_compiled_sdk() {
     if [ $ret -ne 0 ]; then
       echo "ERROR: Failed to install SDK with code ${ret}!"
       return 1
+    fi
+
+    if [ -d "build/${CONFDESTS[$i]}/${DSYM_PATH}" ]; then
+      "${MV}" "build/${CONFDESTS[$i]}/${DSYM_PATH}" "${PROJECT_PATH}/VoodooInput/${CONFDESTS[$i]}/${DSYM_PATH}" || ret=$?
+      if [ $ret -ne 0 ]; then
+        echo "ERROR: Failed to install SDK dSYM with code ${ret}!"
+        return 1
+      fi
     fi
 
     echo "Installed compiled SDK from master!"
