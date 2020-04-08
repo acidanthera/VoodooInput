@@ -79,7 +79,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     bool input_active = input_report.Button;
     bool is_error_input_active = false;
     
-    for (int i = 0; i < multitouch_event.contact_count + 1; i++) {
+    for (int i = 0; i < multitouch_event.contact_count + stylus_check; i++) {
         const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
 
         if (!transducer || !transducer->isValid)
