@@ -322,7 +322,7 @@ install_compiled_sdk() {
 prepare_environment || exit 1
 
 ret=0
-if [ "${TRAVIS_TAG}" != "" ] || [ "${BUILD_MODE}" = "prebuilt" ]; then
+if [ "${TRAVIS_TAG}" != "" ] || [ "${CIRCLE_TAG}" != "" ] || [ "${BUILD_MODE}" = "prebuilt" ]; then
   install_prebuilt_sdk || ret=$?
 else
   install_compiled_sdk || ret=$?
