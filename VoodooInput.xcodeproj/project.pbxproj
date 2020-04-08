@@ -386,7 +386,7 @@
 					"$(PROJECT_DIR)/VoodooInput/Library",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.4;
+				MODULE_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
@@ -405,7 +405,7 @@
 					"$(PROJECT_DIR)/VoodooInput/Library",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.0.4;
+				MODULE_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
