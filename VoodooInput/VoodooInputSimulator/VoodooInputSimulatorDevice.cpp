@@ -92,7 +92,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
         UInt16 finger_id = transducer->secondaryId % 15;
         if (!transducer->isTransducerActive) {
-            touch_state[finger_id] = 0;
+            touch_state[finger_id] = 2;
         } else {
             input_active = true;
         }
@@ -176,11 +176,10 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             }
         }
         
-        touch_state[finger_id]++;
-        if (touch_state[finger_id] > 4) {
+        if (touch_state[finger_id] == 4) {
             finger_data.State = 0x4;
         } else {
-            finger_data.State = touch_state[finger_id];
+            finger_data.State = ++touch_state[finger_id];
         }
         
         finger_data.Priority = 4 - i;
@@ -235,7 +234,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
 
     if (!input_active) {
         for (int i = 0; i < 15; i++) {
-            touch_state[i] = 0;
+            touch_state[i] = 2;
         }
 
         input_report.FINGERS[0].Size = 0x0;
@@ -311,7 +310,7 @@ bool VoodooInputSimulatorDevice::start(IOService* provider) {
     registerPowerDriver(this, PMPowerStates, kIOPMNumberPowerStates);
 
     for (int i = 0; i < 15; i++) {
-        touch_state[i] = 0;
+        touch_state[i] = 2;
     }
     
     stylus_check = 0;
