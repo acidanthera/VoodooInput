@@ -2,6 +2,7 @@ VoodooInput Changelog
 =====================
 #### v1.0.5
 - Don't read extra finger if there is no stylus
+- Improve handling of slow to respond devices 
 
 #### v1.0.4
 - Improved compatibility with MT2 emulation (thx @Goshin)
