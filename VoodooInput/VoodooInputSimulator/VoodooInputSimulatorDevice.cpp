@@ -92,7 +92,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
         UInt16 finger_id = transducer->secondaryId % 15;
         if (!transducer->isTransducerActive) {
-            touch_state[finger_id] = 2;
+            touch_state[finger_id] = input_report.Button ? 0 : 2;
         } else {
             input_active = true;
         }
