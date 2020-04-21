@@ -89,6 +89,14 @@ exit:
     return false;
 }
 
+bool VoodooInput::willTerminate(IOService* provider, IOOptionBits options) {
+    if (parentProvider->isOpen(this)) {
+        parentProvider->close(this);
+    }
+
+    return super::willTerminate(provider, options);
+}
+
 void VoodooInput::stop(IOService *provider) {
     if (simulator) {
         simulator->stop(this);
@@ -100,10 +108,6 @@ void VoodooInput::stop(IOService *provider) {
         actuator->stop(this);
         actuator->detach(this);
         OSSafeReleaseNULL(actuator);
-    }
-    
-    if (parentProvider->isOpen(this)) {
-        parentProvider->close(this);
     }
     
     super::stop(provider);

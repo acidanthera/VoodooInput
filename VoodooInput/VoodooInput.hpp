@@ -34,6 +34,7 @@ class EXPORT VoodooInput : public IOService {
 public:
     bool start(IOService* provider) override;
     void stop(IOService* provider) override;
+    bool willTerminate(IOService* provider, IOOptionBits options) override;
     
     UInt8 getTransformKey();
 
