@@ -44,10 +44,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     input_report.Unused[4] = 0;
     
     const VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
-    
-    if (transducer->isValid && transducer->type == VoodooInputTransducerType::STYLUS)
-        stylus_check = 1;
-    
+
     // physical button
     input_report.Button = transducer->isPhysicalButtonDown;
     
@@ -79,8 +76,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     bool input_active = input_report.Button;
     bool is_error_input_active = false;
     
-    for (int i = 0; i < multitouch_event.contact_count + stylus_check; i++) {
-        const VoodooInputTransducer* transducer = &multitouch_event.transducers[i + stylus_check];
+    for (int i = 0; i < multitouch_event.contact_count; i++) {
+        const VoodooInputTransducer* transducer = &multitouch_event.transducers[i];
 
         if (!transducer || !transducer->isValid)
             continue;
@@ -312,9 +309,7 @@ bool VoodooInputSimulatorDevice::start(IOService* provider) {
     for (int i = 0; i < 15; i++) {
         touch_state[i] = 2;
     }
-    
-    stylus_check = 0;
-    
+        
     new_get_report_buffer = nullptr;
     
     ready_for_reports = true;
