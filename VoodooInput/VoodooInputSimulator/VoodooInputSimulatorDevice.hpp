@@ -125,7 +125,6 @@ private:
     AbsoluteTime start_timestamp;
     OSData* new_get_report_buffer = NULL;
     UInt8 touch_state[15];
-    int stylus_check = 0;
     IOWorkLoop* work_loop;
     IOCommandGate* command_gate;
     MAGIC_TRACKPAD_INPUT_REPORT input_report;
