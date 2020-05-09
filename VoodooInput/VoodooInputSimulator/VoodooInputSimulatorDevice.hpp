@@ -81,6 +81,7 @@ class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
+    IOMemoryDescriptor * memDesc;
     void constructReport(const VoodooInputEvent& multitouch_event);
 
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;

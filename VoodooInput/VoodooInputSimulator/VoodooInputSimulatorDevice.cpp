@@ -12,6 +12,7 @@
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
 
+
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputSimulatorDevice, IOHIDDevice);
 
@@ -33,9 +34,8 @@ void VoodooInputSimulatorDevice::constructReport(const VoodooInputEvent& multito
 void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& multitouch_event) {
     if (!ready_for_reports)
         return;
-    
     AbsoluteTime timestamp = multitouch_event.timestamp;
-
+    
     input_report.ReportID = 0x02;
     input_report.Unused[0] = 0;
     input_report.Unused[1] = 0;
@@ -217,23 +217,27 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report.TouchActive = 0x3;
     else
         input_report.TouchActive = 0x2;
-    
-    int total_report_len = (9 * multitouch_event.contact_count) + 12;
-    IOBufferMemoryDescriptor* buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
-
+//    IOBufferMemoryDescriptor* buffer_report;
+//    int total_report_len = (9 * multitouch_event.contact_count) + 12;
+//    buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
+//    IOLog("%s VoodooInputSimulatorDevice IOBufferMemoryDescriptor 1, len: %d , sizeof: %lu  \n", getName(),total_report_len,sizeof(input_report));
     if (!is_error_input_active) {
-      buffer_report->writeBytes(0, &input_report, total_report_len);
-      handleReport(buffer_report, kIOHIDReportTypeInput);
+//        buffer_report->writeBytes(0, &input_report, total_report_len);
+        handleReport(memDesc, kIOHIDReportTypeInput);
+        
     }
+    input_report = {};
+    return;
+    //buffer_report->release();
+    //buffer_report = NULL;
+    
 
-    buffer_report->release();
-    buffer_report = NULL;
-
+    
     if (!input_active) {
         for (int i = 0; i < 15; i++) {
             touch_state[i] = 2;
         }
-
+        
         input_report.FINGERS[0].Size = 0x0;
         input_report.FINGERS[0].Pressure = 0x0;
         input_report.FINGERS[0].Touch_Major = 0x0;
@@ -244,19 +248,14 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
         input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+        handleReport(memDesc, kIOHIDReportTypeInput);
+        //IOLog("%s VoodooInputSimulatorDevice IOBufferMemoryDescriptor 2. Len: %d ,Prio: %d, State: %d \n", getName(),total_report_len,input_report.FINGERS[0].Priority,input_report.FINGERS[0].State);
         
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
-        buffer_report->writeBytes(0, &input_report, total_report_len);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
         
         input_report.FINGERS[0].Priority = 0x5;
         input_report.FINGERS[0].State = 0x0;
-        
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
-        buffer_report->writeBytes(0, &input_report, total_report_len);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
+        handleReport(memDesc, kIOHIDReportTypeInput);
+        //IOLog("%s VoodooInputSimulatorDevice IOBufferMemoryDescriptor 3. Len: %d ,Prio: %d, State: %d \n", getName(),total_report_len,input_report.FINGERS[0].Priority,input_report.FINGERS[0].State);
         
         milli_timestamp += 10;
         
@@ -264,19 +263,23 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
 
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, 12);
-        buffer_report->writeBytes(0, &input_report, 12);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
+        handleReport(memDesc, kIOHIDReportTypeInput);
+        
+        
+        //IOLog("%s VoodooInputSimulatorDevice IOBufferMemoryDescriptor 3.\n", getName());
     }
     
+    
+    
     input_report = {};
+    //memDesc->complete();
 }
 
 bool VoodooInputSimulatorDevice::start(IOService* provider) {
     if (!super::start(provider))
         return false;
-    
+    memDesc = IOMemoryDescriptor::withAddressRange((mach_vm_address_t)&input_report, 39, kIODirectionNone, kernel_task);
+    memDesc->prepare();
     ready_for_reports = false;
     
     clock_get_uptime(&start_timestamp);
@@ -345,6 +348,8 @@ void VoodooInputSimulatorDevice::releaseResources() {
     OSSafeReleaseNULL(work_loop);
     
     OSSafeReleaseNULL(new_get_report_buffer);
+    memDesc->complete();
+    memDesc->release();
 }
 
 IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
@@ -431,6 +436,8 @@ IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHID
 }
 
 IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
+    IOLog("%s VoodooInputSimulatorDevice getReport\n", getName());
+    //IOSleep(1000);
     UInt32 report_id = options & 0xFF;
     Boolean getReportedAllocated = true;
     
@@ -541,6 +548,7 @@ IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHID
 }
 
 IOReturn VoodooInputSimulatorDevice::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
+    IOLog("%s VoodooInputSimulatorDevice report descriptor\n", getName());
     IOBufferMemoryDescriptor* report_descriptor_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, sizeof(report_descriptor));
     
     if (!report_descriptor_buffer) {
@@ -575,7 +583,7 @@ OSString* VoodooInputSimulatorDevice::newProductString() const {
 }
 
 OSString* VoodooInputSimulatorDevice::newSerialNumberString() const {
-    return OSString::withCString("Voodoo Magic Trackpad 2 Simulator");
+    return OSString::withCString("Voodoo Magic Trackpad 2 SimulatorX");
 }
 
 OSString* VoodooInputSimulatorDevice::newTransportString() const {
