@@ -221,42 +221,40 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     if (!is_error_input_active) {
         handleReport(memDesc, kIOHIDReportTypeInput);
     }
+    
+    if (!input_active) {
+        for (int i = 0; i < 15; i++) {
+            touch_state[i] = 2;
+        }
+
+        input_report.FINGERS[0].Size = 0x0;
+        input_report.FINGERS[0].Pressure = 0x0;
+        input_report.FINGERS[0].Touch_Major = 0x0;
+        input_report.FINGERS[0].Touch_Minor = 0x0;
+
+        milli_timestamp += 10;
+
+        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
+        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
+        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+        handleReport(memDesc, kIOHIDReportTypeInput);
+
+        input_report.FINGERS[0].Priority = 0x5;
+        input_report.FINGERS[0].State = 0x0;
+        handleReport(memDesc, kIOHIDReportTypeInput);
+
+        milli_timestamp += 10;
+        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
+        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
+        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+
+        handleReport(memDesc, kIOHIDReportTypeInput);
+
+    }
+
+
+
     input_report = {};
-    return;
-// The following code didn't have any impact in my unit.I don't think they are necessary.further testing needed.So,i'm just commenting them out.
-//    if (!input_active) {
-//        for (int i = 0; i < 15; i++) {
-//            touch_state[i] = 2;
-//        }
-//
-//        input_report.FINGERS[0].Size = 0x0;
-//        input_report.FINGERS[0].Pressure = 0x0;
-//        input_report.FINGERS[0].Touch_Major = 0x0;
-//        input_report.FINGERS[0].Touch_Minor = 0x0;
-//
-//        milli_timestamp += 10;
-//
-//        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
-//        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
-//        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
-//        handleReport(memDesc, kIOHIDReportTypeInput);
-//
-//        input_report.FINGERS[0].Priority = 0x5;
-//        input_report.FINGERS[0].State = 0x0;
-//        handleReport(memDesc, kIOHIDReportTypeInput);
-//
-//        milli_timestamp += 10;
-//        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
-//        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
-//        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
-//
-//        handleReport(memDesc, kIOHIDReportTypeInput);
-//
-//    }
-//
-//
-//
-//    input_report = {};
 
 }
 
