@@ -327,6 +327,7 @@ void VoodooInputSimulatorDevice::releaseResources() {
     
     OSSafeReleaseNULL(new_get_report_buffer);
     
+    kernel_buffer->complete();
     OSSafeReleaseNULL(kernel_buffer);
 
 }
