@@ -81,24 +81,22 @@ class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
-    IOMemoryDescriptor * memDesc;
+    IOMemoryDescriptor * kernel_buffer = nullptr;
+
     void constructReport(const VoodooInputEvent& multitouch_event);
 
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
 
     IOReturn getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
     IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
+
     OSNumber* newVendorIDNumber() const override;
-    
     
     OSNumber* newProductIDNumber() const override;
     
-    
     OSNumber* newVersionNumber() const override;
-    
-    
+
     OSString* newTransportString() const override;
-    
     
     OSString* newManufacturerString() const override;
     

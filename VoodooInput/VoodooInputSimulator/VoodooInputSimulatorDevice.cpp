@@ -35,14 +35,14 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     if (!ready_for_reports)
         return;
     AbsoluteTime timestamp = multitouch_event.timestamp;
-    
+
     input_report.ReportID = 0x02;
     input_report.Unused[0] = 0;
     input_report.Unused[1] = 0;
     input_report.Unused[2] = 0;
     input_report.Unused[3] = 0;
     input_report.Unused[4] = 0;
-    
+
     const VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
 
     // physical button
@@ -219,7 +219,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report.TouchActive = 0x2;
     
     if (!is_error_input_active) {
-        handleReport(memDesc, kIOHIDReportTypeInput);
+        handleReport(kernel_buffer, kIOHIDReportTypeInput);
     }
     
     if (!input_active) {
@@ -231,46 +231,41 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report.FINGERS[0].Pressure = 0x0;
         input_report.FINGERS[0].Touch_Major = 0x0;
         input_report.FINGERS[0].Touch_Minor = 0x0;
-
         milli_timestamp += 10;
-
         input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
         input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
-        handleReport(memDesc, kIOHIDReportTypeInput);
+        handleReport(kernel_buffer, kIOHIDReportTypeInput);
 
         input_report.FINGERS[0].Priority = 0x5;
         input_report.FINGERS[0].State = 0x0;
-        handleReport(memDesc, kIOHIDReportTypeInput);
+        handleReport(kernel_buffer, kIOHIDReportTypeInput);
 
         milli_timestamp += 10;
         input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
         input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
-
-        handleReport(memDesc, kIOHIDReportTypeInput);
-
+        handleReport(kernel_buffer, kIOHIDReportTypeInput);
     }
-
-
-
     input_report = {};
-
 }
 
 bool VoodooInputSimulatorDevice::start(IOService* provider) {
     if (!super::start(provider))
         return false;
-    memDesc = IOMemoryDescriptor::withAddressRange((mach_vm_address_t)&input_report, 39, kIODirectionNone, kernel_task); // hardcoded to 39 bytes because this is the maximum lenght of the size of input_report i've got so far.Needs further testing.If the size of the report is more than the allocated memory then Trackpad will behave abnormal.
-    memDesc->prepare();
     ready_for_reports = false;
-    
+
+    kernel_buffer = IOMemoryDescriptor::withAddressRange((mach_vm_address_t)&input_report, sizeof(input_report), kIODirectionNone, kernel_task);
+    kernel_buffer->prepare();
+
     clock_get_uptime(&start_timestamp);
     
     engine = OSDynamicCast(VoodooInput, provider);
     
-    if (!engine)
+    if (!engine){
+        releaseResources();
         return false;
+    }
 
     work_loop = this->getWorkLoop();
     if (!work_loop) {
@@ -331,8 +326,9 @@ void VoodooInputSimulatorDevice::releaseResources() {
     OSSafeReleaseNULL(work_loop);
     
     OSSafeReleaseNULL(new_get_report_buffer);
-    memDesc->complete();
-    memDesc->release();
+    
+    OSSafeReleaseNULL(kernel_buffer);
+
 }
 
 IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
@@ -419,7 +415,6 @@ IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHID
 }
 
 IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
-    IOLog("%s VoodooInputSimulatorDevice getReport\n", getName());
     UInt32 report_id = options & 0xFF;
     Boolean getReportedAllocated = true;
     
@@ -530,7 +525,6 @@ IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHID
 }
 
 IOReturn VoodooInputSimulatorDevice::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
-    IOLog("%s VoodooInputSimulatorDevice report descriptor\n", getName());
     IOBufferMemoryDescriptor* report_descriptor_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, sizeof(report_descriptor));
     
     if (!report_descriptor_buffer) {
