@@ -256,6 +256,10 @@ bool VoodooInputSimulatorDevice::start(IOService* provider) {
     ready_for_reports = false;
 
     kernel_buffer = IOMemoryDescriptor::withAddressRange((mach_vm_address_t)&input_report, sizeof(input_report), kIODirectionNone, kernel_task);
+    if (!kernel_buffer) {
+        IOLog("%s Could not allocate kernel_buffer\n", getName());
+        return false;
+    }
     kernel_buffer->prepare();
 
     clock_get_uptime(&start_timestamp);
