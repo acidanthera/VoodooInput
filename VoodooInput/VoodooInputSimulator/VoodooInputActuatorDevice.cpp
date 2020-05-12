@@ -17,7 +17,6 @@ IOReturn VoodooInputActuatorDevice::setReport(IOMemoryDescriptor* report, IOHIDR
 }
 
 IOReturn VoodooInputActuatorDevice::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
-      IOLog("%s VoodooInputActuatorDevice report descriptor\n", getName());
     IOBufferMemoryDescriptor* report_descriptor_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, sizeof(actuator_report_descriptor));
     
     if (!report_descriptor_buffer) {
