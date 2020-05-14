@@ -81,7 +81,7 @@ class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
     
 public:
-    IOMemoryDescriptor * kernel_buffer = nullptr;
+    IOBufferMemoryDescriptor* input_report_buffer = nullptr;
 
     void constructReport(const VoodooInputEvent& multitouch_event);
 
@@ -126,7 +126,7 @@ private:
     UInt8 touch_state[15];
     IOWorkLoop* work_loop;
     IOCommandGate* command_gate;
-    MAGIC_TRACKPAD_INPUT_REPORT input_report;
+    MAGIC_TRACKPAD_INPUT_REPORT *input_report = nullptr;
 
     void constructReportGated(const VoodooInputEvent& multitouch_event);
 };
