@@ -175,8 +175,9 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         } else {
             finger_data.State = ++touch_state[finger_id];
         }
-        
-        finger_data.Priority = 4 - i;
+
+        // assume the first finger is the index finger, followed by the middle finger, ...
+        finger_data.Finger = kFingerTypeIndexFinger + (i % 4);
 
         if (transducer->supportsPressure) {
             finger_data.Pressure = transducer->currentCoordinates.pressure;
@@ -196,7 +197,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         
         if (!transducer->isTransducerActive && !input_report->Button) {
             finger_data.State = 0x7;
-            finger_data.Priority = 0x5;
             finger_data.Size = 0x0;
             finger_data.Pressure = 0x0;
             finger_data.Touch_Minor = 0;
@@ -241,7 +241,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report_buffer->setLength(total_report_len);
         handleReport(input_report_buffer, kIOHIDReportTypeInput);
 
-        input_report->FINGERS[0].Priority = 0x5;
+        input_report->FINGERS[0].Finger = kFingerTypeUndefined;
         input_report->FINGERS[0].State = 0x0;
         input_report_buffer->setLength(total_report_len);
         handleReport(input_report_buffer, kIOHIDReportTypeInput);
