@@ -15,11 +15,6 @@
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputSimulatorDevice, IOHIDDevice);
 
-UInt16 abs(SInt16 x) {
-    if (x < 0)
-        return x * -1;
-    return x;
-}
 
 const unsigned char report_descriptor[] = {0x05, 0x01, 0x09, 0x02, 0xa1, 0x01, 0x09, 0x01, 0xa1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x85, 0x02, 0x95, 0x03, 0x75, 0x01, 0x81, 0x02, 0x95, 0x01, 0x75, 0x05, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x02, 0x81, 0x06, 0x95, 0x04, 0x75, 0x08, 0x81, 0x01, 0xc0, 0xc0, 0x05, 0x0d, 0x09, 0x05, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0c, 0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x95, 0x10, 0x85, 0x3f, 0x81, 0x22, 0xc0, 0x06, 0x00, 0xff, 0x09, 0x0c, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0c, 0x15, 0x00, 0x26, 0xff, 0x00, 0x85, 0x44, 0x75, 0x08, 0x96, 0x6b, 0x05, 0x81, 0x00, 0xc0};
 
@@ -84,18 +79,15 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         }
 
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
-        UInt16 finger_id = transducer->secondaryId % 15;
+        UInt16 touch_id = transducer->secondaryId % 15;
         if (!transducer->isTransducerActive) {
-            touch_state[finger_id] = input_report->Button ? 0 : 2;
+            touch_state[touch_id] = input_report->Button ? 0 : 2;
         } else {
             input_active = true;
         }
 
         MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report->FINGERS[i];
-        
-        SInt16 x_min = MT2_MAX_X / 2;
-        SInt16 y_min = MT2_MAX_Y / 2;
-        
+
         IOFixed scaled_x = ((transducer->currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
         IOFixed scaled_y = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
 
@@ -170,10 +162,10 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             }
         }
         
-        if (touch_state[finger_id] == 4) {
+        if (touch_state[touch_id] == 4) {
             finger_data.State = 0x4;
         } else {
-            finger_data.State = ++touch_state[finger_id];
+            finger_data.State = ++touch_state[touch_id];
         }
 
         // assume the first finger is the index finger, followed by the middle finger, ...
@@ -203,11 +195,11 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Touch_Major = 0;
         }
 
-        finger_data.X = (SInt16)(scaled_x - x_min);
-        finger_data.Y = (SInt16)(scaled_y - y_min) * -1;
+        finger_data.X = (SInt16)(scaled_x - (MT2_MAX_X / 2));
+        finger_data.Y = (SInt16)(scaled_y - (MT2_MAX_Y / 2)) * -1;
         
         finger_data.Angle = angle_bits;
-        finger_data.Identifier = finger_id + 1;
+        finger_data.Identifier = touch_id + 1;
     }
 
     // set the thumb to improve 4F pinch and spread gesture
