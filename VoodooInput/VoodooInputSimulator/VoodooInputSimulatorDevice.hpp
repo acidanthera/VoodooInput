@@ -25,6 +25,15 @@
 #define MT2_MAX_X 8134
 #define MT2_MAX_Y 5206
 
+enum FingerTypes {
+    kFingerTypeUndefined = 0,
+    kFingerTypeThumb,
+    kFingerTypeIndexFinger,
+    kFingerTypeMiddleFinger,
+    kFingerTypeRingFinger,
+    kFingerTypeLittleFinger
+};
+
 /* Finger Packet
 +---+---+---+---+---+---+---+---+---+
 |   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
@@ -35,7 +44,7 @@
 +---+           +-------------------+
 | 2 |           y: SInt13           |
 +---+-----------+-----------+       +
-| 3 |   state   |  priority |       |
+| 3 |   state   |   finger  |       |
 |   |   UInt3   |   UInt3   |       |
 +---+-----------+-----------+-------+
 | 4 |       touchMajor: UInt8       |
@@ -53,7 +62,7 @@
 struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT_FINGER {
     SInt16 X: 13;
     SInt16 Y: 13;
-    UInt8 Priority: 3;
+    UInt8 Finger: 3;
     UInt8 State: 3;
     UInt8 Touch_Major;
     UInt8 Touch_Minor;
