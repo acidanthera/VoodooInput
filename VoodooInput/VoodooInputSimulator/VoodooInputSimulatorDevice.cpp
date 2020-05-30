@@ -210,6 +210,20 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.Identifier = finger_id + 1;
     }
 
+    // set the thumb to improve 4F pinch and spread gesture
+    if (multitouch_event.contact_count == 4) {
+        // simple thumb detection: to find the lowest finger touch.
+        SInt16 y_min = MT2_MAX_Y / 2;
+        int thumb_index = 0;
+        for (int i = 0; i < multitouch_event.contact_count; i++) {
+            if (input_report->FINGERS[i].Y < y_min) {
+                y_min = input_report->FINGERS[i].Y;
+                thumb_index = i;
+            }
+        }
+        input_report->FINGERS[thumb_index].Finger = kFingerTypeThumb;
+    }
+
     if (input_active)
         input_report->TouchActive = 0x3;
     else
