@@ -31,22 +31,19 @@ void VoodooInputSimulatorDevice::constructReport(const VoodooInputEvent& multito
 }
 
 void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& multitouch_event) {
-    if (!ready_for_reports)
-        return;
-    
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
-    input_report.ReportID = 0x02;
-    input_report.Unused[0] = 0;
-    input_report.Unused[1] = 0;
-    input_report.Unused[2] = 0;
-    input_report.Unused[3] = 0;
-    input_report.Unused[4] = 0;
-    
+    input_report->ReportID = 0x02;
+    input_report->Unused[0] = 0;
+    input_report->Unused[1] = 0;
+    input_report->Unused[2] = 0;
+    input_report->Unused[3] = 0;
+    input_report->Unused[4] = 0;
+
     const VoodooInputTransducer* transducer = &multitouch_event.transducers[0];
 
     // physical button
-    input_report.Button = transducer->isPhysicalButtonDown;
+    input_report->Button = transducer->isPhysicalButtonDown;
     
     // touch active
 
@@ -55,7 +52,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     UInt8 transform = engine->getTransformKey();
 
     // multitouch report id
-    input_report.multitouch_report_id = 0x31; // Magic
+    input_report->multitouch_report_id = 0x31; // Magic
     
     // timestamp
     AbsoluteTime relative_timestamp = timestamp;
@@ -68,12 +65,12 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     
     milli_timestamp /= 1000000;
     
-    input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
-    input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
-    input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+    input_report->timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
+    input_report->timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
+    input_report->timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
     
     // finger data
-    bool input_active = input_report.Button;
+    bool input_active = input_report->Button;
     bool is_error_input_active = false;
     
     for (int i = 0; i < multitouch_event.contact_count; i++) {
@@ -89,12 +86,12 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
         UInt16 finger_id = transducer->secondaryId % 15;
         if (!transducer->isTransducerActive) {
-            touch_state[finger_id] = input_report.Button ? 0 : 2;
+            touch_state[finger_id] = input_report->Button ? 0 : 2;
         } else {
             input_active = true;
         }
 
-        MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report.FINGERS[i];
+        MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report->FINGERS[i];
         
         SInt16 x_min = MT2_MAX_X / 2;
         SInt16 y_min = MT2_MAX_Y / 2;
@@ -193,11 +190,11 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Touch_Minor = 20;
         }
         
-        if (input_report.Button) {
+        if (input_report->Button) {
             finger_data.Pressure = 120;
         }
         
-        if (!transducer->isTransducerActive && !input_report.Button) {
+        if (!transducer->isTransducerActive && !input_report->Button) {
             finger_data.State = 0x7;
             finger_data.Priority = 0x5;
             finger_data.Size = 0x0;
@@ -214,77 +211,74 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     }
 
     if (input_active)
-        input_report.TouchActive = 0x3;
+        input_report->TouchActive = 0x3;
     else
-        input_report.TouchActive = 0x2;
-    
-    int total_report_len = (9 * multitouch_event.contact_count) + 12;
-    IOBufferMemoryDescriptor* buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
+        input_report->TouchActive = 0x2;
+
+    vm_size_t total_report_len = sizeof(MAGIC_TRACKPAD_INPUT_REPORT) +
+        sizeof(MAGIC_TRACKPAD_INPUT_REPORT_FINGER) * multitouch_event.contact_count;
 
     if (!is_error_input_active) {
-      buffer_report->writeBytes(0, &input_report, total_report_len);
-      handleReport(buffer_report, kIOHIDReportTypeInput);
+        input_report_buffer->setLength(total_report_len);
+        handleReport(input_report_buffer, kIOHIDReportTypeInput);
     }
-
-    buffer_report->release();
-    buffer_report = NULL;
-
+    
     if (!input_active) {
         for (int i = 0; i < 15; i++) {
             touch_state[i] = 2;
         }
 
-        input_report.FINGERS[0].Size = 0x0;
-        input_report.FINGERS[0].Pressure = 0x0;
-        input_report.FINGERS[0].Touch_Major = 0x0;
-        input_report.FINGERS[0].Touch_Minor = 0x0;
+        input_report->FINGERS[0].Size = 0x0;
+        input_report->FINGERS[0].Pressure = 0x0;
+        input_report->FINGERS[0].Touch_Major = 0x0;
+        input_report->FINGERS[0].Touch_Minor = 0x0;
 
         milli_timestamp += 10;
-        
-        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
-        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
-        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
-        
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
-        buffer_report->writeBytes(0, &input_report, total_report_len);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
-        
-        input_report.FINGERS[0].Priority = 0x5;
-        input_report.FINGERS[0].State = 0x0;
-        
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, total_report_len);
-        buffer_report->writeBytes(0, &input_report, total_report_len);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
-        
-        milli_timestamp += 10;
-        
-        input_report.timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
-        input_report.timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
-        input_report.timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
 
-        buffer_report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, 12);
-        buffer_report->writeBytes(0, &input_report, 12);
-        handleReport(buffer_report, kIOHIDReportTypeInput);
-        buffer_report->release();
+        input_report->timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
+        input_report->timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
+        input_report->timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+        input_report_buffer->setLength(total_report_len);
+        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+
+        input_report->FINGERS[0].Priority = 0x5;
+        input_report->FINGERS[0].State = 0x0;
+        input_report_buffer->setLength(total_report_len);
+        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+
+        milli_timestamp += 10;
+
+        input_report->timestamp_buffer[0] = (milli_timestamp << 0x3) | 0x4;
+        input_report->timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
+        input_report->timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
+        input_report_buffer->setLength(sizeof(MAGIC_TRACKPAD_INPUT_REPORT));
+        handleReport(input_report_buffer, kIOHIDReportTypeInput);
     }
-    
-    input_report = {};
+
+    memset(input_report, 0, total_report_len);
 }
 
 bool VoodooInputSimulatorDevice::start(IOService* provider) {
     if (!super::start(provider))
         return false;
-    
     ready_for_reports = false;
-    
+
+    input_report_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0,
+        sizeof(MAGIC_TRACKPAD_INPUT_REPORT) + sizeof(MAGIC_TRACKPAD_INPUT_REPORT_FINGER) * VOODOO_INPUT_MAX_TRANSDUCERS);
+    if (!input_report_buffer) {
+        IOLog("%s Could not allocate IOBufferMemoryDescriptor\n", getName());
+        return false;
+    }
+    input_report = (MAGIC_TRACKPAD_INPUT_REPORT *) input_report_buffer->getBytesNoCopy();
+
     clock_get_uptime(&start_timestamp);
     
     engine = OSDynamicCast(VoodooInput, provider);
     
-    if (!engine)
+    if (!engine) {
+        releaseResources();
         return false;
+    }
 
     work_loop = this->getWorkLoop();
     if (!work_loop) {
@@ -341,10 +335,13 @@ void VoodooInputSimulatorDevice::releaseResources() {
         work_loop->removeEventSource(command_gate);
         OSSafeReleaseNULL(command_gate);
     }
-    
+    input_report = nullptr;
+
     OSSafeReleaseNULL(work_loop);
-    
+
     OSSafeReleaseNULL(new_get_report_buffer);
+
+    OSSafeReleaseNULL(input_report_buffer);
 }
 
 IOReturn VoodooInputSimulatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {

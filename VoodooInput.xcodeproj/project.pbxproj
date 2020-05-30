@@ -68,6 +68,7 @@
 				7BBAB1FA22E3A2F800B2941A /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		7BBAB1FA22E3A2F800B2941A /* Products */ = {
 			isa = PBXGroup;
