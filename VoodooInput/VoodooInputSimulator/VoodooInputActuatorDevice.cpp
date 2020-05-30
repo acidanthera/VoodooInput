@@ -51,7 +51,7 @@ OSString* VoodooInputActuatorDevice::newProductString() const {
 }
 
 OSString* VoodooInputActuatorDevice::newSerialNumberString() const {
-    return OSString::withCString("VoodooI2C Magic Trackpad 2 Simulator");
+    return OSString::withCString("VoodooI2C Magic Trackpad 2 Actuator");
 }
 
 OSString* VoodooInputActuatorDevice::newTransportString() const {

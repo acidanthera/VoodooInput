@@ -27,11 +27,11 @@
 // to Lilu weak exports from vtable.
 
 kern_return_t WEAKFUNC PRIVATE OSObject::Dispatch(const IORPC rpc) {
-	(panic)("OSObject::Dispatch plugin stub called");
+    (panic)("OSObject::Dispatch plugin stub called");
 }
 
 kern_return_t WEAKFUNC PRIVATE OSMetaClassBase::Dispatch(const IORPC rpc) {
-	(panic)("OSMetaClassBase::Dispatch plugin stub called");
+    (panic)("OSMetaClassBase::Dispatch plugin stub called");
 }
 
 #endif

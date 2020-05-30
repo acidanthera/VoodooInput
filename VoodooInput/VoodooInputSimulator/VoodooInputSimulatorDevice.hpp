@@ -74,8 +74,11 @@ struct __attribute__((__packed__)) MAGIC_TRACKPAD_INPUT_REPORT {
     UInt8 multitouch_report_id;
     UInt8 timestamp_buffer[3];
     
-    MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[VOODOO_INPUT_MAX_TRANSDUCERS]; // May support more fingers
+    MAGIC_TRACKPAD_INPUT_REPORT_FINGER FINGERS[]; // May support more fingers
 };
+
+static_assert(sizeof(MAGIC_TRACKPAD_INPUT_REPORT) == 12, "Unexpected MAGIC_TRACKPAD_INPUT_REPORT size");
+static_assert(sizeof(MAGIC_TRACKPAD_INPUT_REPORT_FINGER) == 9, "Unexpected MAGIC_TRACKPAD_INPUT_REPORT_FINGER size");
 
 class EXPORT VoodooInputSimulatorDevice : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputSimulatorDevice);
@@ -87,47 +90,34 @@ public:
 
     IOReturn getReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) override;
     IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
-    OSNumber* newVendorIDNumber() const override;
-    
-    
-    OSNumber* newProductIDNumber() const override;
-    
-    
-    OSNumber* newVersionNumber() const override;
-    
-    
-    OSString* newTransportString() const override;
-    
-    
-    OSString* newManufacturerString() const override;
-    
-    OSNumber* newPrimaryUsageNumber() const override;
-    
-    OSNumber* newPrimaryUsagePageNumber() const override;
-    
-    OSString* newProductString() const override;
-    
-    OSString* newSerialNumberString() const override;
-    
-    OSNumber* newLocationIDNumber() const override;
-    
-    IOReturn setPowerState(unsigned long whichState, IOService* whatDevice) override;
-    
-    bool start(IOService* provider) override;
 
+    OSNumber* newVendorIDNumber() const override;
+    OSNumber* newProductIDNumber() const override;
+    OSNumber* newVersionNumber() const override;
+    OSString* newTransportString() const override;
+    OSString* newManufacturerString() const override;
+    OSNumber* newPrimaryUsageNumber() const override;
+    OSNumber* newPrimaryUsagePageNumber() const override;
+    OSString* newProductString() const override;
+    OSString* newSerialNumberString() const override;
+    OSNumber* newLocationIDNumber() const override;
+
+    IOReturn setPowerState(unsigned long whichState, IOService* whatDevice) override;
+
+    bool start(IOService* provider) override;
     void stop(IOService* provider) override;
-    
     void releaseResources();
 
 private:
-    bool ready_for_reports = false;
-    VoodooInput* engine;
-    AbsoluteTime start_timestamp;
-    OSData* new_get_report_buffer = NULL;
-    UInt8 touch_state[15];
-    IOWorkLoop* work_loop;
-    IOCommandGate* command_gate;
-    MAGIC_TRACKPAD_INPUT_REPORT input_report;
+    bool ready_for_reports {false};
+    VoodooInput* engine {nullptr};
+    AbsoluteTime start_timestamp {};
+    OSData* new_get_report_buffer {nullptr};
+    UInt8 touch_state[15] {};
+    IOWorkLoop* work_loop {nullptr};
+    IOCommandGate* command_gate {nullptr};
+    IOBufferMemoryDescriptor* input_report_buffer {nullptr};
+    MAGIC_TRACKPAD_INPUT_REPORT* input_report {nullptr};
 
     void constructReportGated(const VoodooInputEvent& multitouch_event);
 };
