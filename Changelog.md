@@ -1,5 +1,9 @@
 VoodooInput Changelog
 =====================
+#### v1.0.6
+- Reduced memory consumption and CPU usage
+- Fixed dragging issues on some touchpads
+
 #### v1.0.5
 - Don't read extra finger if there is no stylus
 - Improve handling of slow to respond devices 
