@@ -25,6 +25,18 @@ void VoodooInputSimulatorDevice::constructReport(const VoodooInputEvent& multito
     command_gate->runAction(OSMemberFunctionCast(IOCommandGate::Action, this, &VoodooInputSimulatorDevice::constructReportGated), (void*)&multitouch_event);
 }
 
+void VoodooInputSimulatorDevice::sendReport() {
+#if DEBUG
+    size_t fingerCount = (input_report_buffer->getLength() - sizeof(MAGIC_TRACKPAD_INPUT_REPORT)) / sizeof(MAGIC_TRACKPAD_INPUT_REPORT_FINGER);
+    IOLog("Sending report with touch active %d, button %d, finger count %zu\n", input_report->TouchActive, input_report->Button, fingerCount);
+    for (size_t i = 0; i < fingerCount; i++) {
+        MAGIC_TRACKPAD_INPUT_REPORT_FINGER &f = input_report->FINGERS[i];
+        IOLog("[%zu] (%d, %d) F%d St%d Maj%d Min%d Sz%d P%d ID%d A%d\n", i, f.X, f.Y, f.Finger, f.State, f.Touch_Major, f.Touch_Minor, f.Size, f.Pressure, f.Identifier, f.Angle);
+    }
+#endif
+    handleReport(input_report_buffer, kIOHIDReportTypeInput);
+}
+
 void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& multitouch_event) {
     AbsoluteTime timestamp = multitouch_event.timestamp;
 
@@ -168,8 +180,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.State = ++touch_state[touch_id];
         }
 
-        // assume the first finger is the index finger, followed by the middle finger, ...
-        finger_data.Finger = kFingerTypeIndexFinger + (i % 4);
+        finger_data.Finger = transducer->fingerType;
 
         if (transducer->supportsPressure) {
             finger_data.Pressure = transducer->currentCoordinates.pressure;
@@ -202,20 +213,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.Identifier = touch_id + 1;
     }
 
-    // set the thumb to improve 4F pinch and spread gesture
-    if (multitouch_event.contact_count == 4) {
-        // simple thumb detection: to find the lowest finger touch.
-        SInt16 y_min = MT2_MAX_Y / 2;
-        int thumb_index = 0;
-        for (int i = 0; i < multitouch_event.contact_count; i++) {
-            if (input_report->FINGERS[i].Y < y_min) {
-                y_min = input_report->FINGERS[i].Y;
-                thumb_index = i;
-            }
-        }
-        input_report->FINGERS[thumb_index].Finger = kFingerTypeThumb;
-    }
-
     if (input_active)
         input_report->TouchActive = 0x3;
     else
@@ -226,7 +223,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
 
     if (!is_error_input_active) {
         input_report_buffer->setLength(total_report_len);
-        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+        sendReport();
     }
     
     if (!input_active) {
@@ -245,12 +242,12 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report->timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report->timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
         input_report_buffer->setLength(total_report_len);
-        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+        sendReport();
 
-        input_report->FINGERS[0].Finger = kFingerTypeUndefined;
+        input_report->FINGERS[0].Finger = kMT2FingerTypeUndefined;
         input_report->FINGERS[0].State = 0x0;
         input_report_buffer->setLength(total_report_len);
-        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+        sendReport();
 
         milli_timestamp += 10;
 
@@ -258,7 +255,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         input_report->timestamp_buffer[1] = (milli_timestamp >> 0x5) & 0xFF;
         input_report->timestamp_buffer[2] = (milli_timestamp >> 0xd) & 0xFF;
         input_report_buffer->setLength(sizeof(MAGIC_TRACKPAD_INPUT_REPORT));
-        handleReport(input_report_buffer, kIOHIDReportTypeInput);
+        sendReport();
     }
 
     memset(input_report, 0, total_report_len);

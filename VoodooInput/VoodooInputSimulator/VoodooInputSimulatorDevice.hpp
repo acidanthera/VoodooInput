@@ -25,15 +25,6 @@
 #define MT2_MAX_X 8134
 #define MT2_MAX_Y 5206
 
-enum FingerTypes {
-    kFingerTypeUndefined = 0,
-    kFingerTypeThumb,
-    kFingerTypeIndexFinger,
-    kFingerTypeMiddleFinger,
-    kFingerTypeRingFinger,
-    kFingerTypeLittleFinger
-};
-
 /* Finger Packet
 +---+---+---+---+---+---+---+---+---+
 |   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
@@ -128,6 +119,7 @@ private:
     IOBufferMemoryDescriptor* input_report_buffer {nullptr};
     MAGIC_TRACKPAD_INPUT_REPORT* input_report {nullptr};
 
+    void sendReport();
     void constructReportGated(const VoodooInputEvent& multitouch_event);
 };
 

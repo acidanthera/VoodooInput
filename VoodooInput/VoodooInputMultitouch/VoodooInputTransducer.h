@@ -10,6 +10,16 @@
 
 #define VOODOO_INPUT_MAX_TRANSDUCERS 10
 
+enum MT2FingerType {
+    kMT2FingerTypeUndefined = 0,
+    kMT2FingerTypeThumb,
+    kMT2FingerTypeIndexFinger,
+    kMT2FingerTypeMiddleFinger,
+    kMT2FingerTypeRingFinger,
+    kMT2FingerTypeLittleFinger,
+    KMT2FingerTypeCount
+};
+
 enum VoodooInputTransducerType {
     STYLUS,
     FINGER
@@ -25,7 +35,7 @@ struct TouchCoordinates {
 struct VoodooInputTransducer {
     AbsoluteTime timestamp;
     
-    UInt32 id;
+    MT2FingerType fingerType;
     UInt32 secondaryId;
     VoodooInputTransducerType type;
     
