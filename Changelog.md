@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.0.7
+- Allowed to set finger type externally to fix swiping desktops when holding a dragged item
+
 #### v1.0.6
 - Reduced memory consumption and CPU usage
 - Fixed dragging issues on some touchpads
