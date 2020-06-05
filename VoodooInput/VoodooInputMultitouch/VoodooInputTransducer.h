@@ -17,7 +17,7 @@ enum MT2FingerType {
     kMT2FingerTypeMiddleFinger,
     kMT2FingerTypeRingFinger,
     kMT2FingerTypeLittleFinger,
-    KMT2FingerTypeCount
+    kMT2FingerTypeCount
 };
 
 enum VoodooInputTransducerType {
