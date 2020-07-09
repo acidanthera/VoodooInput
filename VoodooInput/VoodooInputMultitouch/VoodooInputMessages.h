@@ -19,6 +19,7 @@
 #define VOODOO_INPUT_MAX_TRANSDUCERS 10
 #define kIOMessageVoodooInputMessage 12345
 #define kIOMessageVoodooInputUpdateDimensionsMessage 12346
+#define kIOMessageVoodooInputUpdatePropertiesNotification 12347
 
 #define kVoodooInputTransducerFingerType 1
 #define kVoodooInputTransducerStylusType 2

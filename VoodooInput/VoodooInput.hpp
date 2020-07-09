@@ -43,7 +43,9 @@ public:
 
     UInt32 getLogicalMaxX();
     UInt32 getLogicalMaxY();
-    
+
+    bool updateProperties();
+
     IOReturn message(UInt32 type, IOService *provider, void *argument) override;
 };
 

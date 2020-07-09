@@ -20,29 +20,12 @@ bool VoodooInput::start(IOService *provider) {
     }
     
     parentProvider = provider;
-    
-    OSNumber* transformNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_TRANSFORM_KEY));
-    
-    OSNumber* logicalMaxXNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_LOGICAL_MAX_X_KEY));
 
-    OSNumber* logicalMaxYNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_LOGICAL_MAX_Y_KEY));
-
-    OSNumber* physicalMaxXNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_PHYSICAL_MAX_X_KEY));
-
-    OSNumber* physicalMaxYNumber = OSDynamicCast(OSNumber, provider->getProperty(VOODOO_INPUT_PHYSICAL_MAX_Y_KEY));
-    
-    if (transformNumber == nullptr || logicalMaxXNumber == nullptr || logicalMaxYNumber == nullptr ||
-        physicalMaxXNumber == nullptr || physicalMaxYNumber == nullptr) {
+    if (!updateProperties()) {
         IOLog("VoodooInput could not get provider properties!\n");
         return false;
     }
-    
-    transformKey = transformNumber->unsigned8BitValue();
-    logicalMaxX = logicalMaxXNumber->unsigned32BitValue();
-    logicalMaxY = logicalMaxYNumber->unsigned32BitValue();
-    physicalMaxX = physicalMaxXNumber->unsigned32BitValue();
-    physicalMaxY = physicalMaxYNumber->unsigned32BitValue();
-    
+
     // Allocate the simulator and actuator devices
     simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
     actuator = OSTypeAlloc(VoodooInputActuatorDevice);
@@ -113,6 +96,27 @@ void VoodooInput::stop(IOService *provider) {
     super::stop(provider);
 }
 
+bool VoodooInput::updateProperties() {
+    OSNumber* transformNumber = OSDynamicCast(OSNumber, getProperty(VOODOO_INPUT_TRANSFORM_KEY, gIOServicePlane));
+    OSNumber* logicalMaxXNumber = OSDynamicCast(OSNumber, getProperty(VOODOO_INPUT_LOGICAL_MAX_X_KEY, gIOServicePlane));
+    OSNumber* logicalMaxYNumber = OSDynamicCast(OSNumber, getProperty(VOODOO_INPUT_LOGICAL_MAX_Y_KEY, gIOServicePlane));
+    OSNumber* physicalMaxXNumber = OSDynamicCast(OSNumber, getProperty(VOODOO_INPUT_PHYSICAL_MAX_X_KEY, gIOServicePlane));
+    OSNumber* physicalMaxYNumber = OSDynamicCast(OSNumber, getProperty(VOODOO_INPUT_PHYSICAL_MAX_Y_KEY, gIOServicePlane));
+
+    if (transformNumber == nullptr || logicalMaxXNumber == nullptr || logicalMaxYNumber == nullptr ||
+        physicalMaxXNumber == nullptr || physicalMaxYNumber == nullptr) {
+        return false;
+    }
+
+    transformKey = transformNumber->unsigned8BitValue();
+    logicalMaxX = logicalMaxXNumber->unsigned32BitValue();
+    logicalMaxY = logicalMaxYNumber->unsigned32BitValue();
+    physicalMaxX = physicalMaxXNumber->unsigned32BitValue();
+    physicalMaxY = physicalMaxYNumber->unsigned32BitValue();
+
+    return true;
+}
+
 UInt8 VoodooInput::getTransformKey() {
     return transformKey;
 }
@@ -145,6 +149,9 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
             logicalMaxX = dimensions.max_x - dimensions.min_x;
             logicalMaxY = dimensions.max_y - dimensions.min_y;
         }
+    }
+    else if (type == kIOMessageVoodooInputUpdatePropertiesNotification) {
+        updateProperties();
     }
 
     return super::message(type, provider, argument);
