@@ -2,6 +2,7 @@ VoodooInput Changelog
 =====================
 #### v1.0.7
 - Allowed to set finger type externally to fix swiping desktops when holding a dragged item
+- Added a message to allow client to set gesture orientation when rotating a touchscreen (thx @Goshin)
 
 #### v1.0.6
 - Reduced memory consumption and CPU usage
