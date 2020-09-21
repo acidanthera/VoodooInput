@@ -8,6 +8,7 @@ matrix:
     compiler: clang
 
     script:
+      - git clone https://github.com/acidanthera/MacKernelSDK
       - xcodebuild -configuration Debug
       - xcodebuild -jobs 1 -configuration Release
 
@@ -27,5 +28,6 @@ matrix:
     compiler: clang
 
     script:
+      - git clone https://github.com/acidanthera/MacKernelSDK
       - xcodebuild analyze -quiet -scheme VoodooInput -configuration Debug CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]
       - xcodebuild analyze -quiet -scheme VoodooInput -configuration Release CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]

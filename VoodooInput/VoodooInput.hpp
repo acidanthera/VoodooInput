@@ -8,7 +8,7 @@
 #ifndef VOODOO_INPUT_HPP
 #define VOODOO_INPUT_HPP
 
-#include <LegacyIOService.h>
+#include <IOKit/IOService.h>
 
 class VoodooInputSimulatorDevice;
 class VoodooInputActuatorDevice;
