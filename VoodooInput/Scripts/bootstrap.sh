@@ -270,6 +270,12 @@ install_compiled_sdk() {
     return 1
   fi
 
+  "${GIT}" clone "https://github.com/acidanthera/MacKernelSDK" -b "master" --depth=1 || ret=$?
+  if [ $ret -ne 0 ]; then
+    echo "ERROR: Failed to clone MacKernelSDK with code ${ret}!"
+    return 1
+  fi
+
   "${MKDIR}" "${PROJECT_PATH}/VoodooInput" || ret=$?
   if [ $ret -ne 0 ]; then
     echo "ERROR: Failed to create SDK directory ${PROJECT_PATH}/VoodooInput with code ${ret}!"
