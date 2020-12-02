@@ -1,7 +1,7 @@
 VoodooInput
 ===========
 
-[![Build Status](https://travis-ci.com/acidanthera/VoodooInput.svg?branch=master)](https://travis-ci.com/acidanthera/VoodooInput)
+[![Build Status](https://github.com/acidanthera/VoodooInput/workflows/CI/badge.svg?branch=master)](https://github.com/acidanthera/VoodooInput/actions) [![Scan Status](https://scan.coverity.com/projects/22196/badge.svg?flat=1)](https://scan.coverity.com/projects/22196)
 
 An opensource trackpad aggregator kernel extension providing Magic Trackpad 2 software emulation for arbitrary input sources like [VoodooPS2](https://github.com/acidanthera/VoodooPS2).
 
