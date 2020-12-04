@@ -3,12 +3,14 @@
 //  VoodooInput
 //
 //  Copyright © 2019 Kishor Prins. All rights reserved.
+// Copyright (c) 2020 Leonard Kleinhans <leo-labs>
 //
 
 #include "VoodooInput.hpp"
 #include "VoodooInputMultitouch/VoodooInputMessages.h"
 #include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
+#include "Trackpoint/TrackpointDevice.hpp"
 
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
@@ -29,11 +31,13 @@ bool VoodooInput::start(IOService *provider) {
     // Allocate the simulator and actuator devices
     simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
     actuator = OSTypeAlloc(VoodooInputActuatorDevice);
+    trackpoint = OSTypeAlloc(TrackpointDevice);
     
-    if (!simulator || !actuator) {
-        IOLog("VoodooInput could not alloc simulator or actuator!\n");
+    if (!simulator || !actuator || !trackpoint) {
+        IOLog("VoodooInput could not alloc simulator, actuator or trackpoint!\n");
         OSSafeReleaseNULL(simulator);
         OSSafeReleaseNULL(actuator);
+        OSSafeReleaseNULL(trackpoint);
         return false;
     }
     
@@ -58,6 +62,18 @@ bool VoodooInput::start(IOService *provider) {
         actuator->detach(this);
         goto exit;
     }
+    
+    // Initialize trackpoint device
+    if (!trackpoint->init(NULL) || !trackpoint->attach(this)) {
+        IOLog("VoodooInput could not init or attach trackpoint!\n");
+        goto exit;
+    }
+    else if (!trackpoint->start(this)) {
+        IOLog("VoodooInput could not start trackpoint!\n");
+        trackpoint->detach(this);
+        goto exit;
+    }
+    trackpoint->registerService();
     
     setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
     
@@ -91,6 +107,12 @@ void VoodooInput::stop(IOService *provider) {
         actuator->stop(this);
         actuator->detach(this);
         OSSafeReleaseNULL(actuator);
+    }
+    
+    if (trackpoint) {
+        trackpoint->stop(this);
+        trackpoint->detach(this);
+        OSSafeReleaseNULL(trackpoint);
     }
     
     super::stop(provider);
@@ -138,20 +160,38 @@ UInt32 VoodooInput::getLogicalMaxY() {
 }
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
-    if (type == kIOMessageVoodooInputMessage && provider == parentProvider) {
-        if (argument && simulator) {
-            simulator->constructReport(*(VoodooInputEvent*)argument);
+    switch (type) {
+        case kIOMessageVoodooInputMessage:
+            if (provider == parentProvider && argument && simulator)
+                simulator->constructReport(*(VoodooInputEvent*)argument);
+            break;
+            
+        case kIOMessageVoodooInputUpdateDimensionsMessage:
+            if (provider == parentProvider && argument) {
+                const VoodooInputDimensions& dimensions = *(VoodooInputDimensions*)argument;
+                logicalMaxX = dimensions.max_x - dimensions.min_x;
+                logicalMaxY = dimensions.max_y - dimensions.min_y;
+            }
+            break;
+            
+        case kIOMessageVoodooInputUpdatePropertiesNotification:
+            updateProperties();
+            break;
+            
+        case kIOMessageVoodooTrackpointRelativePointer: {
+            if (trackpoint) {
+                const RelativePointerEvent& event = *(RelativePointerEvent*)argument;
+                trackpoint->updateRelativePointer(event.dx, event.dy, event.buttons, event.timestamp);
+            }
+            break;
         }
-    }
-    else if (type == kIOMessageVoodooInputUpdateDimensionsMessage && provider == parentProvider) {
-        if (argument) {
-            const VoodooInputDimensions& dimensions = *(VoodooInputDimensions*)argument;
-            logicalMaxX = dimensions.max_x - dimensions.min_x;
-            logicalMaxY = dimensions.max_y - dimensions.min_y;
+        case kIOMessageVoodooTrackpointScrollWheel: {
+            if (trackpoint) {
+                const ScrollWheelEvent& event = *(ScrollWheelEvent*)argument;
+                trackpoint->updateScrollwheel(event.deltaAxis1, event.deltaAxis2, event.deltaAxis3, event.timestamp);
+            }
+            break;
         }
-    }
-    else if (type == kIOMessageVoodooInputUpdatePropertiesNotification) {
-        updateProperties();
     }
 
     return super::message(type, provider, argument);

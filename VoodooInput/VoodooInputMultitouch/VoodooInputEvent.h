@@ -3,6 +3,7 @@
 //  VooodooInput
 //
 //  Copyright © 2019 Kishor Prins. All rights reserved.
+// Copyright (c) 2020 Leonard Kleinhans <leo-labs>
 //
 
 #ifndef VOODOO_INPUT_EVENT_H
@@ -21,6 +22,20 @@ struct VoodooInputDimensions {
     SInt32 max_x;
     SInt32 min_y;
     SInt32 max_y;
+};
+
+struct RelativePointerEvent {
+    uint64_t timestamp;
+    int dx;
+    int dy;
+    int buttons;
+};
+
+struct ScrollWheelEvent {
+    uint64_t timestamp;
+    short deltaAxis1;
+    short deltaAxis2;
+    short deltaAxis3;
 };
 
 #endif /* VoodooInputEvent_h */

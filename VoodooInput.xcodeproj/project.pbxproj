@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 358914F225798FA5007A0B58 /* TrackpointDevice.hpp */; };
+		358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 358914F325798FA5007A0B58 /* TrackpointDevice.cpp */; };
 		7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */; };
 		7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */; };
 		7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21122E3AD0D00B2941A /* VoodooInputSimulatorDevice.hpp */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		358914F225798FA5007A0B58 /* TrackpointDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TrackpointDevice.hpp; sourceTree = "<group>"; };
+		358914F325798FA5007A0B58 /* TrackpointDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackpointDevice.cpp; sourceTree = "<group>"; };
 		7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoodooInput.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInput.hpp; sourceTree = "<group>"; };
 		7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInput.cpp; sourceTree = "<group>"; };
@@ -47,6 +51,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		358914F125798FA5007A0B58 /* Trackpoint */ = {
+			isa = PBXGroup;
+			children = (
+				358914F225798FA5007A0B58 /* TrackpointDevice.hpp */,
+				358914F325798FA5007A0B58 /* TrackpointDevice.cpp */,
+			);
+			path = Trackpoint;
+			sourceTree = "<group>";
+		};
 		7BBAB1EF22E3A2F800B2941A = {
 			isa = PBXGroup;
 			children = (
@@ -69,6 +82,7 @@
 		7BBAB1FB22E3A2F800B2941A /* VoodooInput */ = {
 			isa = PBXGroup;
 			children = (
+				358914F125798FA5007A0B58 /* Trackpoint */,
 				CEC086442439FD3E00F5B701 /* VoodooInputMultitouch */,
 				7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */,
 				7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */,
@@ -127,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */,
+				358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 			);
@@ -230,6 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */,
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
