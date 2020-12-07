@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.0.9
+- Add trackpoint device from VoodooTrackpoint
+
 #### v1.0.8
 - Initial MacKernelSDK and Xcode 12 compatibility
 
