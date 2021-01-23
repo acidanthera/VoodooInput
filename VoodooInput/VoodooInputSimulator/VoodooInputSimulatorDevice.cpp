@@ -479,8 +479,8 @@ IOReturn VoodooInputSimulatorDevice::getReport(IOMemoryDescriptor* report, IOHID
         // Sensor Surface Width = 0x3cf0 (0xf0, 0x3c) = 15.600 cm
         // Sensor Surface Height = 0x2b20 (0x20, 0x2b) = 11.040 cm
         
-        uint32_t rawWidth = engine->getPhysicalMaxX() * 10;
-        uint32_t rawHeight = engine->getPhysicalMaxY() * 10;
+        uint32_t rawWidth = engine->getPhysicalMaxX();
+        uint32_t rawHeight = engine->getPhysicalMaxY();
         
         uint8_t rawWidthLower = rawWidth & 0xff;
         uint8_t rawWidthHigher = (rawWidth >> 8) & 0xff;
