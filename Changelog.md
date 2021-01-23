@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.1.0
+- Eliminate leftover scaling of physical dimensions by x10
+
 #### v1.0.9
 - Add trackpoint device from VoodooTrackpoint
 
