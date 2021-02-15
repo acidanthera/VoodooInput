@@ -7,7 +7,7 @@ An opensource trackpad aggregator kernel extension providing Magic Trackpad 2 so
 
 **WARNING**: This kernel extension is designed to be bundled with a dedicated multitouch client driver and exists for the developers only.
 Please download the latest version of [VoodooPS2](https://github.com/acidanthera/VoodooPS2/releases) or [VoodooI2C](https://github.com/alexandred/VoodooI2C)
-to make the use this kext.
+to make use of this kext.
 
 #### Credits
 - [Apple](https://www.apple.com) for macOS
