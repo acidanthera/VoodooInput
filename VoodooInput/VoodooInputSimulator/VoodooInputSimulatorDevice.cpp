@@ -107,10 +107,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             is_error_input_active = true;
         }
         
-        IOFixed scaled_old_x = ((transducer->previousCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT2_MAX_X;
-        IOFixed scaled_old_y = ((transducer->previousCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_Y;
-
-        
         if (transform) {
             if (transform & kIOFBSwapAxes) {
                 scaled_x = ((transducer->currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT2_MAX_X;
@@ -125,55 +121,6 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             }
         }
 
-        UInt8 angle_bits = 0;
-        IOFixed x_diff = scaled_x - scaled_old_x;
-        IOFixed y_diff = (scaled_y - scaled_old_y) * -1;
-        if (x_diff > 0) {
-            if (y_diff <= -5.027f * x_diff) {
-                // if: y_diff/x_diff <= tan(pi/2 + pi/8 * 1/2) < 0
-                // then: angle ~= (pi/2), angle_bits = (pi/2) / pi * 8
-                angle_bits = 0x4;
-            } else if (y_diff <= -1.497f * x_diff) {
-                // if: y_diff/x_diff <= tan(5pi/8 + pi/8 * 1/2) < 0
-                // then: angle ~= (5pi/8), angle_bits = (5pi/8) / pi * 8
-                angle_bits = 0x5;
-            } else if (y_diff <= -0.668f * x_diff) {
-                angle_bits = 0x6;
-            } else if (y_diff <= -0.199f * x_diff) {
-                angle_bits = 0x7;
-            } else if (y_diff <= 0.199f * x_diff) {
-                angle_bits = 0x0;
-            } else if (y_diff <= 0.668f * x_diff) {
-                angle_bits = 0x1;
-            } else if (y_diff <= 1.497f * x_diff) {
-                angle_bits = 0x2;
-            } else if (y_diff <= 5.027f * x_diff) {
-                angle_bits = 0x3;
-            } else {
-                angle_bits = 0x4;
-            }
-        } else {
-            if (y_diff >= -5.027f * x_diff) {
-                angle_bits = 0x4;
-            } else if (y_diff >= -1.497f * x_diff) {
-                angle_bits = 0x5;
-            } else if (y_diff >= -0.668f * x_diff) {
-                angle_bits = 0x6;
-            } else if (y_diff >= -0.199f * x_diff) {
-                angle_bits = 0x7;
-            } else if (y_diff >= 0.199f * x_diff) {
-                angle_bits = 0x0;
-            } else if (y_diff >= 0.668f * x_diff) {
-                angle_bits = 0x1;
-            } else if (y_diff >= 1.497f * x_diff) {
-                angle_bits = 0x2;
-            } else if (y_diff >= 5.027f * x_diff) {
-                angle_bits = 0x3;
-            } else {
-                angle_bits = 0x4;
-            }
-        }
-        
         if (touch_state[touch_id] == 4) {
             finger_data.State = 0x4;
         } else {
@@ -209,7 +156,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         finger_data.X = (SInt16)(scaled_x - (MT2_MAX_X / 2));
         finger_data.Y = (SInt16)(scaled_y - (MT2_MAX_Y / 2)) * -1;
         
-        finger_data.Angle = angle_bits;
+        finger_data.Angle = 0x4; // pi/2
         finger_data.Identifier = touch_id + 1;
     }
 
