@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.1.1
+- Remove angle calculation
+
 #### v1.1.0
 - Eliminate leftover scaling of physical dimensions by x10
 

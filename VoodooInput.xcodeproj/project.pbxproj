@@ -384,7 +384,7 @@
 					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.1.0;
+				MODULE_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
@@ -403,7 +403,7 @@
 					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.1.0;
+				MODULE_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
