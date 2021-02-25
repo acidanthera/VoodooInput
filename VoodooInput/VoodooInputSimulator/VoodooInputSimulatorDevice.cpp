@@ -92,11 +92,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
 
         // in case the obtained id is greater than 14, usually 0~4 for common devices.
         UInt16 touch_id = transducer->secondaryId % 15;
-        if (!transducer->isTransducerActive) {
-            touch_state[touch_id] = input_report->Button ? 0 : 2;
-        } else {
-            input_active = true;
-        }
+        input_active |= transducer->isTransducerActive;
 
         MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report->FINGERS[i];
 
@@ -121,11 +117,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             }
         }
 
-        if (touch_state[touch_id] == 4) {
-            finger_data.State = 0x4;
-        } else {
-            finger_data.State = ++touch_state[touch_id];
-        }
+        finger_data.State = touch_active[touch_id] ? kTouchStateActive : kTouchStateStart;
+        touch_active[touch_id] = transducer->isTransducerActive || transducer->isPhysicalButtonDown;
 
         finger_data.Finger = transducer->fingerType;
 
@@ -145,8 +138,8 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
             finger_data.Pressure = 120;
         }
         
-        if (!transducer->isTransducerActive && !input_report->Button) {
-            finger_data.State = 0x7;
+        if (!transducer->isTransducerActive && !transducer->isPhysicalButtonDown) {
+            finger_data.State = kTouchStateStop;
             finger_data.Size = 0x0;
             finger_data.Pressure = 0x0;
             finger_data.Touch_Minor = 0;
@@ -174,9 +167,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
     }
     
     if (!input_active) {
-        for (int i = 0; i < 15; i++) {
-            touch_state[i] = 2;
-        }
+        memset(touch_active, false, sizeof(touch_active));
 
         input_report->FINGERS[0].Size = 0x0;
         input_report->FINGERS[0].Pressure = 0x0;
@@ -192,7 +183,7 @@ void VoodooInputSimulatorDevice::constructReportGated(const VoodooInputEvent& mu
         sendReport();
 
         input_report->FINGERS[0].Finger = kMT2FingerTypeUndefined;
-        input_report->FINGERS[0].State = 0x0;
+        input_report->FINGERS[0].State = kTouchStateInactive;
         input_report_buffer->setLength(total_report_len);
         sendReport();
 
@@ -249,10 +240,6 @@ bool VoodooInputSimulatorDevice::start(IOService* provider) {
     PMinit();
     provider->joinPMtree(this);
     registerPowerDriver(this, PMPowerStates, kIOPMNumberPowerStates);
-
-    for (int i = 0; i < 15; i++) {
-        touch_state[i] = 2;
-    }
         
     new_get_report_buffer = nullptr;
     
