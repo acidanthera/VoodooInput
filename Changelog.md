@@ -1,7 +1,7 @@
 VoodooInput Changelog
 =====================
 #### v1.1.2
-- Improved tiuch state abstraction
+- Improved touch state abstraction
 
 #### v1.1.1
 - Remove angle calculation
