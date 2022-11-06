@@ -192,17 +192,16 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
             }
             break;
         }
-        case kIOMessageVoodooTrackpointMessage: {
+        case kIOMessageVoodooTrackpointMessage:
             if (trackpoint) {
                 trackpoint->reportPacket(*(TrackpointReport *)argument);
             }
             break;
-        }
-        case kIOMessageVoodooTrackpointUpdatePropertiesNotification: {
+        case kIOMessageVoodooTrackpointUpdatePropertiesNotification:
             if (trackpoint) {
                 trackpoint->updateTrackpointProperties();
             }
-        }
+            break;
     }
 
     return super::message(type, provider, argument);

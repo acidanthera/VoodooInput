@@ -26,8 +26,10 @@ class TrackpointDevice : public IOHIPointing {
     typedef IOHIPointing super;
     OSDeclareDefaultStructors(TrackpointDevice);
 private:
-    UInt32 trackpointMult {DEFAULT_MULT};
-    UInt32 trackpointScrollMult {DEFAULT_MULT};
+    UInt32 trackpointMultX {DEFAULT_MULT};
+    UInt32 trackpointMultY {DEFAULT_MULT};
+    UInt32 trackpointScrollMultX {DEFAULT_MULT};
+    UInt32 trackpointScrollMultY {DEFAULT_MULT};
     UInt32 trackpointDeadzone {1};
     UInt32 btnCount {3};
     

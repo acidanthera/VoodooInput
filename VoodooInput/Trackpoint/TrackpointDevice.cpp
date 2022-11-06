@@ -52,13 +52,17 @@ void TrackpointDevice::updateTrackpointProperties() {
     
     OSNumber *btns = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_BTN_CNT));
     OSNumber *deadzone = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_DEADZONE));
-    OSNumber *mouseMult = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT));
-    OSNumber *scrollMult = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT));
+    OSNumber *mouseMultX = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT_X));
+    OSNumber *mouseMultY = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT_Y));
+    OSNumber *scrollMultX = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT_X));
+    OSNumber *scrollMultY = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT_Y));
     
     if (btns != nullptr) btnCount = btns->unsigned32BitValue();
     if (deadzone != nullptr) trackpointDeadzone = deadzone->unsigned32BitValue();
-    if (mouseMult != nullptr) trackpointMult = mouseMult->unsigned32BitValue();
-    if (scrollMult != nullptr) trackpointScrollMult = scrollMult->unsigned32BitValue();
+    if (mouseMultX != nullptr) trackpointMultX = mouseMultX->unsigned32BitValue();
+    if (mouseMultY != nullptr) trackpointMultY = mouseMultY->unsigned32BitValue();
+    if (scrollMultX != nullptr) trackpointScrollMultX = scrollMultX->unsigned32BitValue();
+    if (scrollMultY != nullptr) trackpointScrollMultY = scrollMultY->unsigned32BitValue();
 }
 
 void TrackpointDevice::stop(IOService* provider) {
@@ -116,13 +120,13 @@ void TrackpointDevice::reportPacket(TrackpointReport &report) {
 
     // Must multiply first then divide so we don't multiply by zero
     if (middleBtnState == SCROLLED) {
-        SInt32 scrollY = -dy * trackpointScrollMult / DEFAULT_MULT;
-        SInt32 scrollX = -dx * trackpointScrollMult / DEFAULT_MULT;
+        SInt32 scrollY = -dy * trackpointScrollMultX / DEFAULT_MULT;
+        SInt32 scrollX = -dx * trackpointScrollMultY / DEFAULT_MULT;
         
         dispatchScrollWheelEvent(scrollY, scrollX, 0, timestamp);
     } else {
-        SInt32 mulDx = dx * trackpointMult / DEFAULT_MULT;
-        SInt32 mulDy = dy * trackpointMult / DEFAULT_MULT;
+        SInt32 mulDx = dx * trackpointMultX / DEFAULT_MULT;
+        SInt32 mulDy = dy * trackpointMultY / DEFAULT_MULT;
         
         dispatchRelativePointerEvent(mulDx, mulDy, buttons, timestamp);
     }
