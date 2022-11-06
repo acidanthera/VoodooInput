@@ -116,13 +116,13 @@ void TrackpointDevice::reportPacket(TrackpointReport &report) {
 
     // Must multiply first then divide so we don't multiply by zero
     if (middleBtnState == SCROLLED) {
-        SInt32 scrollY = (SInt32)((SInt64)-dy * trackpointScrollMult / DEFAULT_MULT);
-        SInt32 scrollX = (SInt32)((SInt64)-dx * trackpointScrollMult / DEFAULT_MULT);
+        SInt32 scrollY = -dy * trackpointScrollMult / DEFAULT_MULT;
+        SInt32 scrollX = -dx * trackpointScrollMult / DEFAULT_MULT;
         
         dispatchScrollWheelEvent(scrollY, scrollX, 0, timestamp);
     } else {
-        SInt32 mulDx = (SInt32)((SInt64)dx * trackpointMult / DEFAULT_MULT);
-        SInt32 mulDy = (SInt32)((SInt64)dy * trackpointMult / DEFAULT_MULT);
+        SInt32 mulDx = dx * trackpointMult / DEFAULT_MULT;
+        SInt32 mulDy = dy * trackpointMult / DEFAULT_MULT;
         
         dispatchRelativePointerEvent(mulDx, mulDy, buttons, timestamp);
     }
