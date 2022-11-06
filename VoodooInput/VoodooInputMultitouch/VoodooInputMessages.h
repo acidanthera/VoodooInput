@@ -22,10 +22,19 @@
 #define kIOMessageVoodooInputUpdatePropertiesNotification 12347
 #define kIOMessageVoodooTrackpointRelativePointer iokit_vendor_specific_msg(430)
 #define kIOMessageVoodooTrackpointScrollWheel iokit_vendor_specific_msg(431)
-
+#define kIOMessageVoodooTrackpointMessage iokit_vendor_specific_msg(432)
+#define kIOMessageVoodooTrackpointUpdatePropertiesNotification iokit_vendor_specific_msg(433)
 
 #define kVoodooInputTransducerFingerType 1
 #define kVoodooInputTransducerStylusType 2
+
+#define VOODOO_TRACKPOINT_KEY "VoodooInput Trackpoint"
+#define VOODOO_TRACKPOINT_BTN_CNT "Button Count"
+#define VOODOO_TRACKPOINT_DEADZONE "Deadzone"
+// Note that these multipliers are divided by 64 intenrally
+// To get a multiplier of one, the multiplier needs to be set 64.
+#define VOODOO_TRACKPOINT_MOUSE_MULT "Mouse Multiplier"
+#define VOODOO_TRACKPOINT_SCROLL_MULT "Scroll Multiplier"
 
 #include "VoodooInputTransducer.h"
 #include "VoodooInputEvent.h"

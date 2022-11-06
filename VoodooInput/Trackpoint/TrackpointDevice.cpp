@@ -10,6 +10,9 @@
 
 OSDefineMetaClassAndStructors(TrackpointDevice, IOHIPointing);
 
+#define abs(x) ((x < 0) ? -(x) : (x))
+#define MIDDLE_MOUSE_MASK 0x4
+
 UInt32 TrackpointDevice::deviceType() {
     return NX_EVS_DEVICE_TYPE_MOUSE;
 }
@@ -19,7 +22,7 @@ UInt32 TrackpointDevice::interfaceID() {
 }
 
 IOItemCount TrackpointDevice::buttonCount() {
-    return 3;
+    return btnCount;
 };
 
 IOFixed TrackpointDevice::resolution() {
@@ -30,6 +33,8 @@ bool TrackpointDevice::start(IOService* provider) {
     if (!super::start(provider)) {
         return false;
     }
+    
+    updateTrackpointProperties();
 
     setProperty(kIOHIDScrollAccelerationTypeKey, kIOHIDTrackpadScrollAccelerationKey);
     setProperty(kIOHIDScrollResolutionKey, 800 << 16, 32);
@@ -40,10 +45,88 @@ bool TrackpointDevice::start(IOService* provider) {
     return true;
 }
 
+void TrackpointDevice::updateTrackpointProperties() {
+    OSDictionary *dict = OSDynamicCast(OSDictionary, getProperty(VOODOO_TRACKPOINT_KEY));
+    
+    if (dict == nullptr) return;
+    
+    OSNumber *btns = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_BTN_CNT));
+    OSNumber *deadzone = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_DEADZONE));
+    OSNumber *mouseMult = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT));
+    OSNumber *scrollMult = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT));
+    
+    if (btns != nullptr) btnCount = btns->unsigned32BitValue();
+    if (deadzone != nullptr) trackpointDeadzone = deadzone->unsigned32BitValue();
+    if (mouseMult != nullptr) trackpointMult = mouseMult->unsigned32BitValue();
+    if (scrollMult != nullptr) trackpointScrollMult = scrollMult->unsigned32BitValue();
+}
+
 void TrackpointDevice::stop(IOService* provider) {
     super::stop(provider);
 }
 
+int TrackpointDevice::signum(int value)
+{
+    if (value > 0) return 1;
+    if (value < 0) return -1;
+    return 0;
+}
+
+void TrackpointDevice::reportPacket(TrackpointReport &report) {
+    SInt32 dx = report.dx;
+    SInt32 dy = report.dy;
+    UInt32 buttons = report.buttons;
+    AbsoluteTime timestamp = report.timestamp;
+
+    dx -= signum(dx) * min(abs(dx), trackpointDeadzone);
+    dy -= signum(dy) * min(abs(dy), trackpointDeadzone);
+
+    bool middleBtnNotPressed = (buttons & MIDDLE_MOUSE_MASK) == 0;
+    
+    // Do not tell macOS about the middle button until it's been released
+    // Scrolling with the button down can result in the button being spammed
+    switch (middleBtnState) {
+        case NOT_PRESSED:
+            if (middleBtnNotPressed) {
+                break;
+            }
+            
+            middleBtnState = PRESSED;
+            /* fallthrough */
+        case PRESSED:
+            if (dx || dy) {
+                middleBtnState = SCROLLED;
+            }
+            
+            if (middleBtnNotPressed) {
+                // Two reports are needed to send the middle button - this is the first
+                // The second one below is sent with the button released
+                dispatchRelativePointerEvent(dx, dy, MIDDLE_MOUSE_MASK, timestamp);
+                middleBtnState = NOT_PRESSED;
+            }
+            break;
+        case SCROLLED:
+            if (middleBtnNotPressed) {
+                middleBtnState = NOT_PRESSED;
+            }
+            break;
+    }
+
+    buttons &= ~MIDDLE_MOUSE_MASK;
+
+    // Must multiply first then divide so we don't multiply by zero
+    if (middleBtnState == SCROLLED) {
+        SInt32 scrollY = (SInt32)((SInt64)-dy * trackpointScrollMult / DEFAULT_MULT);
+        SInt32 scrollX = (SInt32)((SInt64)-dx * trackpointScrollMult / DEFAULT_MULT);
+        
+        dispatchScrollWheelEvent(scrollY, scrollX, 0, timestamp);
+    } else {
+        SInt32 mulDx = (SInt32)((SInt64)dx * trackpointMult / DEFAULT_MULT);
+        SInt32 mulDy = (SInt32)((SInt64)dy * trackpointMult / DEFAULT_MULT);
+        
+        dispatchRelativePointerEvent(mulDx, mulDy, buttons, timestamp);
+    }
+}
 
 void TrackpointDevice::updateRelativePointer(int dx, int dy, int buttons, uint64_t timestamp) {
     dispatchRelativePointerEvent(dx, dy, buttons, timestamp);
