@@ -26,7 +26,7 @@ IOItemCount TrackpointDevice::buttonCount() {
 };
 
 IOFixed TrackpointDevice::resolution() {
-    return 800 << 16;
+    return 150 << 16;
 };
 
 bool TrackpointDevice::start(IOService* provider) {
