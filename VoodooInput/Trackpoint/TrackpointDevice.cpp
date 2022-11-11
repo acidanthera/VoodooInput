@@ -61,8 +61,8 @@ void TrackpointDevice::updateTrackpointProperties() {
     if (deadzone != nullptr) trackpointDeadzone = deadzone->unsigned32BitValue();
     if (mouseMultX != nullptr) trackpointMultX = mouseMultX->unsigned32BitValue();
     if (mouseMultY != nullptr) trackpointMultY = mouseMultY->unsigned32BitValue();
-    if (scrollMultX != nullptr) trackpointScrollMultX = scrollMultX->unsigned32BitValue();
-    if (scrollMultY != nullptr) trackpointScrollMultY = scrollMultY->unsigned32BitValue();
+    if (scrollMultX != nullptr) trackpointScrollMultX = scrollMultX->unsigned16BitValue();
+    if (scrollMultY != nullptr) trackpointScrollMultY = scrollMultY->unsigned16BitValue();
 }
 
 void TrackpointDevice::stop(IOService* provider) {
@@ -117,16 +117,16 @@ void TrackpointDevice::reportPacket(TrackpointReport &report) {
     }
 
     buttons &= ~MIDDLE_MOUSE_MASK;
-
+    
     // Must multiply first then divide so we don't multiply by zero
     if (middleBtnState == SCROLLED) {
-        SInt32 scrollY = -dy * trackpointScrollMultX / DEFAULT_MULT;
-        SInt32 scrollX = -dx * trackpointScrollMultY / DEFAULT_MULT;
+        short scrollY = dy * (int) trackpointScrollMultX / DEFAULT_MULT;
+        short scrollX = dx * (int) trackpointScrollMultY / DEFAULT_MULT;
         
         dispatchScrollWheelEvent(scrollY, scrollX, 0, timestamp);
     } else {
-        SInt32 mulDx = dx * trackpointMultX / DEFAULT_MULT;
-        SInt32 mulDy = dy * trackpointMultY / DEFAULT_MULT;
+        int mulDx = dx * (int) trackpointMultX / DEFAULT_MULT;
+        int mulDy = dy * (int) trackpointMultY / DEFAULT_MULT;
         
         dispatchRelativePointerEvent(mulDx, mulDy, buttons, timestamp);
     }
