@@ -118,7 +118,6 @@ void TrackpointDevice::reportPacket(TrackpointReport &report) {
 
     buttons &= ~MIDDLE_MOUSE_MASK;
     
-    // Must multiply first then divide so we don't multiply by zero
     if (middleBtnState == SCROLLED) {
         short scrollY = dy * (int) trackpointScrollMultX / DEFAULT_MULT;
         short scrollX = dx * (int) trackpointScrollMultY / DEFAULT_MULT;
