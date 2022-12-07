@@ -45,24 +45,37 @@ bool TrackpointDevice::start(IOService* provider) {
     return true;
 }
 
+void TrackpointDevice::getOSIntValue(OSDictionary *dict, int *val, const char *key) {
+    OSNumber *osnum = OSDynamicCast(OSNumber, dict->getObject(key));
+    if (osnum != nullptr) *val = osnum->unsigned32BitValue();
+}
+
+void TrackpointDevice::getOSShortValue(OSDictionary *dict, short *val, const char *key) {
+    OSNumber *osnum = OSDynamicCast(OSNumber, dict->getObject(key));
+    if (osnum != nullptr) *val = osnum->unsigned16BitValue();
+}
+
 void TrackpointDevice::updateTrackpointProperties() {
     OSDictionary *dict = OSDynamicCast(OSDictionary, getProperty(VOODOO_TRACKPOINT_KEY));
     
     if (dict == nullptr) return;
     
-    OSNumber *btns = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_BTN_CNT));
-    OSNumber *deadzone = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_DEADZONE));
-    OSNumber *mouseMultX = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT_X));
-    OSNumber *mouseMultY = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_MOUSE_MULT_Y));
-    OSNumber *scrollMultX = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT_X));
-    OSNumber *scrollMultY = OSDynamicCast(OSNumber, dict->getObject(VOODOO_TRACKPOINT_SCROLL_MULT_Y));
+    getOSIntValue(dict, &btnCount, VOODOO_TRACKPOINT_BTN_CNT);
+    getOSIntValue(dict, &trackpointDeadzone, VOODOO_TRACKPOINT_DEADZONE);
+    getOSIntValue(dict, &trackpointMultX, VOODOO_TRACKPOINT_MOUSE_MULT_X);
+    getOSIntValue(dict, &trackpointMultY, VOODOO_TRACKPOINT_MOUSE_MULT_Y);
+    getOSIntValue(dict, &trackpointDivX, VOODOO_TRACKPOINT_MOUSE_DIV_X);
+    getOSIntValue(dict, &trackpointDivY, VOODOO_TRACKPOINT_MOUSE_DIV_Y);
     
-    if (btns != nullptr) btnCount = btns->unsigned32BitValue();
-    if (deadzone != nullptr) trackpointDeadzone = deadzone->unsigned32BitValue();
-    if (mouseMultX != nullptr) trackpointMultX = mouseMultX->unsigned32BitValue();
-    if (mouseMultY != nullptr) trackpointMultY = mouseMultY->unsigned32BitValue();
-    if (scrollMultX != nullptr) trackpointScrollMultX = scrollMultX->unsigned16BitValue();
-    if (scrollMultY != nullptr) trackpointScrollMultY = scrollMultY->unsigned16BitValue();
+    getOSShortValue(dict, &trackpointScrollMultX, VOODOO_TRACKPOINT_SCROLL_MULT_X);
+    getOSShortValue(dict, &trackpointScrollMultY, VOODOO_TRACKPOINT_SCROLL_MULT_Y);
+    getOSShortValue(dict, &trackpointScrollDivX, VOODOO_TRACKPOINT_SCROLL_DIV_X);
+    getOSShortValue(dict, &trackpointScrollDivY, VOODOO_TRACKPOINT_SCROLL_DIV_Y);
+    
+    if (trackpointDivX == 0) trackpointDivX = 1;
+    if (trackpointDivY == 0) trackpointDivY = 1;
+    if (trackpointScrollDivX == 0) trackpointScrollDivX = 1;
+    if (trackpointScrollDivY == 0) trackpointScrollDivY = 1;
 }
 
 void TrackpointDevice::stop(IOService* provider) {
@@ -119,13 +132,13 @@ void TrackpointDevice::reportPacket(TrackpointReport &report) {
     buttons &= ~MIDDLE_MOUSE_MASK;
     
     if (middleBtnState == SCROLLED) {
-        short scrollY = dy * (int) trackpointScrollMultX / DEFAULT_MULT;
-        short scrollX = dx * (int) trackpointScrollMultY / DEFAULT_MULT;
+        short scrollY = dy * trackpointScrollMultX / trackpointScrollDivX;
+        short scrollX = dx * trackpointScrollMultY / trackpointScrollDivY;
         
         dispatchScrollWheelEvent(scrollY, scrollX, 0, timestamp);
     } else {
-        int mulDx = dx * (int) trackpointMultX / DEFAULT_MULT;
-        int mulDy = dy * (int) trackpointMultY / DEFAULT_MULT;
+        int mulDx = dx * trackpointMultX / trackpointDivX;
+        int mulDy = dy * trackpointMultY / trackpointDivY;
         
         dispatchRelativePointerEvent(mulDx, mulDy, buttons, timestamp);
     }

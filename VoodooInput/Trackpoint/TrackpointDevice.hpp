@@ -14,8 +14,6 @@
 #include "VoodooInputMessages.h"
 #include "VoodooInputEvent.h"
 
-#define DEFAULT_MULT 64
-
 enum MiddlePressedState {
     NOT_PRESSED,
     PRESSED,
@@ -26,15 +24,21 @@ class TrackpointDevice : public IOHIPointing {
     typedef IOHIPointing super;
     OSDeclareDefaultStructors(TrackpointDevice);
 private:
-    UInt32 trackpointMultX {DEFAULT_MULT};
-    UInt32 trackpointMultY {DEFAULT_MULT};
-    UInt32 trackpointScrollMultX {DEFAULT_MULT};
-    UInt32 trackpointScrollMultY {DEFAULT_MULT};
-    UInt32 trackpointDeadzone {1};
-    UInt32 btnCount {3};
+    int trackpointMultX {1};
+    int trackpointMultY {1};
+    int trackpointDivX {1};
+    int trackpointDivY {1};
+    short trackpointScrollMultX {1};
+    short trackpointScrollMultY {1};
+    short trackpointScrollDivX {1};
+    short trackpointScrollDivY {1};
+    int trackpointDeadzone {1};
+    int btnCount {3};
     
     MiddlePressedState middleBtnState {NOT_PRESSED};
     int signum(int value);
+    void getOSIntValue(OSDictionary *dict, int *val, const char *key);
+    void getOSShortValue(OSDictionary *dict, short *val, const char *key);
 protected:
     virtual IOItemCount buttonCount() override;
     virtual IOFixed resolution() override;

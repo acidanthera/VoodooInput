@@ -31,12 +31,16 @@
 #define VOODOO_TRACKPOINT_KEY "VoodooInput Trackpoint"
 #define VOODOO_TRACKPOINT_BTN_CNT "Button Count"
 #define VOODOO_TRACKPOINT_DEADZONE "Deadzone"
-// Note that these multipliers are divided by 64 internally
-// To get a multiplier of one, the multiplier needs to be set 64.
+
 #define VOODOO_TRACKPOINT_MOUSE_MULT_X "Mouse Multiplier X"
 #define VOODOO_TRACKPOINT_MOUSE_MULT_Y "Mouse Multiplier Y"
 #define VOODOO_TRACKPOINT_SCROLL_MULT_X "Scroll Multiplier X"
 #define VOODOO_TRACKPOINT_SCROLL_MULT_Y "Scroll Multiplier Y"
+
+#define VOODOO_TRACKPOINT_MOUSE_DIV_X "Mouse Divisor X"
+#define VOODOO_TRACKPOINT_MOUSE_DIV_Y "Mouse Divisor Y"
+#define VOODOO_TRACKPOINT_SCROLL_DIV_X "Scroll Divisor X"
+#define VOODOO_TRACKPOINT_SCROLL_DIV_Y "Scroll Divisor Y"
 
 #include "VoodooInputTransducer.h"
 #include "VoodooInputEvent.h"
