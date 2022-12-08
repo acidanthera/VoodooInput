@@ -73,7 +73,6 @@ bool VoodooInput::start(IOService *provider) {
         trackpoint->detach(this);
         goto exit;
     }
-    trackpoint->registerService();
     
     setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
     

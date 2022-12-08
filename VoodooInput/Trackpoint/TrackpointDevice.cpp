@@ -56,7 +56,8 @@ void TrackpointDevice::getOSShortValue(OSDictionary *dict, short *val, const cha
 }
 
 void TrackpointDevice::updateTrackpointProperties() {
-    OSDictionary *dict = OSDynamicCast(OSDictionary, getProperty(VOODOO_TRACKPOINT_KEY));
+    OSObject *obj = getProperty(VOODOO_TRACKPOINT_KEY, gIOServicePlane);
+    OSDictionary *dict = OSDynamicCast(OSDictionary, obj);
     
     if (dict == nullptr) return;
     
