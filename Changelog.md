@@ -1,5 +1,11 @@
 VoodooInput Changelog
 =====================
+#### v1.1.3
+- Added trackpoint logic improvements by @1Revenger1
+- Seperated X and Y axis
+- Switched to higher resolution (400)
+- Added divisor for scroll and mouse movement
+
 #### v1.1.2
 - Improved touch state abstraction
 
