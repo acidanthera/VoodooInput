@@ -50,6 +50,10 @@ bool VoodooInputMT1Simulator::start(IOService *provider) {
 }
 
 void VoodooInputMT1Simulator::stop(IOService *provider) {
+    if (workloop) {
+        workloop->removeEventSource(cmdGate);
+    }
+    
     OSSafeReleaseNULL(workloop);
     OSSafeReleaseNULL(cmdGate);
     if (userClients != nullptr) {
