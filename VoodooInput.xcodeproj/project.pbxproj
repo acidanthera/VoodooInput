@@ -17,6 +17,10 @@
 		7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21522E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp */; };
 		CE8DA19D2518354A008C44E8 /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8DA19C2518354A008C44E8 /* libkmod.a */; };
 		EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */; };
+		EE7EE27F296116D7005EFCC4 /* VoodooInputMT1Simulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE27D296116D7005EFCC4 /* VoodooInputMT1Simulator.cpp */; };
+		EE7EE280296116D7005EFCC4 /* VoodooInputMT1Simulator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE27E296116D7005EFCC4 /* VoodooInputMT1Simulator.hpp */; };
+		EE7EE283296119AB005EFCC4 /* VoodooInputMT1UserClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE281296119AB005EFCC4 /* VoodooInputMT1UserClient.cpp */; };
+		EE7EE284296119AB005EFCC4 /* VoodooInputMT1UserClient.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE282296119AB005EFCC4 /* VoodooInputMT1UserClient.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +43,10 @@
 		CEFB081D2397003600215B0B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		CEFB081E2397003600215B0B /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = SOURCE_ROOT; };
 		EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputIDs.hpp; sourceTree = "<group>"; };
+		EE7EE27D296116D7005EFCC4 /* VoodooInputMT1Simulator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputMT1Simulator.cpp; sourceTree = "<group>"; };
+		EE7EE27E296116D7005EFCC4 /* VoodooInputMT1Simulator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputMT1Simulator.hpp; sourceTree = "<group>"; };
+		EE7EE281296119AB005EFCC4 /* VoodooInputMT1UserClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputMT1UserClient.cpp; sourceTree = "<group>"; };
+		EE7EE282296119AB005EFCC4 /* VoodooInputMT1UserClient.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputMT1UserClient.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +92,7 @@
 		7BBAB1FB22E3A2F800B2941A /* VoodooInput */ = {
 			isa = PBXGroup;
 			children = (
+				EE7EE27C296116B1005EFCC4 /* VoodooInputMT1Simulator */,
 				358914F125798FA5007A0B58 /* Trackpoint */,
 				CEC086442439FD3E00F5B701 /* VoodooInputMultitouch */,
 				7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */,
@@ -136,6 +145,17 @@
 			path = VoodooInput;
 			sourceTree = "<group>";
 		};
+		EE7EE27C296116B1005EFCC4 /* VoodooInputMT1Simulator */ = {
+			isa = PBXGroup;
+			children = (
+				EE7EE27D296116D7005EFCC4 /* VoodooInputMT1Simulator.cpp */,
+				EE7EE27E296116D7005EFCC4 /* VoodooInputMT1Simulator.hpp */,
+				EE7EE281296119AB005EFCC4 /* VoodooInputMT1UserClient.cpp */,
+				EE7EE282296119AB005EFCC4 /* VoodooInputMT1UserClient.hpp */,
+			);
+			path = VoodooInputMT1Simulator;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -146,6 +166,8 @@
 				7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */,
 				358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
+				EE7EE280296116D7005EFCC4 /* VoodooInputMT1Simulator.hpp in Headers */,
+				EE7EE284296119AB005EFCC4 /* VoodooInputMT1UserClient.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 				EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */,
 			);
@@ -252,6 +274,8 @@
 				358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */,
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
+				EE7EE283296119AB005EFCC4 /* VoodooInputMT1UserClient.cpp in Sources */,
+				EE7EE27F296116D7005EFCC4 /* VoodooInputMT1Simulator.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
