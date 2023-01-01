@@ -152,3 +152,7 @@ void TrackpointDevice::updateRelativePointer(int dx, int dy, int buttons, uint64
 void TrackpointDevice::updateScrollwheel(short deltaAxis1, short deltaAxis2, short deltaAxis3, uint64_t timestamp) {
     dispatchScrollWheelEvent(deltaAxis1, deltaAxis2, deltaAxis3, timestamp);
 }
+
+bool TrackpointDevice::willTerminate(IOService* provider, IOOptionBits options) {
+    return  super::willTerminate(provider, options);
+}

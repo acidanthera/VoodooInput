@@ -46,6 +46,7 @@ protected:
 public:
     bool start(IOService* provider) override;
     void stop(IOService* provider) override;
+    bool willTerminate(IOService* provider, IOOptionBits options) override;
     
     virtual UInt32 deviceType() override;
     virtual UInt32 interfaceID() override;
