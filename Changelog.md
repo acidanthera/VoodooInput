@@ -5,6 +5,7 @@ VoodooInput Changelog
 - Seperated X and Y axis
 - Switched to higher resolution (400)
 - Added divisor for scroll and mouse movement
+- Workaround crashes with USB devices on macOS 13, thx @kprinssu
 
 #### v1.1.2
 - Improved touch state abstraction
