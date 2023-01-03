@@ -166,8 +166,8 @@ UInt32 VoodooInput::getLogicalMaxY() {
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
     switch (type) {
         case kIOMessageVoodooInputMessage:
-//            if (provider == parentProvider && argument && simulator)
-//                simulator->constructReport(*(VoodooInputEvent*)argument);
+            if (provider == parentProvider && argument && simulator)
+                simulator->constructReport(*(VoodooInputEvent*)argument);
             break;
             
         case kIOMessageVoodooInputUpdateDimensionsMessage:
