@@ -47,9 +47,11 @@ public:
     virtual IOReturn clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) override;
     
     virtual IOExternalMethod *getTargetAndMethodForIndex(IOService **targetP, UInt32 index) override;
-    IOReturn sSetSendFrames(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
-    IOReturn sGetReport(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
-    IOReturn sNoop(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    IOReturn sSetSendFrames(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    IOReturn sGetReport(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    IOReturn sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    
+    void enqueueData(void *data, UInt32 size);
 private:
     VoodooInputMT1Simulator *simulator {nullptr};
     
@@ -57,8 +59,6 @@ private:
     IOSharedDataQueue *logQueue {nullptr};
     IOMemoryDescriptor *dataQueueDesc {nullptr};
     IOMemoryDescriptor *logQueueDesc {nullptr};
-    
-    static IOExternalMethodACID sMethods[VoodooInputMT1UserClientMethodsNumMethods];
 };
 
 #endif /* VoodooInputMT1UserClient_hpp */

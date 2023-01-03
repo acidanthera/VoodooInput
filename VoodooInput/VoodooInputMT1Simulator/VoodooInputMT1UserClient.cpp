@@ -12,32 +12,34 @@
 OSDefineMetaClassAndStructors(VoodooInputMT1UserClient, IOUserClient);
 
 #if defined(__x86_64__)
-// { Object, Func pointer, Padding, Flags, Count 0, Count 1 }
-IOExternalMethodACID VoodooInputMT1UserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
+// { Object, Func pointer, Padding, Flags, Inputs, Outputs }
+static const IOExternalMethod sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
     // VoodooInputMT1UserClientMethodsSetSendsFrames
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sSetSendFrames), kIOExternalMethodACIDPadding, 0, 0, 1},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sSetSendFrames), kIOUCScalarIScalarO, 1, 0},
     // VoodooInputMT1UserClientMethodsGetReport
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sGetReport), kIOExternalMethodACIDPadding, 0, 3, 0x208},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sGetReport), kIOUCStructIStructO, 0x208, 0x208},
     // VoodooInputMT1UserClientMethodsSetReport
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sNoop), kIOExternalMethodACIDPadding, 0, 3, 0x208},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCStructIStructO, 0x208, 0x208},
     // VoodooInputMT1UserClientMethodsSetSendLogs
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sNoop), kIOExternalMethodACIDPadding, 0, 0, 1},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 1, 0},
     // VoodooInputMT1UserClientMethodsIssueDriverRequest
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sNoop), kIOExternalMethodACIDPadding, 0, 3, 204},
-    {0, nullptr, kIOExternalMethodACIDPadding, 0, 0, 3},    // Relative Mouse Movement
-    {0, nullptr, kIOExternalMethodACIDPadding, 0, 0, 3},    // Scroll Wheel
-    {0, nullptr, kIOExternalMethodACIDPadding, 0, 0, 2},    // Keyboard
-    {0, nullptr, kIOExternalMethodACIDPadding, 0, 0, 1},    // Map Clicks
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCStructIStructO, 0x204, 0x204},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Relative Mouse Movement
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Scroll Wheel
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 2, 0},    // Keyboard
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 1, 0},    // Map Clicks
     // VoodooInputMT1UserClientMethodsRecacheProperties
-    {0, static_cast<IOMethodACID>(&VoodooInputMT1UserClient::sNoop), kIOExternalMethodACIDPadding, 0, 0, 0},
-    {0, nullptr, kIOExternalMethodACIDPadding, 0, 0, 3},    // Momentum Scroll
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 0, 0},
+    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Momentum Scroll
 };
+
 #else // __defined(__x86_64__)
 // TODO: Switch where padding is in struct
 #error "Invalid architecture"
 #endif // __defined(__x86_64__)
 
 bool VoodooInputMT1UserClient::start(IOService *provider) {
+    IOLog("%s Start\n", getName());
     if (!super::start(provider)) return false;
     simulator = OSDynamicCast(VoodooInputMT1Simulator, provider);
     
@@ -69,13 +71,15 @@ void VoodooInputMT1UserClient::stop(IOService *provider) {
 }
 
 IOReturn VoodooInputMT1UserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
+    IOLog("%s client notif port\n", getName());
     dataQueue->setNotificationPort(port);
     logQueue->setNotificationPort(port);
     return kIOReturnSuccess;
 }
 
 IOReturn VoodooInputMT1UserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
-    if (type == 0x10) {
+    IOLog("%s clientMem\n", getName());
+    if (type != 0x10) {
         dataQueueDesc->retain();
         *memory = dataQueueDesc;
     } else {
@@ -88,17 +92,18 @@ IOReturn VoodooInputMT1UserClient::clientMemoryForType(UInt32 type, IOOptionBits
 }
 
 IOExternalMethod *VoodooInputMT1UserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
+    IOLog("%s External Method %d\n", getName(), index);
     if (index >= VoodooInputMT1UserClientMethodsNumMethods) {
         return nullptr;
     }
     
     *targetP = this;
-    sMethods[index].object = this;
-    return reinterpret_cast<IOExternalMethod *>(&sMethods[index]);
+    return const_cast<IOExternalMethod *>(&sMethods[index]);
 }
 
-IOReturn VoodooInputMT1UserClient::sSetSendFrames(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+IOReturn VoodooInputMT1UserClient::sSetSendFrames(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     bool success = true;
+    IOLog("%s Get Report: %d\n", getName(), static_cast<bool>(p1));
     
     if (static_cast<bool>(p1)) {
         success = simulator->registerUserClient(this);
@@ -110,12 +115,14 @@ IOReturn VoodooInputMT1UserClient::sSetSendFrames(IOService *svc, void *p1, void
 }
 
 // I'm not really sure why they use two different structs here???
-IOReturn VoodooInputMT1UserClient::sGetReport(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+IOReturn VoodooInputMT1UserClient::sGetReport(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     MT1DeviceReportStruct *input = static_cast<MT1DeviceReportStruct *>(p1);
     MT1DeviceReportStruct *output = static_cast<MT1DeviceReportStruct *>(p2);
     if (input == nullptr || output == nullptr) {
         return kIOReturnBadArgument;
     }
+    
+    IOLog("%s Get Report: %d\n", getName(), input->reportId);
     
     IOReturn ret = simulator->getReport(input);
     if (ret == kIOReturnSuccess) {
@@ -126,6 +133,12 @@ IOReturn VoodooInputMT1UserClient::sGetReport(IOService *svc, void *p1, void *p2
     return ret;
 }
 
-IOReturn VoodooInputMT1UserClient::sNoop(IOService *svc, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+void VoodooInputMT1UserClient::enqueueData(void *data, UInt32 size) {
+    if (dataQueue == nullptr) return;
+    IOLog("%s Enqueue Data\n", getName());
+    dataQueue->enqueue(data, size);
+}
+
+IOReturn VoodooInputMT1UserClient::sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     return kIOReturnSuccess; // noop
 }
