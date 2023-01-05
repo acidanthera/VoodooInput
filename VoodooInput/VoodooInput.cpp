@@ -47,7 +47,7 @@ bool VoodooInput::start(IOService *provider) {
     }
     
     // Initialize simulator device
-    if (!simulator->init(NULL) || !simulator->attach(this)) {
+    if (!simulator->init(OSDynamicCast(OSDictionary, getProperty("MT1Props"))) || !simulator->attach(this)) {
         IOLog("VoodooInput could not attach simulator!\n");
         goto exit;
     }

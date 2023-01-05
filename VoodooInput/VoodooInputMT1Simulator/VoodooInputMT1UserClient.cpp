@@ -133,10 +133,10 @@ IOReturn VoodooInputMT1UserClient::sGetReport(void *p1, void *p2, void *p3, void
     return ret;
 }
 
-void VoodooInputMT1UserClient::enqueueData(void *data, UInt32 size) {
+void VoodooInputMT1UserClient::enqueueData(void *data, size_t size) {
     if (dataQueue == nullptr) return;
     IOLog("%s Enqueue Data\n", getName());
-    dataQueue->enqueue(data, size);
+    dataQueue->enqueue(data, (UInt32) size);
 }
 
 IOReturn VoodooInputMT1UserClient::sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
