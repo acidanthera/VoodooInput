@@ -59,48 +59,31 @@ bool VoodooInputMT1Simulator::setProperty(const OSString *aKey, OSObject *anObje
 bool VoodooInputMT1Simulator::init(OSDictionary *props) {
     // Hidd tries to set a new user client, so we block setProperty writes to the user client key.
     // This means that we need to set the user here in the props dictionary
-    props = OSDictionary::withCapacity(1);
-    OSString* userClient = OSString::withCString("VoodooInputMT1UserClient");
-    props->setObject(kIOUserClientClassKey, userClient);
-    props->setObject("Clicking", kOSBooleanTrue);
-    props->setObject("TrackpadScroll", kOSBooleanTrue);
-    props->setObject("TrackpadHorizScroll", kOSBooleanTrue);
     bool success = super::init(props);
-    OSSafeReleaseNULL(userClient);
-    OSSafeReleaseNULL(props);
     
     if (!success) {
         return false;
     }
     
-    setProperty("MTHIDDevice", kOSBooleanTrue);
+    setProperty("Clicking", kOSBooleanTrue);
+    setProperty("TrackpadScroll", kOSBooleanTrue);
+    setProperty("TrackpadHorizScroll", kOSBooleanTrue);
+    setProperty("AlwaysNeedsVelocityCalculated", kOSBooleanTrue);
+    setProperty("Endianness", MT1_LITTLE_ENDIAN, 32);
     setProperty("Multitouch ID", 0x30000001d183000, 64);
     setProperty("Family ID", 0x62, 8);
     setProperty("bcdVersion", 0x109, 16);
-    setProperty("parser-type", 0x3e8, 32);
-    setProperty("parser-options", 39, 32);
-    setProperty("HIDDefaultBehavior", "Mouse");
-    setProperty("HIDServiceSupport", kOSBooleanTrue);
     setProperty("Max Packet Size", 0x200, 32);
     
     if (version_major >= 16) {
         setProperty("SupportsGestureScrolling", kOSBooleanTrue);
-        setProperty("TrackpadFourFingerGestures", kOSBooleanTrue);
         setProperty("ApplePreferenceIdentifier", "com.apple.AppleMultitouchTrackpad");
         setProperty("MT Built-in", kOSBooleanTrue);
         setProperty("ApplePreferenceCapability", kOSBooleanTrue);
         setProperty("TrackpadEmbedded", kOSBooleanTrue);
-        setProperty("TrackpadThreeFingerDrag", kOSBooleanTrue);
     }
     
     setProperty("TrackpadCornerSecondaryClick", kOSBooleanTrue);
-    OSDictionary* dict = OSDictionary::withCapacity(1);
-    OSString* str = OSString::withCString("AppleMultitouchDriver.kext/Contents/PlugIns/MultitouchHID.plugin");
-    dict->setObject("0516B563-B15B-11DA-96EB-0014519758EF", str);
-    
-    setProperty(kIOCFPlugInTypesKey, dict);
-    OSSafeReleaseNULL(str);
-    OSSafeReleaseNULL(dict);
     
     OSDictionary* trackpadPrefs = OSDictionary::withCapacity(1);
     setProperty("TrackpadUserPreferences", trackpadPrefs);
@@ -141,14 +124,42 @@ bool VoodooInputMT1Simulator::start(IOService *provider) {
         return false;
     }
     
+    size_t inputSize = sizeof(WELLSPRING3_REPORT) + (sizeof(WELLSPRING3_FINGER) * VOODOO_INPUT_MAX_TRANSDUCERS);
+    inputReport = reinterpret_cast<WELLSPRING3_REPORT *>(IOMalloc(inputSize));
+    bzero(inputReport, inputSize);
+    
+    if (inputReport == nullptr) return false;
+    
     clock_get_uptime(&startTimestamp);
+    
+//    IOServiceMatchingNotificationHandler notificationHandler = OSMemberFunctionCast(IOServiceMatchingNotificationHandler, this, &VoodooInputMT1Simulator::notificationEventDriverPublish);
+//    OSDictionary *matching = serviceMatching("AppleUSBMultitouchEventDriver");
+//    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this);
+//    OSSafeReleaseNULL(matching);
     
     registerService();
     
     return true;
 }
 
+void VoodooInputMT1Simulator::notificationEventDriverPublish(IOService * newService, IONotifier * notifier) {
+    if (notifier == eventDriverPublish) {
+        IOHIDEventService *eventDriver = OSDynamicCast(IOHIDEventService, newService);
+        if (eventDriver == nullptr) return;
+        
+        OSNumber *loc = OSDynamicCast(OSNumber, eventDriver->getProperty("LocationID"));
+        if (loc == nullptr) return;
+        
+        if (!loc->isEqualTo(newLocationIDNumber())) return;
+//        eventDriver->setSystemProperties();
+    }
+}
+
 void VoodooInputMT1Simulator::stop(IOService *provider) {
+    if (eventDriverPublish != nullptr) {
+        eventDriverPublish->remove();
+    }
+    
     if (workloop) {
         workloop->removeEventSource(cmdGate);
     }
@@ -158,6 +169,11 @@ void VoodooInputMT1Simulator::stop(IOService *provider) {
     if (userClients != nullptr) {
         userClients->flushCollection();
         OSSafeReleaseNULL(userClients);
+    }
+    
+    if (inputReport != nullptr) {
+        size_t inputSize = sizeof(WELLSPRING3_REPORT) + (sizeof(WELLSPRING3_FINGER) * VOODOO_INPUT_MAX_TRANSDUCERS);
+        IOFree(inputReport, inputSize);
     }
     
     super::stop(provider);
@@ -197,7 +213,7 @@ OSNumber* VoodooInputMT1Simulator::newProductIDNumber() const {
 }
 
 OSString* VoodooInputMT1Simulator::newProductString() const {
-    return OSString::withCString("Apple Internal Trackpad");
+    return OSString::withCString("Wellspring3 Emulator");
 }
 
 OSString* VoodooInputMT1Simulator::newSerialNumberString() const {
@@ -239,7 +255,7 @@ static const UInt8 MT1SensorDesc[SensorDescLength] = {0x01, 0x01, 0x00, 0x0c, 0x
 
 #define SensorRowsLength 5
 static const UInt8 MT1SensorRows[SensorRowsLength] = {
-    0x01,       // Endianness (no clue what 1 means)
+    0x01,       // Is little Endian
     0x0C,       // Rows
     0x14,       // Columns
     0x01, 0x09  // BCD Version
@@ -297,15 +313,23 @@ IOReturn VoodooInputMT1Simulator::getReport(MT1DeviceReportStruct *toFill) {
 
 void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
     AbsoluteTime timestamp = event.timestamp;
-    size_t inputSize = sizeof(MT1_INPUT_REPORT) + (sizeof(MT1_INPUT_REPORT_FINGER) * event.contact_count);
-    MT1_INPUT_REPORT *inputReport = reinterpret_cast<MT1_INPUT_REPORT *>(IOMalloc(inputSize));
+    size_t inputSize = sizeof(WELLSPRING3_REPORT) + (sizeof(WELLSPRING3_FINGER) * event.contact_count);
     
     IOLog("MT1Sim: Constructing report\n");
     if (inputReport == nullptr) return;
     
-    inputReport->ReportID = 0x28;
-    inputReport->Timestamp = 0;
-    inputReport->Button = event.transducers[0].isPhysicalButtonDown;
+    inputReport->ReportID = 0x74;
+    inputReport->Counter = counter++;
+    inputReport->unkown1 = 0x03;
+    inputReport->HeaderSize = sizeof(WELLSPRING3_REPORT);
+    inputReport->unk2[0] =  0x00; // Magic
+    inputReport->unk2[1] =  0x17;
+    inputReport->unk2[2] =  0x07;
+    inputReport->unk2[3] =  0x97;
+    inputReport->TotalFingerDataSize = sizeof(WELLSPRING3_FINGER) * event.contact_count;
+    inputReport->NumFingers = event.contact_count;
+    inputReport->Button = event.transducers[0].isPhysicalButtonDown || event.transducers[0].currentCoordinates.pressure > 100;
+    inputReport->unknown1 = 0x00000010;
 
     // rotation check
     UInt8 transform = engine->getTransformKey();
@@ -320,7 +344,7 @@ void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
     absolutetime_to_nanoseconds(relativeTimestamp, &milliTimestamp);
     
     milliTimestamp /= 1000000;
-    inputReport->Timestamp = milliTimestamp;
+    inputReport->Timestamp = static_cast<UInt32>(milliTimestamp);
     
     // finger data
     bool input_active = inputReport->Button;
@@ -340,7 +364,7 @@ void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
         UInt16 touch_id = transducer.secondaryId % 15;
         input_active |= transducer.isTransducerActive;
 
-        MT1_INPUT_REPORT_FINGER& fingerData = inputReport->FINGERS[i];
+        WELLSPRING3_FINGER& fingerData = inputReport->Fingers[i];
 
         IOFixed scaled_x = ((transducer.currentCoordinates.x * 1.0f) / engine->getLogicalMaxX()) * MT1_MAX_X;
         IOFixed scaled_y = ((transducer.currentCoordinates.y * 1.0f) / engine->getLogicalMaxY()) * MT1_MAX_Y;
@@ -369,75 +393,82 @@ void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
         fingerData.Finger = transducer.fingerType;
 
         if (transducer.supportsPressure) {
-            fingerData.Pressure = transducer.currentCoordinates.pressure;
-            fingerData.Size = transducer.currentCoordinates.width;
-            fingerData.Touch_Major = transducer.currentCoordinates.width;
-            fingerData.Touch_Minor = transducer.currentCoordinates.width;
+            fingerData.Size = transducer.currentCoordinates.width * 4;
+            fingerData.ToolMajor = transducer.currentCoordinates.width * 16;
+            fingerData.ToolMinor = transducer.currentCoordinates.width * 16;
         } else {
-            fingerData.Pressure = 5;
-            fingerData.Size = 10;
-            fingerData.Touch_Major = 20;
-            fingerData.Touch_Minor = 20;
+            fingerData.Size = 200;
+            fingerData.ToolMajor = 800;
+            fingerData.ToolMinor = 800;
         }
         
         if (!transducer.isTransducerActive && !transducer.isPhysicalButtonDown) {
+            touchActive[touch_id] = false;
             fingerData.State = kTouchStateStop;
             fingerData.Size = 0x0;
-            fingerData.Touch_Minor = 0;
-            fingerData.Touch_Major = 0;
+            fingerData.ToolMajor = 0;
+            fingerData.ToolMinor = 0;
         }
 
         fingerData.X = (SInt16)(scaled_x - (MT1_MAX_X / 2));
-        fingerData.Y = (SInt16)(scaled_y - (MT1_MAX_Y / 2)) * -1;
+        fingerData.Y = (SInt16)(scaled_y);
+        fingerData.Unknown = touchActive[touch_id] ? 0xFF : 0; // Always set to 1 in MT2 logic, though my MBP9,2 sets this to 0xFF once it starts moving
         
-        fingerData.Orientation = 0x4; // pi/2
-        fingerData.Identifier = touch_id + 1;
+        fingerData.Orientation = 0x4000; // pi/2
+        fingerData.Id = touch_id + 1;
     }
 
-    inputReport->TouchActive = input_active;
+//    inputReport->TouchActive = input_active;
     
     if (!is_error_input_active) {
-        OSCollectionIterator* iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
-            IOLog("MT1Sim: Sending report\n");
-            client->enqueueData(inputReport, inputSize);
-        }
-        OSSafeReleaseNULL(iter);
+        IOLog("MT1Sim: Sending report\n");
+        enqueueData(inputReport, (UInt32) inputSize);
     }
     
     if (!input_active) {
         memset(touchActive, false, sizeof(touchActive));
-
-        inputReport->FINGERS[0].Size = 0x0;
-        inputReport->FINGERS[0].Touch_Major = 0x0;
-        inputReport->FINGERS[0].Touch_Minor = 0x0;
-
-        milliTimestamp += 10;
-        inputReport->Timestamp = milliTimestamp;
         
-        OSCollectionIterator* iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
-            client->enqueueData(inputReport, inputSize);
-        }
-        OSSafeReleaseNULL(iter);
+        // Stop finger
+        inputReport->Counter++;
+        inputReport->Fingers[0].State = kTouchStateStop;
+        inputReport->Fingers[0].Size = 0x0;
+        inputReport->Fingers[0].ToolMajor = 0x0;
+        inputReport->Fingers[0].ToolMinor = 0x0;
 
-        inputReport->FINGERS[0].Finger = kMT2FingerTypeUndefined;
-        inputReport->FINGERS[0].State = kTouchStateInactive;
-        iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
-            client->enqueueData(inputReport, inputSize);
-        }
-        OSSafeReleaseNULL(iter);
+        inputReport->Counter++;
+        inputReport->Timestamp += 10;
+        enqueueData(inputReport, inputSize);
+
+        // Undefined/Zeroed out finger
+        inputReport->Counter++;
+        inputReport->Timestamp += 10;
+        inputReport->Fingers[0].Finger = kMT2FingerTypeUndefined;
+        inputReport->Fingers[0].State = kTouchStateInactive;
+        enqueueData(inputReport, inputSize);
 
         // Blank report
-        milliTimestamp += 10;
-        inputReport->Timestamp = milliTimestamp;
-        iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
-            client->enqueueData(inputReport, sizeof(MT1_INPUT_REPORT));
-        }
-        OSSafeReleaseNULL(iter);
+        inputReport->NumFingers = 0;
+        inputReport->TotalFingerDataSize = 0;
+        inputReport->Counter++;
+        inputReport->Timestamp += 10;
+        enqueueData(inputReport, sizeof(WELLSPRING3_REPORT));
     }
     
-    IOFree(inputReport, inputSize);
+    bzero(inputReport, inputSize);
+}
+
+void VoodooInputMT1Simulator::enqueueData(WELLSPRING3_REPORT *report, size_t dataLen) {
+#if DEBUG
+    IOLog("Sending report with button %d, finger count %hhu, at %dms\n", report->Button, report->NumFingers, report->Timestamp);
+    for (size_t i = 0; i < report->NumFingers; i++) {
+        WELLSPRING3_FINGER &f = report->Fingers[i];
+        IOLog("[%zu] (%d, %d) (%d, %d)dx F%d St%d Maj%d Min%d Sz%d ID%d A%d\n", i, f.X, f.Y, f.XVelocity, f.YVelocity, f.Finger, f.State, f.ToolMajor, f.ToolMinor, f.Size, f.Id, f.Orientation);
+    }
+#endif
+    
+    OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
+    while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
+        client->enqueueData(report, dataLen);
+    }
+    OSSafeReleaseNULL(iter);
 }
