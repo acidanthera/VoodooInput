@@ -12,14 +12,13 @@
 #include <IOKit/IOLib.h>
 #include <IOKit/IOSharedDataQueue.h>
 #include <IOKit/IOUserClient.h>
-#include "./VoodooInputMT1Simulator.hpp"
 
 #include "../VoodooInput.hpp"
 #include "../VoodooInputMultitouch/VoodooInputTransducer.h"
 #include "../VoodooInputMultitouch/VoodooInputEvent.h"
 #include "../VoodooInputMultitouch/MultitouchHelpers.h"
 
-enum VoodooInputMT1UserClientMethods {
+enum VoodooInputWellspringUserClientMethods {
     VoodooInputMT1UserClientMethodsSetSendsFrames,
     VoodooInputMT1UserClientMethodsGetReport,
     VoodooInputMT1UserClientMethodsSetReport,
@@ -36,8 +35,11 @@ enum VoodooInputMT1UserClientMethods {
 
 static_assert(VoodooInputMT1UserClientMethodsNumMethods == 11, "Invalid number of Userclient methods");
 
-class EXPORT VoodooInputMT1UserClient : public IOUserClient {
-    OSDeclareDefaultStructors(VoodooInputMT1UserClient);
+struct MTDeviceReportStruct;
+class VoodooInputWellspringSimulator;
+
+class EXPORT VoodooInputWellspringUserClient : public IOUserClient {
+    OSDeclareDefaultStructors(VoodooInputWellspringUserClient);
 
 public:
     virtual bool start(IOService *provider) override;
@@ -47,13 +49,13 @@ public:
     virtual IOReturn clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) override;
     
     virtual IOExternalMethod *getTargetAndMethodForIndex(IOService **targetP, UInt32 index) override;
-    IOReturn sSetSendFrames(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
-    IOReturn sGetReport(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    IOReturn sSetSendFrames(bool enableFrames);
+    IOReturn sGetReport(MTDeviceReportStruct *input, MTDeviceReportStruct *output);
     IOReturn sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
     
     void enqueueData(void *data, size_t size);
 private:
-    VoodooInputMT1Simulator *simulator {nullptr};
+    VoodooInputWellspringSimulator *simulator {nullptr};
     
     IOSharedDataQueue *dataQueue {nullptr};
     IOSharedDataQueue *logQueue {nullptr};

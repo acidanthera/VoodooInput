@@ -10,7 +10,7 @@
 #include "VoodooInputMultitouch/VoodooInputMessages.h"
 #include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
-#include "VoodooInputMT1Simulator/VoodooInputMT1Simulator.hpp"
+#include "VoodooInputWellspringSimulator/VoodooInputWellspringSimulator.hpp"
 #include "Trackpoint/TrackpointDevice.hpp"
 
 #define super IOService
@@ -31,14 +31,14 @@ bool VoodooInput::start(IOService *provider) {
 
     // Allocate the simulator and actuator devices
 //    simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
-//    actuator = OSTypeAlloc(VoodooInputActuatorDevice);
-    simulator = OSTypeAlloc(VoodooInputMT1Simulator);
+    actuator = OSTypeAlloc(VoodooInputActuatorDevice);
+    simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
     trackpoint = OSTypeAlloc(TrackpointDevice);
     
-    if (!simulator /*|| !actuator*/ || !trackpoint) {
+    if (!simulator || !actuator || !trackpoint) {
         IOLog("VoodooInput could not alloc simulator, actuator or trackpoint!\n");
         OSSafeReleaseNULL(simulator);
-//        OSSafeReleaseNULL(actuator);
+        OSSafeReleaseNULL(actuator);
         OSSafeReleaseNULL(trackpoint);
         return false;
     }
@@ -55,15 +55,15 @@ bool VoodooInput::start(IOService *provider) {
     }
     
     // Initialize actuator device
-//    if (!actuator->init(NULL) || !actuator->attach(this)) {
-//        IOLog("VoodooInput could not init or attach actuator!\n");
-//        goto exit;
-//    }
-//    else if (!actuator->start(this)) {
-//        IOLog("VoodooInput could not start actuator!\n");
-//        actuator->detach(this);
-//        goto exit;
-//    }
+    if (!actuator->init(NULL) || !actuator->attach(this)) {
+        IOLog("VoodooInput could not init or attach actuator!\n");
+        goto exit;
+    }
+    else if (!actuator->start(this)) {
+        IOLog("VoodooInput could not start actuator!\n");
+        actuator->detach(this);
+        goto exit;
+    }
     
     // Initialize trackpoint device
     if (!trackpoint->init(NULL) || !trackpoint->attach(this)) {
