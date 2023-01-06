@@ -6,13 +6,31 @@
 //  Copyright © 2022 Kishor Prins. All rights reserved.
 //
 
-#include "VoodooInputMT1Simulator.hpp"
+#include "VoodooInputWellspringSimulator.hpp"
 #include <libkern/version.h>
 
 #define super IOHIDDevice
-OSDefineMetaClassAndStructors(VoodooInputMT1Simulator, IOHIDDevice);
+OSDefineMetaClassAndStructors(VoodooInputWellspringSimulator, IOHIDDevice);
 
-bool VoodooInputMT1Simulator::setProperty(const char *aKey, OSObject *anObject) {
+// Reports come from a MacbookPro9,2
+#define SensorParamsLength 6
+static const UInt8 MTSensorParams[SensorParamsLength] = {0x00, 0x00, 0x03, 0x00, 0xD6, 0x01};
+
+#define SensorDescLength 8
+static const UInt8 MTSensorDesc[SensorDescLength] = {0x01, 0x01, 0x00, 0x0c, 0x01, 0x00, 0x14, 0x00};
+
+#define SensorRowsLength 5
+static const UInt8 MTSensorRows[SensorRowsLength] = {
+    0x01,       // Is little Endian
+    0x0C,       // Rows
+    0x14,       // Columns
+    0x01, 0x09  // BCD Version
+};
+
+#define FamilyID 0x62
+#define FamilyIDLength 1
+
+bool VoodooInputWellspringSimulator::setProperty(const char *aKey, OSObject *anObject) {
     IOLog("MT1Sim: Attempting to set Property! %s\n", aKey);
     OSString *str = OSString::withCString(aKey);
     bool ret = false;
@@ -23,11 +41,15 @@ bool VoodooInputMT1Simulator::setProperty(const char *aKey, OSObject *anObject) 
     return ret;
 }
 
-bool VoodooInputMT1Simulator::setProperty(const char *aKey, unsigned long long aValue, unsigned int aNumberOfBits) {
+bool VoodooInputWellspringSimulator::setProperty(const char *aKey, void *bytes, unsigned int length) {
+    return super::setProperty(aKey, bytes, length);
+}
+
+bool VoodooInputWellspringSimulator::setProperty(const char *aKey, unsigned long long aValue, unsigned int aNumberOfBits) {
     return super::setProperty(aKey, aValue, aNumberOfBits);
 }
 
-bool VoodooInputMT1Simulator::setProperty(const char *aKey, const char *aString) {
+bool VoodooInputWellspringSimulator::setProperty(const char *aKey, const char *aString) {
     IOLog("MT1Sim: Attempting to set String Property! %s\n", aKey);
     OSString *str = OSString::withCString(aKey);
     bool ret = false;
@@ -38,7 +60,7 @@ bool VoodooInputMT1Simulator::setProperty(const char *aKey, const char *aString)
     return ret;
 }
 
-bool VoodooInputMT1Simulator::setProperty(const OSSymbol *aKey, OSObject *anObject) {
+bool VoodooInputWellspringSimulator::setProperty(const OSSymbol *aKey, OSObject *anObject) {
     IOLog("MT1Sim: Attempting to set OSSymbol Object Property! %s\n", aKey->getCStringNoCopy());
     bool ret = false;
     if (!aKey->isEqualTo("IOUserClientClass")) {
@@ -47,7 +69,8 @@ bool VoodooInputMT1Simulator::setProperty(const OSSymbol *aKey, OSObject *anObje
     return ret;
 }
 
-bool VoodooInputMT1Simulator::setProperty(const OSString *aKey, OSObject *anObject) {
+bool VoodooInputWellspringSimulator::setProperty(const OSString *aKey, OSObject *anObject) {
+    // Hidd tries to set a new user client, so we block setProperty writes to the user client key.
     IOLog("MT1Sim: Attempting to set OSString Object Property! %s\n", aKey->getCStringNoCopy());
     bool ret = false;
     if (!aKey->isEqualTo("IOUserClientClass")) {
@@ -56,9 +79,7 @@ bool VoodooInputMT1Simulator::setProperty(const OSString *aKey, OSObject *anObje
     return ret;
 }
 
-bool VoodooInputMT1Simulator::init(OSDictionary *props) {
-    // Hidd tries to set a new user client, so we block setProperty writes to the user client key.
-    // This means that we need to set the user here in the props dictionary
+bool VoodooInputWellspringSimulator::init(OSDictionary *props) {
     bool success = super::init(props);
     
     if (!success) {
@@ -91,7 +112,7 @@ bool VoodooInputMT1Simulator::init(OSDictionary *props) {
     return true;
 }
 
-bool VoodooInputMT1Simulator::start(IOService *provider) {
+bool VoodooInputWellspringSimulator::start(IOService *provider) {
     if (!super::start(provider)) return false;
     
     engine = OSDynamicCast(VoodooInput, provider);
@@ -101,6 +122,8 @@ bool VoodooInputMT1Simulator::start(IOService *provider) {
     
     setProperty("Sensor Surface Width", engine->getPhysicalMaxX(), 32);
     setProperty("Sensor Surface Height", engine->getPhysicalMaxY(), 32);
+    setProperty("Sensor Region Param", const_cast<UInt8 *>(MTSensorParams), SensorParamsLength);
+    setProperty("Sensor Region Descriptor", const_cast<UInt8 *>(MTSensorDesc), SensorDescLength);
     
     workloop = getWorkLoop();
     if (workloop == nullptr) {
@@ -142,20 +165,20 @@ bool VoodooInputMT1Simulator::start(IOService *provider) {
     return true;
 }
 
-void VoodooInputMT1Simulator::notificationEventDriverPublish(IOService * newService, IONotifier * notifier) {
-    if (notifier == eventDriverPublish) {
-        IOHIDEventService *eventDriver = OSDynamicCast(IOHIDEventService, newService);
-        if (eventDriver == nullptr) return;
+void VoodooInputWellspringSimulator::notificationEventDriverPublish(IOService * newService, IONotifier * notifier) {
+//    if (notifier == eventDriverPublish) {
+//        IOHIDEventService *eventDriver = OSDynamicCast(IOHIDEventService, newService);
+//        if (eventDriver == nullptr) return;
         
-        OSNumber *loc = OSDynamicCast(OSNumber, eventDriver->getProperty("LocationID"));
-        if (loc == nullptr) return;
+//        OSNumber *loc = OSDynamicCast(OSNumber, eventDriver->getProperty("LocationID"));
+//        if (loc == nullptr) return;
         
-        if (!loc->isEqualTo(newLocationIDNumber())) return;
+//        if (!loc->isEqualTo(newLocationIDNumber())) return;
 //        eventDriver->setSystemProperties();
-    }
+//    }
 }
 
-void VoodooInputMT1Simulator::stop(IOService *provider) {
+void VoodooInputWellspringSimulator::stop(IOService *provider) {
     if (eventDriverPublish != nullptr) {
         eventDriverPublish->remove();
     }
@@ -186,7 +209,7 @@ const unsigned char report_descriptor[] = {
     0x81, 0x00, 0xC0
 };
 
-IOReturn VoodooInputMT1Simulator::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
+IOReturn VoodooInputWellspringSimulator::newReportDescriptor(IOMemoryDescriptor** descriptor) const {
     IOBufferMemoryDescriptor* report_descriptor_buffer = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, sizeof(report_descriptor));
     
     if (!report_descriptor_buffer) {
@@ -200,71 +223,53 @@ IOReturn VoodooInputMT1Simulator::newReportDescriptor(IOMemoryDescriptor** descr
     return kIOReturnSuccess;
 }
 
-OSNumber* VoodooInputMT1Simulator::newPrimaryUsageNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newPrimaryUsageNumber() const {
     return OSNumber::withNumber(kHIDUsage_GD_Mouse, 32);
 }
 
-OSNumber* VoodooInputMT1Simulator::newPrimaryUsagePageNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newPrimaryUsagePageNumber() const {
     return OSNumber::withNumber(kHIDPage_GenericDesktop, 32);
 }
 
-OSNumber* VoodooInputMT1Simulator::newProductIDNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newProductIDNumber() const {
     return OSNumber::withNumber(0x252, 32);
 }
 
-OSString* VoodooInputMT1Simulator::newProductString() const {
+OSString* VoodooInputWellspringSimulator::newProductString() const {
     return OSString::withCString("Wellspring3 Emulator");
 }
 
-OSString* VoodooInputMT1Simulator::newSerialNumberString() const {
+OSString* VoodooInputWellspringSimulator::newSerialNumberString() const {
     return OSString::withCString("None");
 }
 
-OSString* VoodooInputMT1Simulator::newTransportString() const {
+OSString* VoodooInputWellspringSimulator::newTransportString() const {
     return OSString::withCString("USB");
 }
 
-OSNumber* VoodooInputMT1Simulator::newVendorIDNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newVendorIDNumber() const {
     return OSNumber::withNumber(0x5ac, 16);
 }
 
-OSNumber* VoodooInputMT1Simulator::newLocationIDNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newLocationIDNumber() const {
     return OSNumber::withNumber(0x1d183000, 32);
 }
 
-OSNumber* VoodooInputMT1Simulator::newVersionNumber() const {
+OSNumber* VoodooInputWellspringSimulator::newVersionNumber() const {
     return OSNumber::withNumber(0x219, 32);
 }
 
-bool VoodooInputMT1Simulator::registerUserClient(IOService *client) {
+bool VoodooInputWellspringSimulator::registerUserClient(IOService *client) {
     IOLog("MT1Sim: Adding user client\n");
     return userClients->setObject(client);
 }
 
-void VoodooInputMT1Simulator::unregisterUserClient(IOService *client) {
+void VoodooInputWellspringSimulator::unregisterUserClient(IOService *client) {
     IOLog("MT1Sim: Removing user client\n");
     userClients->removeObject(client);
 }
 
-// Reports come from a MacbookPro9,2
-#define SensorParamsLength 6
-static const UInt8 MT1SensorParams[SensorParamsLength] = {0x00, 0x00, 0x03, 0x00, 0xD6, 0x01};
-
-#define SensorDescLength 8
-static const UInt8 MT1SensorDesc[SensorDescLength] = {0x01, 0x01, 0x00, 0x0c, 0x01, 0x00, 0x14, 0x00};
-
-#define SensorRowsLength 5
-static const UInt8 MT1SensorRows[SensorRowsLength] = {
-    0x01,       // Is little Endian
-    0x0C,       // Rows
-    0x14,       // Columns
-    0x01, 0x09  // BCD Version
-};
-
-#define FamilyID 0x62
-#define FamilyIDLength 1
-
-IOReturn VoodooInputMT1Simulator::getReport(MT1DeviceReportStruct *toFill) {
+IOReturn VoodooInputWellspringSimulator::getReport(MTDeviceReportStruct *toFill) {
     UInt32 width, height;
     
     switch (toFill->reportId) {
@@ -273,11 +278,11 @@ IOReturn VoodooInputMT1Simulator::getReport(MT1DeviceReportStruct *toFill) {
             toFill->dataSize = 1;
             break;
         case MT1ReportSensorParam:
-            memcpy(toFill->data, MT1SensorParams, SensorParamsLength);
+            memcpy(toFill->data, MTSensorParams, SensorParamsLength);
             toFill->dataSize = SensorParamsLength;
             break;
         case MT1ReportSensorDescriptor:
-            memcpy(toFill->data, MT1SensorDesc, SensorDescLength);
+            memcpy(toFill->data, MTSensorDesc, SensorDescLength);
             toFill->dataSize = SensorDescLength;
             break;
         case MT1ReportSensorSize:
@@ -297,7 +302,7 @@ IOReturn VoodooInputMT1Simulator::getReport(MT1DeviceReportStruct *toFill) {
             toFill->dataSize = sizeof(UInt32) * 2;
             break;
         case MT1ReportSensorRows:
-            memcpy(toFill->data, MT1SensorRows, SensorRowsLength);
+            memcpy(toFill->data, MTSensorRows, SensorRowsLength);
             toFill->dataSize = SensorRowsLength;
             break;
         case MT1ReportFamilyId:
@@ -311,7 +316,7 @@ IOReturn VoodooInputMT1Simulator::getReport(MT1DeviceReportStruct *toFill) {
     return kIOReturnSuccess;
 }
 
-void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
+void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     AbsoluteTime timestamp = event.timestamp;
     size_t inputSize = sizeof(WELLSPRING3_REPORT) + (sizeof(WELLSPRING3_FINGER) * event.contact_count);
     
@@ -386,6 +391,8 @@ void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
                 scaled_y = MT1_MAX_Y - scaled_y;
             }
         }
+        
+        scaled_y = MT1_MAX_Y - scaled_y;
 
         fingerData.State = touchActive[touch_id] ? kTouchStateActive : kTouchStateStart;
         touchActive[touch_id] = transducer.isTransducerActive || transducer.isPhysicalButtonDown;
@@ -457,7 +464,7 @@ void VoodooInputMT1Simulator::constructReport(VoodooInputEvent& event) {
     bzero(inputReport, inputSize);
 }
 
-void VoodooInputMT1Simulator::enqueueData(WELLSPRING3_REPORT *report, size_t dataLen) {
+void VoodooInputWellspringSimulator::enqueueData(WELLSPRING3_REPORT *report, size_t dataLen) {
 #if DEBUG
     IOLog("Sending report with button %d, finger count %hhu, at %dms\n", report->Button, report->NumFingers, report->Timestamp);
     for (size_t i = 0; i < report->NumFingers; i++) {
@@ -467,7 +474,7 @@ void VoodooInputMT1Simulator::enqueueData(WELLSPRING3_REPORT *report, size_t dat
 #endif
     
     OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-    while (VoodooInputMT1UserClient *client = OSDynamicCast(VoodooInputMT1UserClient, iter->getNextObject())) {
+    while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
         client->enqueueData(report, dataLen);
     }
     OSSafeReleaseNULL(iter);

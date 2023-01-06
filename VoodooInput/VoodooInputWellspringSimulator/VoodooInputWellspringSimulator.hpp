@@ -10,13 +10,12 @@
 #define AppleUSBMultitouchDriver_hpp
 
 #include <IOKit/hid/IOHIDDevice.h>
-#include <IOKit/hid/IOHIDEventService.h>
 #include <IOKit/IOLib.h>
 #include <IOKit/IOKitKeys.h>
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
 
-#include "./VoodooInputMT1UserClient.hpp"
+#include "./VoodooInputWellspringUserClient.hpp"
 #include "../VoodooInput.hpp"
 #include "../VoodooInputMultitouch/VoodooInputTransducer.h"
 #include "../VoodooInputMultitouch/VoodooInputEvent.h"
@@ -130,7 +129,7 @@ struct __attribute__((__packed__)) WELLSPRING3_REPORT {
 
 static_assert(sizeof(WELLSPRING3_REPORT) == 28, "Unexpected WELLSPRING3_REPORT size");
 
-struct MT1DeviceReportStruct {
+struct MTDeviceReportStruct {
     uint8_t reportId;
     uint8_t data[512];
     uint32_t dataSize;
@@ -143,8 +142,8 @@ struct MT1DeviceReportStruct {
 #define MT1ReportSensorRows         0xD3
 #define MT1ReportSensorSize         0xD9
 
-class EXPORT VoodooInputMT1Simulator : public IOHIDDevice {
-    OSDeclareDefaultStructors(VoodooInputMT1Simulator);
+class EXPORT VoodooInputWellspringSimulator : public IOHIDDevice {
+    OSDeclareDefaultStructors(VoodooInputWellspringSimulator);
 public:
     virtual bool init(OSDictionary *) override;
     virtual bool start(IOService *provider) override;
@@ -155,6 +154,7 @@ public:
     virtual bool setProperty(const char *aKey, const char *aString) override;
     virtual bool setProperty(const OSSymbol *aKey, OSObject *anObject) override;
     virtual bool setProperty(const OSString *aKey, OSObject *anObject) override;
+    virtual bool setProperty(const char *aKey, void *bytes, unsigned int length) override;
     
     virtual IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
     virtual OSNumber* newPrimaryUsageNumber() const override;
@@ -170,7 +170,7 @@ public:
     bool registerUserClient(IOService *client);
     void unregisterUserClient(IOService *client);
     
-    IOReturn getReport(MT1DeviceReportStruct *toFill);
+    IOReturn getReport(MTDeviceReportStruct *toFill);
     void constructReport(VoodooInputEvent& event);
     void notificationEventDriverPublish(IOService * newService, IONotifier * notifier);
 private:

@@ -12,7 +12,7 @@
 
 class VoodooInputSimulatorDevice;
 class VoodooInputActuatorDevice;
-class VoodooInputMT1Simulator;
+class VoodooInputWellspringSimulator;
 class TrackpointDevice;
 
 #ifndef EXPORT
@@ -37,8 +37,8 @@ class EXPORT VoodooInput : public IOService {
     IOService* parentProvider;
     
 //    VoodooInputSimulatorDevice* simulator;
-//    VoodooInputActuatorDevice* actuator;
-    VoodooInputMT1Simulator* simulator;
+    VoodooInputActuatorDevice* actuator;
+    VoodooInputWellspringSimulator* simulator;
     TrackpointDevice* trackpoint;
     
     UInt8 transformKey;

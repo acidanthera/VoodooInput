@@ -6,31 +6,32 @@
 //  Copyright © 2022 Kishor Prins. All rights reserved.
 //
 
-#include "VoodooInputMT1UserClient.hpp"
+#include "VoodooInputWellspringUserClient.hpp"
+#include "VoodooInputWellspringSimulator.hpp"
 
 #define super IOUserClient
-OSDefineMetaClassAndStructors(VoodooInputMT1UserClient, IOUserClient);
+OSDefineMetaClassAndStructors(VoodooInputWellspringUserClient, IOUserClient);
 
 #if defined(__x86_64__)
-// { Object, Func pointer, Padding, Flags, Inputs, Outputs }
+// { Object, Func pointer, Flags, Inputs, Outputs }
 static const IOExternalMethod sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
     // VoodooInputMT1UserClientMethodsSetSendsFrames
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sSetSendFrames), kIOUCScalarIScalarO, 1, 0},
+    {0, reinterpret_cast<IOMethod>(&VoodooInputWellspringUserClient::sSetSendFrames), kIOUCScalarIScalarO, 1, 0},
     // VoodooInputMT1UserClientMethodsGetReport
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sGetReport), kIOUCStructIStructO, 0x208, 0x208},
+    {0, reinterpret_cast<IOMethod>(&VoodooInputWellspringUserClient::sGetReport), kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)},
     // VoodooInputMT1UserClientMethodsSetReport
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCStructIStructO, 0x208, 0x208},
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCStructIStructO, 0x208, 0x208},
     // VoodooInputMT1UserClientMethodsSetSendLogs
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 1, 0},
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 1, 0},
     // VoodooInputMT1UserClientMethodsIssueDriverRequest
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCStructIStructO, 0x204, 0x204},
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Relative Mouse Movement
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Scroll Wheel
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 2, 0},    // Keyboard
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 1, 0},    // Map Clicks
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCStructIStructO, 0x204, 0x204},
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Relative Mouse Movement
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Scroll Wheel
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 2, 0},    // Keyboard
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 1, 0},    // Map Clicks
     // VoodooInputMT1UserClientMethodsRecacheProperties
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 0, 0},
-    {0, static_cast<IOMethod>(&VoodooInputMT1UserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Momentum Scroll
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 0, 0},
+    {0, static_cast<IOMethod>(&VoodooInputWellspringUserClient::sNoop), kIOUCScalarIScalarO, 3, 0},    // Momentum Scroll
 };
 
 #else // __defined(__x86_64__)
@@ -38,10 +39,10 @@ static const IOExternalMethod sMethods[VoodooInputMT1UserClientMethodsNumMethods
 #error "Invalid architecture"
 #endif // __defined(__x86_64__)
 
-bool VoodooInputMT1UserClient::start(IOService *provider) {
+bool VoodooInputWellspringUserClient::start(IOService *provider) {
     IOLog("%s Start\n", getName());
     if (!super::start(provider)) return false;
-    simulator = OSDynamicCast(VoodooInputMT1Simulator, provider);
+    simulator = OSDynamicCast(VoodooInputWellspringSimulator, provider);
     
     if (simulator == nullptr) {
         IOLog("%s Invalid provider!\n", getName());
@@ -65,19 +66,19 @@ bool VoodooInputMT1UserClient::start(IOService *provider) {
     return true;
 }
 
-void VoodooInputMT1UserClient::stop(IOService *provider) {
+void VoodooInputWellspringUserClient::stop(IOService *provider) {
     OSSafeReleaseNULL(dataQueue);
     OSSafeReleaseNULL(logQueue);
 }
 
-IOReturn VoodooInputMT1UserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
+IOReturn VoodooInputWellspringUserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
     IOLog("%s client notif port\n", getName());
     dataQueue->setNotificationPort(port);
     logQueue->setNotificationPort(port);
     return kIOReturnSuccess;
 }
 
-IOReturn VoodooInputMT1UserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
+IOReturn VoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
     IOLog("%s clientMem\n", getName());
     if (type != 0x10) {
         dataQueueDesc->retain();
@@ -91,7 +92,7 @@ IOReturn VoodooInputMT1UserClient::clientMemoryForType(UInt32 type, IOOptionBits
     return kIOReturnSuccess;
 }
 
-IOExternalMethod *VoodooInputMT1UserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
+IOExternalMethod *VoodooInputWellspringUserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
     IOLog("%s External Method %d\n", getName(), index);
     if (index >= VoodooInputMT1UserClientMethodsNumMethods) {
         return nullptr;
@@ -101,11 +102,11 @@ IOExternalMethod *VoodooInputMT1UserClient::getTargetAndMethodForIndex(IOService
     return const_cast<IOExternalMethod *>(&sMethods[index]);
 }
 
-IOReturn VoodooInputMT1UserClient::sSetSendFrames(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+IOReturn VoodooInputWellspringUserClient::sSetSendFrames(bool enableReports) {
     bool success = true;
-    IOLog("%s Get Report: %d\n", getName(), static_cast<bool>(p1));
+    IOLog("%s Set Send Frames: %d\n", getName(), enableReports);
     
-    if (static_cast<bool>(p1)) {
+    if (enableReports) {
         success = simulator->registerUserClient(this);
     } else {
         simulator->unregisterUserClient(this);
@@ -115,9 +116,7 @@ IOReturn VoodooInputMT1UserClient::sSetSendFrames(void *p1, void *p2, void *p3, 
 }
 
 // I'm not really sure why they use two different structs here???
-IOReturn VoodooInputMT1UserClient::sGetReport(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
-    MT1DeviceReportStruct *input = static_cast<MT1DeviceReportStruct *>(p1);
-    MT1DeviceReportStruct *output = static_cast<MT1DeviceReportStruct *>(p2);
+IOReturn VoodooInputWellspringUserClient::sGetReport(MTDeviceReportStruct *input, MTDeviceReportStruct *output) {
     if (input == nullptr || output == nullptr) {
         return kIOReturnBadArgument;
     }
@@ -133,12 +132,12 @@ IOReturn VoodooInputMT1UserClient::sGetReport(void *p1, void *p2, void *p3, void
     return ret;
 }
 
-void VoodooInputMT1UserClient::enqueueData(void *data, size_t size) {
+void VoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
     if (dataQueue == nullptr) return;
     IOLog("%s Enqueue Data\n", getName());
     dataQueue->enqueue(data, (UInt32) size);
 }
 
-IOReturn VoodooInputMT1UserClient::sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+IOReturn VoodooInputWellspringUserClient::sNoop(void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     return kIOReturnSuccess; // noop
 }

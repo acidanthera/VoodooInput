@@ -27,7 +27,7 @@
 			<key>MT1Props</key>
 			<dict>
 				<key>IOUserClientClass</key>
-				<string>VoodooInputMT1UserClient</string>
+				<string>VoodooInputWellspringUserClient</string>
 				<key>parser-type</key>
 				<integer>1000</integer>
 				<key>parser-options</key>
