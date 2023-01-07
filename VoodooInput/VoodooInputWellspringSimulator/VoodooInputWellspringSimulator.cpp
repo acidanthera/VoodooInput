@@ -243,7 +243,7 @@ OSNumber* VoodooInputWellspringSimulator::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputWellspringSimulator::newProductIDNumber() const {
-    return OSNumber::withNumber(0x252, 32);
+    return OSNumber::withNumber(0x237, 32);
 }
 
 OSString* VoodooInputWellspringSimulator::newProductString() const {
@@ -267,7 +267,7 @@ OSNumber* VoodooInputWellspringSimulator::newLocationIDNumber() const {
 }
 
 OSNumber* VoodooInputWellspringSimulator::newVersionNumber() const {
-    return OSNumber::withNumber(0x219, 32);
+    return OSNumber::withNumber(0x77, 32);
 }
 
 bool VoodooInputWellspringSimulator::registerUserClient(IOService *client) {
@@ -471,7 +471,6 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
 //    inputReport->TouchActive = input_active;
     
     if (!is_error_input_active) {
-        IOLog("MT1Sim: Sending report\n");
         enqueueData(inputReport, (UInt32) inputSize);
     }
     
