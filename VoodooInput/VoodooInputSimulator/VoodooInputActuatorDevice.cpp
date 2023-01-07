@@ -6,18 +6,16 @@
 //
 
 #include "VoodooInputActuatorDevice.hpp"
+<<<<<<< HEAD
 #include "VoodooInputIDs.hpp"
 #include "VoodooInputMessages.h"
+=======
+>>>>>>> 28aae45 (Clean up)
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputActuatorDevice, IOHIDDevice);
 
-//const unsigned char actuator_report_descriptor[] = {0x06, 0x00, 0xff, 0x09, 0x0d, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0d, 0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x85, 0x3f, 0x96, 0x0f, 0x00, 0x81, 0x02, 0x09, 0x0d, 0x85, 0x53, 0x96, 0x3f, 0x00, 0x91, 0x02, 0xc0};
-const unsigned char actuator_report_descriptor[] = {
-    0x05, 0x01, 0x09, 0x02, 0xA1, 0x01, 0x09, 0x01, 0xA1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x85, 0x02, 0x95, 0x03,
-    0x75, 0x01, 0x81, 0x02, 0x95, 0x01, 0x75, 0x05, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x02,
-    0x81, 0x06, 0xc0, 0xc0
-};
+const unsigned char actuator_report_descriptor[] = {0x06, 0x00, 0xff, 0x09, 0x0d, 0xa1, 0x01, 0x06, 0x00, 0xff, 0x09, 0x0d, 0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x85, 0x3f, 0x96, 0x0f, 0x00, 0x81, 0x02, 0x09, 0x0d, 0x85, 0x53, 0x96, 0x3f, 0x00, 0x91, 0x02, 0xc0};
 
 IOReturn VoodooInputActuatorDevice::setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options) {
     return kIOReturnSuccess;
@@ -42,11 +40,11 @@ OSString* VoodooInputActuatorDevice::newManufacturerString() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newPrimaryUsageNumber() const {
-    return OSNumber::withNumber(0x2, 32);
+    return OSNumber::withNumber(0xd, 32);
 }
 
 OSNumber* VoodooInputActuatorDevice::newPrimaryUsagePageNumber() const {
-    return OSNumber::withNumber(0x1, 32);
+    return OSNumber::withNumber(0xff00, 32);
 }
 
 OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
@@ -54,15 +52,15 @@ OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
 }
 
 OSString* VoodooInputActuatorDevice::newProductString() const {
-    return OSString::withCString("Wellspring Emulation Top Case Buttons");
+    return OSString::withCString("Magic Trackpad 2");
 }
 
 OSString* VoodooInputActuatorDevice::newSerialNumberString() const {
-    return OSString::withCString("None");
+    return OSString::withCString("VoodooI2C Magic Trackpad 2 Actuator");
 }
 
 OSString* VoodooInputActuatorDevice::newTransportString() const {
-    return OSString::withCString("USB");
+    return OSString::withCString("I2C");
 }
 
 OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
@@ -70,31 +68,9 @@ OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newLocationIDNumber() const {
-    return OSNumber::withNumber(0x1d183000, 32);
+    return OSNumber::withNumber(0x14400000, 32);
 }
 
 OSNumber* VoodooInputActuatorDevice::newVersionNumber() const {
-    return OSNumber::withNumber(0x219, 32);
-}
-
-IOReturn VoodooInputActuatorDevice::message(UInt32 type, IOService *provider, void *arg) {
-    UInt8 btns = (UInt8)(size_t)arg;
-    IOLog("%s Message with type %d with %zu\n", getName(), type, (size_t) arg);
-    if (type == kIOMessageVoodooInputUpdateBtn) {
-        if (btns == buttonState) return kIOReturnSuccess;
-        IOBufferMemoryDescriptor *report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, 4);
-        UInt8 *bytes = reinterpret_cast<UInt8 *>(report->getBytesNoCopy());
-        bytes[0] = 0x02; // Report ID
-        bytes[1] = btns;
-        bytes[2] = 0x00; // dx
-        bytes[3] = 0x00; // dy
-        
-        buttonState = btns;
-        
-        handleReport(report);
-        OSSafeReleaseNULL(report);
-        return kIOReturnSuccess;
-    }
-    
-    return super::message(type, provider, arg);
+    return OSNumber::withNumber(0x804, 32);
 }
