@@ -292,8 +292,8 @@
 				"CC[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -362,8 +362,8 @@
 				"CC[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -435,7 +435,48 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ACID32]" = 10.5;
 				MODULE_NAME = me.kishorprins.VoodooInput;
 				MODULE_VERSION = 1.1.6;
-				OTHER_CFLAGS = "-Wno-stdlibcxx-not-found";
+				OTHER_CFLAGS = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-msse3",
+					"-mfpmath=sse",
+					"-mssse3",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+				);
+				"OTHER_CFLAGS[arch=ACID32]" = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-mfpmath=sse",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+					"-static",
+					"-fallow-unsupported",
+					"-fno-jump-tables",
+					"-fno-stack-protector",
+					"-target",
+					"i386-apple-macos10.5",
+				);
+				OTHER_LDFLAGS = "-static";
+				"OTHER_LDFLAGS[arch=ACID32]" = (
+					"-static",
+					"-target",
+					"i386-apple-macos10.5",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -460,6 +501,48 @@
 				MODULE_NAME = me.kishorprins.VoodooInput;
 				MODULE_VERSION = 1.1.6;
 				OTHER_CFLAGS = "-Wno-stdlibcxx-not-found";
+				OTHER_CFLAGS = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-msse3",
+					"-mfpmath=sse",
+					"-mssse3",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+				);
+				"OTHER_CFLAGS[arch=ACID32]" = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-mfpmath=sse",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+					"-static",
+					"-fallow-unsupported",
+					"-fno-jump-tables",
+					"-fno-stack-protector",
+					"-target",
+					"i386-apple-macos10.5",
+				);
+				OTHER_LDFLAGS = "-static";
+				"OTHER_LDFLAGS[arch=ACID32]" = (
+					"-static",
+					"-target",
+					"i386-apple-macos10.5",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "x86_64 ACID32";
