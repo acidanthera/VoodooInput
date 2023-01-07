@@ -15,7 +15,7 @@ OSDefineMetaClassAndStructors(VoodooInputWellspringUserClient, IOUserClient);
 #if defined(__x86_64__)
 #define MTExternalMethod(method, flags, inputs, outputs) {0, method, kIOExternalMethodACIDPadding, flags, inputs, outputs}
 #elif defined(__i386__)
-#define MTExternalMethod(method, flags, inputs, outputs) {0, kIOExternalMETHODACIDPadding, method, flags, inputs, outputs}
+#define MTExternalMethod(method, flags, inputs, outputs) {0, kIOExternalMethodACIDPadding, method, flags, inputs, outputs}
 #else
 #error "Invalid architecture"
 #endif
