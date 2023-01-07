@@ -162,8 +162,8 @@ bool VoodooInputWellspringSimulator::start(IOService *provider) {
     
     OSDictionary *matching = serviceMatching("AppleUSBMultitouchHIDEventDriver");
     propertyMatching(OSSymbol::withCString("LocationID"), newLocationIDNumber(), matching);
-    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this);
-    eventDriverTerminate = addMatchingNotification(gIOTerminatedNotification, matching, notificationHandler, this);
+    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this, NULL, 10000);
+    eventDriverTerminate = addMatchingNotification(gIOTerminatedNotification, matching, notificationHandler, this, NULL, 10000);
     OSSafeReleaseNULL(matching);
     
     registerService();
@@ -509,7 +509,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
 
 void VoodooInputWellspringSimulator::enqueueData(WELLSPRING3_REPORT *report, size_t dataLen) {
 #if DEBUG
-    IOLog("%s Sending report with button %d, finger count %hhu, at %dms\n", getName(), report->Button, report->NumFingers, report->Timestamp);
+    IOLog("%s Sending report with button %u, finger count %hhu, at %ums\n", getName(), report->Button, report->NumFingers, report->Timestamp);
     for (size_t i = 0; i < report->NumFingers; i++) {
         WELLSPRING3_FINGER &f = report->Fingers[i];
         IOLog("%s [%zu] (%d, %d) (%d, %d)dx F%d St%d Maj%d Min%d Sz%d ID%d A%d\n", getName(), i, f.X, f.Y, f.XVelocity, f.YVelocity, f.Finger, f.State, f.ToolMajor, f.ToolMinor, f.Size, f.Id, f.Orientation);
