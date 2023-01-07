@@ -59,7 +59,6 @@ IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1Use
 #endif // __defined(__x86_64__)
 
 bool VoodooInputWellspringUserClient::start(IOService *provider) {
-    IOLog("%s Start\n", getName());
     if (!super::start(provider)) return false;
     simulator = OSDynamicCast(VoodooInputWellspringSimulator, provider);
     
@@ -98,7 +97,6 @@ IOReturn VoodooInputWellspringUserClient::registerNotificationPort(mach_port_t p
 }
 
 IOReturn VoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
-    IOLog("%s clientMem\n", getName());
     if (type != 0x10) {
         dataQueueDesc->retain();
         *memory = dataQueueDesc;
@@ -112,7 +110,7 @@ IOReturn VoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOpt
 }
 
 IOExternalMethod *VoodooInputWellspringUserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
-    IOLog("%s External Method %d\n", getName(), index);
+    IOLog("%s External Method %u\n", getName(), index);
     if (index >= VoodooInputMT1UserClientMethodsNumMethods) {
         return nullptr;
     }
@@ -140,7 +138,7 @@ IOReturn VoodooInputWellspringUserClient::sGetReport(VoodooInputWellspringUserCl
         return kIOReturnBadArgument;
     }
     
-    IOLog("%s Get Report: %d\n", that->getName(), input->reportId);
+    IOLog("%s Get Report: %u\n", that->getName(), input->reportId);
     
     IOReturn ret = that->simulator->getReport(input);
     if (ret == kIOReturnSuccess) {
@@ -157,5 +155,6 @@ void VoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
 }
 
 IOReturn VoodooInputWellspringUserClient::sNoop(VoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+    IOLog("%s Noop was called!\n", that->getName());
     return kIOReturnSuccess; // noop
 }
