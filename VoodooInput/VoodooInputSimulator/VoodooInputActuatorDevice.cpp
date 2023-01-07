@@ -7,6 +7,7 @@
 
 #include "VoodooInputActuatorDevice.hpp"
 #include "VoodooInputIDs.hpp"
+#include "VoodooInputMessages.h"
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputActuatorDevice, IOHIDDevice);
@@ -74,4 +75,26 @@ OSNumber* VoodooInputActuatorDevice::newLocationIDNumber() const {
 
 OSNumber* VoodooInputActuatorDevice::newVersionNumber() const {
     return OSNumber::withNumber(0x219, 32);
+}
+
+IOReturn VoodooInputActuatorDevice::message(UInt32 type, IOService *provider, void *arg) {
+    UInt8 btns = (UInt8)(size_t)arg;
+    IOLog("%s Message with type %d with %zu\n", getName(), type, (size_t) arg);
+    if (type == kIOMessageVoodooInputUpdateBtn) {
+        if (btns == buttonState) return kIOReturnSuccess;
+        IOBufferMemoryDescriptor *report = IOBufferMemoryDescriptor::inTaskWithOptions(kernel_task, 0, 4);
+        UInt8 *bytes = reinterpret_cast<UInt8 *>(report->getBytesNoCopy());
+        bytes[0] = 0x02; // Report ID
+        bytes[1] = btns;
+        bytes[2] = 0x00; // dx
+        bytes[3] = 0x00; // dy
+        
+        buttonState = btns;
+        
+        handleReport(report);
+        OSSafeReleaseNULL(report);
+        return kIOReturnSuccess;
+    }
+    
+    return super::message(type, provider, arg);
 }
