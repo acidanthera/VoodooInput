@@ -10,12 +10,12 @@
 #define AppleUSBMultitouchDriver_hpp
 
 #include <IOKit/hid/IOHIDDevice.h>
+#include <IOKit/hid/IOHIDEventService.h>
 #include <IOKit/IOLib.h>
 #include <IOKit/IOKitKeys.h>
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
 
-#include "./VoodooInputWellspringUserClient.hpp"
 #include "../VoodooInput.hpp"
 #include "../VoodooInputMultitouch/VoodooInputTransducer.h"
 #include "../VoodooInputMultitouch/VoodooInputEvent.h"
@@ -31,58 +31,27 @@
 #define MT2_TOUCH_STATE_BIT_NEAR (0x1 << 1)
 #define MT2_TOUCH_STATE_BIT_CONTACT (0x1 << 2)
 
-/* Finger Packet
-+---+---+---+---+---+---+---+---+---+
-|   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-+---+---+---+---+---+---+---+---+---+
-| 0 |           x: SInt13           |
-+---+-----------+                   +
-| 1 |           |                   |
-+---+           +-------------------+
-| 2 |           y: SInt13           |
-+---+-----------------------+       +
-| 3 |          ??           |       |
-|   |          ?!           |       |
-+---+-----------------------+-------+
-| 4 |       touchMajor: UInt8       |
-+---+-------------------------------+
-| 5 |       touchMinor: UInt8       |
-+---+-------+-----------------------+
-| 6 |  id   |     size: UInt6       |
-+---+-------+---------------+-------+
-| 7 |  orientation: UInt6   | id: 4 |
-+---+---+-----------+-------+-------+
-| 8 | ? |   state   |     finger    |
-|   |   |   UInt3   |     UInt4     |
-+---+---+-----------+---------------+
-*/
-//struct __attribute__((__packed__)) MT1_INPUT_REPORT_FINGER {
-//    SInt16 X: 13;
-//    SInt16 Y: 13;
-//    UInt8 Pressure: 6;
-//    UInt8 Touch_Major;
-//    UInt8 Touch_Minor;
-//    UInt8 Size: 6;
-//    UInt8 Identifier: 4;
-//    UInt8 Orientation: 6;
-//    UInt8 Finger: 4;
-//    UInt8 State: 3;
-//    UInt8 : 1;
-//};
-//
-//struct __attribute__((__packed__)) MT1_INPUT_REPORT {
-//    UInt8 ReportID;
-//    UInt8 Button: 1;
-//    UInt8 TouchActive: 1;
-//    UInt32 Timestamp: 22;
-//    
-//    MT1_INPUT_REPORT_FINGER FINGERS[]; // May support more fingers
-//    
-//    // UInt16 Checksum;
-//};
-//
-//static_assert(sizeof(MT1_INPUT_REPORT) == 4, "Unexpected MT1_INPUT_REPORT size");
-//static_assert(sizeof(MT1_INPUT_REPORT_FINGER) == 9, "Unexpected MT1_INPUT_REPORT_FINGER size");
+class VoodooInputWellspringSimulator;
+class VoodooInputWellspringUserClient;
+class VoodooInputActuatorDevice;
+
+class AppleUSBMultitouchHIDEventDriver : public IOHIDEventService {
+    OSDeclareDefaultStructorsWithDispatch(AppleUSBMultitouchHIDEventDriver);
+    friend class VoodooInputWellspringSimulator;
+public:
+    virtual IOReturn setSystemProperties(OSDictionary *) override;
+};
+
+// This report does not come from the hardware, but instead comes from within AppleUSBMultitouch in 10.12+
+// This gets sent to userspace on any button presses
+struct __attribute__((__packed__)) MTRelativePointerReport {
+    UInt8 ReportID;
+    UInt8 Unknown1; // Always set to one
+    UInt16 Unknown2;
+    UInt32 Buttons;
+    UInt32 Unknown3[4]; // A dx/dy probably exists in here
+    AbsoluteTime Timestamp;
+};
 
 struct __attribute__((__packed__)) WELLSPRING3_FINGER {
     UInt8 Id;
@@ -172,20 +141,27 @@ public:
     
     IOReturn getReport(MTDeviceReportStruct *toFill);
     void constructReport(VoodooInputEvent& event);
-    void notificationEventDriverPublish(IOService * newService, IONotifier * notifier);
+    void notificationEventDriver(IOService * newService, IONotifier * notifier);
 private:
-    OSSet *userClients {nullptr};
     bool touchActive[15] {false};
+    
     IOWorkLoop *workloop {nullptr};
     IOCommandGate *cmdGate {nullptr};
+    
+    OSSet *userClients {nullptr};
     VoodooInput *engine {nullptr};
+    AppleUSBMultitouchHIDEventDriver *eventDriver {nullptr};
+    
     AbsoluteTime startTimestamp {};
-    WELLSPRING3_REPORT *inputReport{nullptr};
-    UInt8 counter {0};
+    WELLSPRING3_REPORT *inputReport {nullptr};
     
     IONotifier *eventDriverPublish {nullptr};
+    IONotifier *eventDriverTerminate {nullptr};
+    
+    UInt8 lastButtonState {0};
     
     void enqueueData(WELLSPRING3_REPORT *report, size_t dataLen);
+    void constructButtonReport(UInt8 btnState);
 };
 
 #endif /* AppleUSBMultitouchDriver_hpp */

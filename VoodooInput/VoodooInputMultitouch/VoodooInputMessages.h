@@ -24,6 +24,7 @@
 #define kIOMessageVoodooTrackpointScrollWheel iokit_vendor_specific_msg(431)
 #define kIOMessageVoodooTrackpointMessage iokit_vendor_specific_msg(432)
 #define kIOMessageVoodooTrackpointUpdatePropertiesNotification iokit_vendor_specific_msg(433)
+#define kIOMessageVoodooInputUpdateBtn 12348
 
 #define kVoodooInputTransducerFingerType 1
 #define kVoodooInputTransducerStylusType 2

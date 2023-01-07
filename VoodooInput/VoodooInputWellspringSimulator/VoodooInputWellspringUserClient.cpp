@@ -134,7 +134,6 @@ IOReturn VoodooInputWellspringUserClient::sGetReport(MTDeviceReportStruct *input
 
 void VoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
     if (dataQueue == nullptr) return;
-    IOLog("%s Enqueue Data\n", getName());
     dataQueue->enqueue(data, (UInt32) size);
 }
 

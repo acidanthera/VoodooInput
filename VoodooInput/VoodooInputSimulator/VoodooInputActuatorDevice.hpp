@@ -45,6 +45,10 @@ public:
     OSString* newSerialNumberString() const override;
     
     OSNumber* newLocationIDNumber() const override;
+    
+    virtual IOReturn message(UInt32 type, IOService *provider, void *arg) override;
+private:
+    UInt8 buttonState {0};
 };
 
 

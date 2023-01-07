@@ -7,7 +7,10 @@
 //
 
 #include "VoodooInputWellspringSimulator.hpp"
+#include "VoodooInputWellspringUserClient.hpp"
+#include "VoodooInputActuatorDevice.hpp"
 #include <libkern/version.h>
+#include "VoodooInputMessages.h"
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputWellspringSimulator, IOHIDDevice);
@@ -155,27 +158,29 @@ bool VoodooInputWellspringSimulator::start(IOService *provider) {
     
     clock_get_uptime(&startTimestamp);
     
-//    IOServiceMatchingNotificationHandler notificationHandler = OSMemberFunctionCast(IOServiceMatchingNotificationHandler, this, &VoodooInputMT1Simulator::notificationEventDriverPublish);
-//    OSDictionary *matching = serviceMatching("AppleUSBMultitouchEventDriver");
-//    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this);
-//    OSSafeReleaseNULL(matching);
+    IOServiceMatchingNotificationHandler notificationHandler = OSMemberFunctionCast(IOServiceMatchingNotificationHandler, this, &VoodooInputWellspringSimulator::notificationEventDriver);
+    
+    OSDictionary *matching = serviceMatching("AppleUSBMultitouchHIDEventDriver");
+    propertyMatching(OSSymbol::withCString("LocationID"), newLocationIDNumber(), matching);
+    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this);
+    eventDriverTerminate = addMatchingNotification(gIOTerminatedNotification, matching, notificationHandler, this);
+    OSSafeReleaseNULL(matching);
     
     registerService();
     
     return true;
 }
 
-void VoodooInputWellspringSimulator::notificationEventDriverPublish(IOService * newService, IONotifier * notifier) {
-//    if (notifier == eventDriverPublish) {
-//        IOHIDEventService *eventDriver = OSDynamicCast(IOHIDEventService, newService);
-//        if (eventDriver == nullptr) return;
-        
-//        OSNumber *loc = OSDynamicCast(OSNumber, eventDriver->getProperty("LocationID"));
-//        if (loc == nullptr) return;
-        
-//        if (!loc->isEqualTo(newLocationIDNumber())) return;
-//        eventDriver->setSystemProperties();
-//    }
+void VoodooInputWellspringSimulator::notificationEventDriver(IOService * newService, IONotifier * notifier) {
+    IOLog("%s Event Driver Published/Terminated\n", getName());
+    if (notifier == eventDriverPublish && eventDriver == nullptr) {
+        eventDriver = OSDynamicCast(AppleUSBMultitouchHIDEventDriver, newService);
+        if (eventDriver != nullptr) eventDriver->retain();
+        else IOLog("%s is null!?!?!?!\n", getName());
+    } else if (notifier == eventDriverTerminate && eventDriver != nullptr) {
+        eventDriver->release();
+        eventDriver = nullptr;
+    }
 }
 
 void VoodooInputWellspringSimulator::stop(IOService *provider) {
@@ -183,12 +188,14 @@ void VoodooInputWellspringSimulator::stop(IOService *provider) {
         eventDriverPublish->remove();
     }
     
+    if (eventDriverTerminate != nullptr) {
+        eventDriverTerminate->remove();
+    }
+    
     if (workloop) {
         workloop->removeEventSource(cmdGate);
     }
     
-    OSSafeReleaseNULL(workloop);
-    OSSafeReleaseNULL(cmdGate);
     if (userClients != nullptr) {
         userClients->flushCollection();
         OSSafeReleaseNULL(userClients);
@@ -199,6 +206,10 @@ void VoodooInputWellspringSimulator::stop(IOService *provider) {
         IOFree(inputReport, inputSize);
     }
     
+    OSSafeReleaseNULL(eventDriverPublish);
+    OSSafeReleaseNULL(eventDriverTerminate);
+    OSSafeReleaseNULL(workloop);
+    OSSafeReleaseNULL(cmdGate);
     super::stop(provider);
 }
 
@@ -316,15 +327,45 @@ IOReturn VoodooInputWellspringSimulator::getReport(MTDeviceReportStruct *toFill)
     return kIOReturnSuccess;
 }
 
+void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
+    MTRelativePointerReport report;
+    AbsoluteTime timestamp;
+    
+    clock_get_uptime(&timestamp);
+    
+    if (btnState == lastButtonState) return;
+    lastButtonState = btnState;
+    
+    // macOS Sierra changed how button handling works
+    // There is now a hid report to send into the abyss of the MT stack
+    if (version_major >= 17) {
+        bzero(&report, sizeof(MTRelativePointerReport));
+        
+        report.Buttons = btnState;
+        report.ReportID = 0x82;
+        report.Unknown1 = 1;
+        report.Timestamp = timestamp;
+        OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
+        while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
+            client->enqueueData(&report, sizeof(MTRelativePointerReport));
+        }
+        OSSafeReleaseNULL(iter);
+    } else if (eventDriver != nullptr) {
+        // TODO: There is some weird logic to do with the "mapClick" property.
+        // I'm not even sure this is ever set though, so this is a don't care for now!
+        
+        eventDriver->dispatchRelativePointerEvent(timestamp, 0, 0, btnState, 0);
+    }
+}
+
 void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     AbsoluteTime timestamp = event.timestamp;
     size_t inputSize = sizeof(WELLSPRING3_REPORT) + (sizeof(WELLSPRING3_FINGER) * event.contact_count);
     
-    IOLog("MT1Sim: Constructing report\n");
     if (inputReport == nullptr) return;
     
     inputReport->ReportID = 0x74;
-    inputReport->Counter = counter++;
+    inputReport->Counter++;
     inputReport->unkown1 = 0x03;
     inputReport->HeaderSize = sizeof(WELLSPRING3_REPORT);
     inputReport->unk2[0] =  0x00; // Magic
@@ -335,6 +376,8 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     inputReport->NumFingers = event.contact_count;
     inputReport->Button = event.transducers[0].isPhysicalButtonDown || event.transducers[0].currentCoordinates.pressure > 100;
     inputReport->unknown1 = 0x00000010;
+    
+    constructButtonReport(inputReport->Button);
 
     // rotation check
     UInt8 transform = engine->getTransformKey();
@@ -434,6 +477,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     
     if (!input_active) {
         memset(touchActive, false, sizeof(touchActive));
+        constructButtonReport(0);
         
         // Stop finger
         inputReport->Counter++;
@@ -461,15 +505,15 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
         enqueueData(inputReport, sizeof(WELLSPRING3_REPORT));
     }
     
-    bzero(inputReport, inputSize);
+    bzero(inputReport->Fingers, inputReport->TotalFingerDataSize);
 }
 
 void VoodooInputWellspringSimulator::enqueueData(WELLSPRING3_REPORT *report, size_t dataLen) {
 #if DEBUG
-    IOLog("Sending report with button %d, finger count %hhu, at %dms\n", report->Button, report->NumFingers, report->Timestamp);
+    IOLog("%s Sending report with button %d, finger count %hhu, at %dms\n", getName(), report->Button, report->NumFingers, report->Timestamp);
     for (size_t i = 0; i < report->NumFingers; i++) {
         WELLSPRING3_FINGER &f = report->Fingers[i];
-        IOLog("[%zu] (%d, %d) (%d, %d)dx F%d St%d Maj%d Min%d Sz%d ID%d A%d\n", i, f.X, f.Y, f.XVelocity, f.YVelocity, f.Finger, f.State, f.ToolMajor, f.ToolMinor, f.Size, f.Id, f.Orientation);
+        IOLog("%s [%zu] (%d, %d) (%d, %d)dx F%d St%d Maj%d Min%d Sz%d ID%d A%d\n", getName(), i, f.X, f.Y, f.XVelocity, f.YVelocity, f.Finger, f.State, f.ToolMajor, f.ToolMinor, f.Size, f.Id, f.Orientation);
     }
 #endif
     
