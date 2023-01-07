@@ -158,29 +158,51 @@ bool VoodooInputWellspringSimulator::start(IOService *provider) {
     
     clock_get_uptime(&startTimestamp);
     
-    IOServiceMatchingNotificationHandler notificationHandler = OSMemberFunctionCast(IOServiceMatchingNotificationHandler, this, &VoodooInputWellspringSimulator::notificationEventDriver);
-    
     OSDictionary *matching = serviceMatching("AppleUSBMultitouchHIDEventDriver");
     propertyMatching(OSSymbol::withCString("LocationID"), newLocationIDNumber(), matching);
-    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this, NULL, 10000);
-    eventDriverTerminate = addMatchingNotification(gIOTerminatedNotification, matching, notificationHandler, this, NULL, 10000);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_6
+    IOServiceMatchingNotificationHandler notificationHandler = OSMemberFunctionCast(IOServiceMatchingNotificationHandler, this, &VoodooInputWellspringSimulator::notificationEventDriver);
+    
+    eventDriverPublish = addMatchingNotification(gIOFirstPublishNotification, matching, notificationHandler, this);
+    eventDriverTerminate = addMatchingNotification(gIOTerminatedNotification, matching, notificationHandler, this);
     OSSafeReleaseNULL(matching);
+#else
+    IOServiceNotificationHandler publishHandler = OSMemberFunctionCast(IOServiceNotificationHandler, this,
+                                                                       &VoodooInputWellspringSimulator::notificationEventDriverPublished);
+    IOServiceNotificationHandler terminateHandler = OSMemberFunctionCast(IOServiceNotificationHandler, this,
+                                                                         &VoodooInputWellspringSimulator::notificationEventDriverTerminated);
+    // addNotification releases the matching dictionary, but we need it for two notifications!
+    matching->retain();
+    eventDriverPublish = addNotification(gIOFirstPublishNotification, matching, publishHandler, this);
+    eventDriverTerminate = addNotification(gIOTerminatedNotification, matching, terminateHandler, this);
+    matching = nullptr;
+#endif
     
     registerService();
     
     return true;
 }
 
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_6
 void VoodooInputWellspringSimulator::notificationEventDriver(IOService * newService, IONotifier * notifier) {
     IOLog("%s Event Driver Published/Terminated\n", getName());
-    if (notifier == eventDriverPublish && eventDriver == nullptr) {
+    if (notifier == eventDriverPublish) notificationEventDriverPublished(newService);
+    else if (notifier == eventDriverTerminate) notificationEventDriverTerminated(newService);
+}
+#endif
+
+void VoodooInputWellspringSimulator::notificationEventDriverPublished(IOService *newService) {
+    if (eventDriver == nullptr) {
         eventDriver = OSDynamicCast(AppleUSBMultitouchHIDEventDriver, newService);
         if (eventDriver != nullptr) eventDriver->retain();
         else IOLog("%s is null!?!?!?!\n", getName());
-    } else if (notifier == eventDriverTerminate && eventDriver != nullptr) {
-        eventDriver->release();
-        eventDriver = nullptr;
     }
+}
+
+void VoodooInputWellspringSimulator::notificationEventDriverTerminated(IOService *terminatedService) {
+    OSSafeReleaseNULL(eventDriver);
 }
 
 void VoodooInputWellspringSimulator::stop(IOService *provider) {
