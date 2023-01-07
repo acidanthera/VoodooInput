@@ -13,50 +13,32 @@
 OSDefineMetaClassAndStructors(VoodooInputWellspringUserClient, IOUserClient);
 
 #if defined(__x86_64__)
-// { Object, Func pointer, Padding, Flags, Inputs, Outputs }
-IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
-    // VoodooInputMT1UserClientMethodsSetSendsFrames
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sSetSendFrames, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 1, 0},
-    // VoodooInputMT1UserClientMethodsGetReport
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sGetReport, kIOExternalMethodACIDPadding, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)},
-    // VoodooInputMT1UserClientMethodsSetReport
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCStructIStructO, 0x208, 0x208},
-    // VoodooInputMT1UserClientMethodsSetSendLogs
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 1, 0},
-    // VoodooInputMT1UserClientMethodsIssueDriverRequest
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCStructIStructO, 0x204, 0x204},
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 3, 0},    // Relative Mouse Movement
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 3, 0},    // Scroll Wheel
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 2, 0},    // Keyboard
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 1, 0},    // Map Clicks
-    // VoodooInputMT1UserClientMethodsRecacheProperties
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 0, 0},
-    {0, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOExternalMethodACIDPadding, kIOUCScalarIScalarO, 3, 0},    // Momentum Scroll
-};
+#define MTExternalMethod(method, flags, inputs, outputs) {0, method, kIOExternalMethodACIDPadding, flags, inputs, outputs}
 #elif defined(__i386__)
-// { Object, Padding, Func pointer, Flags, Inputs, Outputs }
-IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
-    // VoodooInputMT1UserClientMethodsSetSendsFrames
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sSetSendFrames, kIOUCScalarIScalarO, 1, 0},
-    // VoodooInputMT1UserClientMethodsGetReport
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sGetReport, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)},
-    // VoodooInputMT1UserClientMethodsSetReport
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x208, 0x208},
-    // VoodooInputMT1UserClientMethodsSetSendLogs
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0},
-    // VoodooInputMT1UserClientMethodsIssueDriverRequest
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x204, 0x204},
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0},    // Relative Mouse Movement
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0},    // Scroll Wheel
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 2, 0},    // Keyboard
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0},    // Map Clicks
-    // VoodooInputMT1UserClientMethodsRecacheProperties
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 0, 0},
-    {0, kIOExternalMethodACIDPadding, (IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0},    // Momentum Scroll
-};
+#define MTExternalMethod(method, flags, inputs, outputs) {0, kIOExternalMETHODACIDPadding, method, flags, inputs, outputs}
 #else
 #error "Invalid architecture"
-#endif // __defined(__x86_64__)
+#endif
+
+IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
+    // VoodooInputMT1UserClientMethodsSetSendsFrames
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sSetSendFrames, kIOUCScalarIScalarO, 1, 0),
+    // VoodooInputMT1UserClientMethodsGetReport
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sGetReport, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
+    // VoodooInputMT1UserClientMethodsSetReport
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
+    // VoodooInputMT1UserClientMethodsSetSendLogs
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),
+    // VoodooInputMT1UserClientMethodsIssueDriverRequest
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x204, 0x204),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Relative Mouse Movement
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Scroll Wheel
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 2, 0),    // Keyboard
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),    // Map Clicks
+    // VoodooInputMT1UserClientMethodsRecacheProperties
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 0, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Momentum Scroll
+};
 
 bool VoodooInputWellspringUserClient::start(IOService *provider) {
     if (!super::start(provider)) return false;
@@ -68,7 +50,8 @@ bool VoodooInputWellspringUserClient::start(IOService *provider) {
     }
     
     dataQueue = IOSharedDataQueue::withCapacity(0x10004);
-    // Don't think we need to use this? Setting a small size for now
+    // I haven't seen the log queue used yet.
+    // Leaving this here with a small size in case userspace decides to ask for it at some point.
     logQueue = IOSharedDataQueue::withCapacity(0x1);
     
     if (dataQueue == nullptr || logQueue == nullptr) {

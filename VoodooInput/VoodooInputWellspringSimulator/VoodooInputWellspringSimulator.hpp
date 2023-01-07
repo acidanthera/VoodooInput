@@ -33,7 +33,6 @@
 
 class VoodooInputWellspringSimulator;
 class VoodooInputWellspringUserClient;
-class VoodooInputActuatorDevice;
 
 class AppleUSBMultitouchHIDEventDriver : public IOHIDEventService {
     OSDeclareDefaultStructorsWithDispatch(AppleUSBMultitouchHIDEventDriver);
