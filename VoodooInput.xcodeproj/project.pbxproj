@@ -184,6 +184,7 @@
 				7BBAB1F522E3A2F800B2941A /* Sources */,
 				7BBAB1F622E3A2F800B2941A /* Frameworks */,
 				CEC086492439FD5D00F5B701 /* Copy SDK */,
+				286BF99E296A122A00542FAA /* Post-process Binary */,
 				CEFB081C239659D000215B0B /* Archive */,
 			);
 			buildRules = (
@@ -228,6 +229,24 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		286BF99E296A122A00542FAA /* Post-process Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Post-process Binary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${TARGET_BUILD_DIR}\"\n\nstrip -S \"${EXECUTABLE_PATH}\"\nif [ \"$CONFIGURATION\" == \"Release\" ]; then\n  strip -x -T \"${EXECUTABLE_PATH}\" &>/dev/null || strip -x \"${EXECUTABLE_PATH}\"\nfi\n";
+		};
 		CEC086492439FD5D00F5B701 /* Copy SDK */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -500,7 +519,6 @@
 				"MACOSX_DEPLOYMENT_TARGET[arch=ACID32]" = 10.5;
 				MODULE_NAME = me.kishorprins.VoodooInput;
 				MODULE_VERSION = 1.1.6;
-				OTHER_CFLAGS = "-Wno-stdlibcxx-not-found";
 				OTHER_CFLAGS = (
 					"-mmmx",
 					"-msse",
