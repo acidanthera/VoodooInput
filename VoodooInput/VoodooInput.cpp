@@ -32,22 +32,15 @@ bool VoodooInput::start(IOService *provider) {
         return false;
     }
 
-    // Allocate the simulator and actuator devices
-//    simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
-//    actuator = OSTypeAlloc(VoodooInputActuatorDevice);
     simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
     trackpoint = OSTypeAlloc(TrackpointDevice);
     
-    if (!simulator /*|| !actuator*/ || !trackpoint) {
+    if (!simulator || !trackpoint) {
         IOLog("VoodooInput could not alloc simulator, actuator or trackpoint!\n");
         OSSafeReleaseNULL(simulator);
-        OSSafeReleaseNULL(actuator);
         OSSafeReleaseNULL(trackpoint);
         return false;
     }
-    
-//    OSDictionary *dict = nullptr;
-//    OSNumber *bootProtocol = nullptr;
     
     // Initialize simulator device
     if (!simulator->init(OSDynamicCast(OSDictionary, getProperty("MT1Props"))) || !simulator->attach(this)) {
@@ -59,31 +52,6 @@ bool VoodooInput::start(IOService *provider) {
         simulator->detach(this);
         goto exit;
     }
-    
-//    dict = OSDictionary::withCapacity(1);
-//    bootProtocol = OSNumber::withNumber(2, 32);
-//    // Initialize actuator device
-//    dict->setObject("MTEventSource", kOSBooleanTrue);
-//    dict->setObject("BootProtocol", bootProtocol);
-//    dict->setObject("HIDDefaultBehavior", OSString::withCString(""));
-//    dict->setObject("HIDPointerAccelerationType", OSString::withCString("HIDTrackpadAcceleratoin"));
-//    dict->setObject("bConfigurationValue", OSNumber::withNumber(1, 32));
-//    dict->setObject("bInterfaceNumber", OSNumber::withNumber(2, 32));
-//    if (!actuator->init(dict) || !actuator->attach(this)) {
-//        IOLog("VoodooInput could not init or attach actuator!\n");
-//        OSSafeReleaseNULL(bootProtocol);
-//        OSSafeReleaseNULL(dict);
-//        goto exit;
-//    }
-//    else if (!actuator->start(this)) {
-//        IOLog("VoodooInput could not start actuator!\n");
-//        actuator->detach(this);
-//        OSSafeReleaseNULL(bootProtocol);
-//        OSSafeReleaseNULL(dict);
-//        goto exit;
-//    }
-//    OSSafeReleaseNULL(bootProtocol);
-//    OSSafeReleaseNULL(dict);
     
     // Initialize trackpoint device
     if (!trackpoint->init(NULL) || !trackpoint->attach(this)) {
@@ -122,12 +90,6 @@ void VoodooInput::stop(IOService *provider) {
         simulator->stop(this);
         simulator->detach(this);
         OSSafeReleaseNULL(simulator);
-    }
-    
-    if (actuator) {
-        actuator->stop(this);
-        actuator->detach(this);
-        OSSafeReleaseNULL(actuator);
     }
     
     if (trackpoint) {

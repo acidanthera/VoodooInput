@@ -36,8 +36,6 @@ class EXPORT VoodooInput : public IOService {
     
     IOService* parentProvider;
     
-//    VoodooInputSimulatorDevice* simulator;
-    VoodooInputActuatorDevice* actuator;
     VoodooInputWellspringSimulator* simulator;
     TrackpointDevice* trackpoint;
     
