@@ -141,7 +141,13 @@ public:
     
     IOReturn getReport(MTDeviceReportStruct *toFill);
     void constructReport(VoodooInputEvent& event);
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_6
     void notificationEventDriver(IOService * newService, IONotifier * notifier);
+#endif
+    void notificationEventDriverPublished(IOService *newService);
+    void notificationEventDriverTerminated(IOService *terminatedService);
+
 private:
     bool touchActive[15] {false};
     
