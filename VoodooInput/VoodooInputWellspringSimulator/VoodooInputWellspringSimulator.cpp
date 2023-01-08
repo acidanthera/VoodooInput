@@ -360,7 +360,7 @@ void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
     
     // macOS Sierra changed how button handling works
     // There is now a hid report to send into the abyss of the MT stack directly
-    if (version_major >= 17) {
+    if (version_major >= 16) {
         bzero(&report, sizeof(MTRelativePointerReport));
         
         report.Buttons = btnState;
