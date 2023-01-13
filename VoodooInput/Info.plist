@@ -308,13 +308,13 @@
 		<key>com.apple.driver.AppleUSBMultitouch</key>
 		<string>1.0.0</string>
 		<key>com.apple.iokit.IOHIDFamily</key>
-		<string>2.0</string>
+		<string>1.6</string>
 		<key>com.apple.kpi.iokit</key>
-		<string>14</string>
+		<string>1.0.8</string>
 		<key>com.apple.kpi.libkern</key>
-		<string>14</string>
+		<string>1.0.8</string>
 		<key>com.apple.kpi.mach</key>
-		<string>13.0</string>
+		<string>1.0.8</string>
 	</dict>
 	<key>OSBundleRequired</key>
 	<string>Root</string>
