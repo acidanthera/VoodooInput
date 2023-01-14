@@ -67,9 +67,12 @@ bool VoodooInputWellspringUserClient::start(IOService *provider) {
     return true;
 }
 
-void VoodooInputWellspringUserClient::stop(IOService *provider) {
+void VoodooInputWellspringUserClient::free() {
+    OSSafeReleaseNULL(dataQueueDesc);
     OSSafeReleaseNULL(dataQueue);
+    OSSafeReleaseNULL(logQueueDesc);
     OSSafeReleaseNULL(logQueue);
+    super::free();
 }
 
 IOReturn VoodooInputWellspringUserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
@@ -80,6 +83,7 @@ IOReturn VoodooInputWellspringUserClient::registerNotificationPort(mach_port_t p
 }
 
 IOReturn VoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
+    // The memory descriptors get released when being mapped in IOUserClient::mapClientMemory
     if (type != 0x10) {
         dataQueueDesc->retain();
         *memory = dataQueueDesc;

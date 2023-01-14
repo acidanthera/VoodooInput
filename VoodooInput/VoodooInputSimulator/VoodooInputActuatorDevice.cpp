@@ -6,11 +6,7 @@
 //
 
 #include "VoodooInputActuatorDevice.hpp"
-<<<<<<< HEAD
 #include "VoodooInputIDs.hpp"
-#include "VoodooInputMessages.h"
-=======
->>>>>>> 28aae45 (Clean up)
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputActuatorDevice, IOHIDDevice);
@@ -52,15 +48,15 @@ OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
 }
 
 OSString* VoodooInputActuatorDevice::newProductString() const {
-    return OSString::withCString("Magic Trackpad 2");
+    return OSString::withCString("Wellspring Emulator");
 }
 
 OSString* VoodooInputActuatorDevice::newSerialNumberString() const {
-    return OSString::withCString("VoodooI2C Magic Trackpad 2 Actuator");
+    return OSString::withCString("Wellspring Actuator");
 }
 
 OSString* VoodooInputActuatorDevice::newTransportString() const {
-    return OSString::withCString("I2C");
+    return OSString::withCString("USB");
 }
 
 OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
@@ -68,7 +64,7 @@ OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newLocationIDNumber() const {
-    return OSNumber::withNumber(0x14400000, 32);
+    return OSNumber::withNumber(0x1d183000, 32);
 }
 
 OSNumber* VoodooInputActuatorDevice::newVersionNumber() const {

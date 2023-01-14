@@ -34,6 +34,8 @@
 				<integer>39</integer>
 				<key>MTHIDDevice</key>
 				<true/>
+				<key>Clicking</key>
+				<integer>0</integer>
 				<key>HIDDefaultBehavior</key>
 				<string>Mouse</string>
 				<key>HIDPointerAccelerationType</key>
@@ -46,6 +48,12 @@
 				<integer>26214400</integer>
 				<key>HIDServiceSupport</key>
 				<true/>
+				<key>TrackpadCornerSecondaryClick</key>
+				<integer>0</integer>
+				<key>TrackpadHorizScroll</key>
+				<integer>1</integer>
+				<key>TrackpadScroll</key>
+				<true/>
 				<key>TrackpadFourFingerGestures</key>
 				<true/>
 				<key>TrackpadMomentumScroll</key>
@@ -54,8 +62,55 @@
 				<true/>
 				<key>TrackpadThreeFingerDrag</key>
 				<true/>
-				<key>TrackpadUserPreferences</key>
-				<dict/>
+				<key>MultitouchPreferences</key>
+				<dict>
+					<key>UserPreferences</key>
+					<true/>
+					<key>version</key>
+					<integer>12</integer>
+					<key>ActuateDetents</key>
+					<integer>1</integer>
+					<key>Clicking</key>
+					<integer>0</integer>
+					<key>DragLock</key>
+					<integer>0</integer>
+					<key>Dragging</key>
+					<integer>0</integer>
+					<key>FirstClickThreshold</key>
+					<integer>1</integer>
+					<key>ForceSuppressed</key>
+					<false/>
+					<key>SecondClickThreshold</key>
+					<integer>1</integer>
+					<key>TrackpadCornerSecondaryClick</key>
+					<integer>0</integer>
+					<key>TrackpadFiveFingerPinchGesture</key>
+					<integer>2</integer>
+					<key>TrackpadFourFingerHorizSwipeGesture</key>
+					<integer>2</integer>
+					<key>TrackpadFourFingerPinchGesture</key>
+					<integer>2</integer>
+					<key>TrackpadFourFingerVertSwipeGesture</key>
+					<integer>2</integer>
+					<key>TrackpadHorizScroll</key>
+					<integer>1</integer>
+					<key>TrackpadMomentumScroll</key>
+					<true/>
+					<key>TrackpadPinch</key>
+					<integer>1</integer>
+					<key>TrackpadRightClick</key>
+					<true/>
+					<key>TrackpadRotate</key>
+					<integer>1</integer>
+					<key>TrackpadScroll</key>
+					<true/>
+					<key>TrackpadThreeFingerDrag</key>
+					<false/>
+					<key>TrackpadThreeFingerHorizSwipeGesture</key>
+					<integer>2</integer>
+					<key>TrackpadThreeFingerVertSwipeGesture</key>
+					<integer>2</integer>
+				</dict>
 				<key>IOCFPlugInTypes</key>
 				<dict>
 					<key>0516B563-B15B-11DA-96EB-0014519758EF</key>

@@ -52,11 +52,12 @@ struct __attribute__((__packed__)) MTRelativePointerReport {
     AbsoluteTime Timestamp;
 };
 
-struct __attribute__((__packed__)) WELLSPRING3_FINGER {
+struct __attribute__((__packed__)) WELLSPRING_FINGER {
     UInt8 Id;
     UInt8 State;
     UInt8 Finger;
-    UInt8 Unknown; // 0 -> 1 -> 0xFF
+    // Goes from 0 -> 1 -> 0xFF on my MBP9,2
+    UInt8 Unknown;
     SInt16 X;
     SInt16 Y;
     // Velocity can be calculated in MultitouchSupport.plugin for us
@@ -67,17 +68,17 @@ struct __attribute__((__packed__)) WELLSPRING3_FINGER {
     UInt16 ToolMinor;
     UInt16 Orientation;
     UInt16 Size;
-    // ContactDensity can be calculated in MultitouchSupport.plugin
-    /*UInt16 ContactDensity;
-    UInt16 Unused[2];
-    UInt16 Pressure; // Not a thing on Wellspring3 */
+    UInt16 DensityMajor;
+    UInt16 DensityMinor;
+    UInt16 Unused[1];
+    UInt16 Pressure;
 };
 
 // There's no finger field
 
-static_assert(sizeof(WELLSPRING3_FINGER) == 20, "Unexpected WELLSPRING3_FINGER size");
+static_assert(sizeof(WELLSPRING_FINGER) == 28, "Unexpected WELLSPRING3_FINGER size");
 
-struct __attribute__((__packed__)) WELLSPRING3_REPORT {
+struct __attribute__((__packed__)) WELLSPRING_REPORT {
     UInt8 ReportID;
     UInt8 Counter; // Unknown, always seems to count up though?
     UInt8 HeaderSize;
@@ -89,13 +90,10 @@ struct __attribute__((__packed__)) WELLSPRING3_REPORT {
     UInt8 Button;
     UInt32 unknown1; // 0x00000010
     UInt16 unknown2[4]; // Sometimes Changes
-    WELLSPRING3_FINGER Fingers[];
-    
-    // End of packet always contains Checksum (though this is never checked in MultitouchSupport)
-    // UInt16 checksum;
+    WELLSPRING_FINGER Fingers[];
 };
 
-static_assert(sizeof(WELLSPRING3_REPORT) == 28, "Unexpected WELLSPRING3_REPORT size");
+static_assert(sizeof(WELLSPRING_REPORT) == 28, "Unexpected WELLSPRING3_REPORT size");
 
 struct MTDeviceReportStruct {
     uint8_t reportId;
@@ -104,18 +102,13 @@ struct MTDeviceReportStruct {
 };
 
 #define MT1ReportDetectConfig       0xC8
-#define MT1ReportSensorParam        0xA1
-#define MT1ReportSensorDescriptor   0xD0
-#define MT1ReportFamilyId           0xD1
-#define MT1ReportSensorRows         0xD3
-#define MT1ReportSensorSize         0xD9
 
 class EXPORT VoodooInputWellspringSimulator : public IOHIDDevice {
     OSDeclareDefaultStructors(VoodooInputWellspringSimulator);
 public:
     virtual bool init(OSDictionary *) override;
     virtual bool start(IOService *provider) override;
-    virtual void stop(IOService *provider) override;
+    virtual void free() override;
     
     virtual bool setProperty(const char *aKey, OSObject *anObject) override;
     virtual bool setProperty(const char *aKey, unsigned long long aValue, unsigned int aNumberOfBits) override;
@@ -158,15 +151,18 @@ private:
     AppleUSBMultitouchHIDEventDriver *eventDriver {nullptr};
     
     AbsoluteTime startTimestamp {};
-    WELLSPRING3_REPORT *inputReport {nullptr};
+    size_t inputReportSize {};
+    WELLSPRING_REPORT *inputReport {nullptr};
     
     IONotifier *eventDriverPublish {nullptr};
     IONotifier *eventDriverTerminate {nullptr};
     
     UInt8 lastButtonState {0};
     
-    void enqueueData(WELLSPRING3_REPORT *report, size_t dataLen);
+    void enqueueData(WELLSPRING_REPORT *report, size_t dataLen);
     void constructButtonReport(UInt8 btnState);
+    void setMTProperties();
+    void createEventDriverNotifiers();
 };
 
 #endif /* AppleUSBMultitouchDriver_hpp */

@@ -13,6 +13,7 @@
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
 #include "VoodooInputWellspringSimulator/VoodooInputWellspringSimulator.hpp"
 #include "Trackpoint/TrackpointDevice.hpp"
+#include <libkern/version.h>
 
 #include "libkern/version.h"
 
@@ -36,12 +37,12 @@ bool VoodooInput::start(IOService *provider) {
     trackpoint = OSTypeAlloc(TrackpointDevice);
     
     if (!simulator || !trackpoint) {
-        IOLog("VoodooInput could not alloc simulator, actuator or trackpoint!\n");
+        IOLog("VoodooInput could not alloc simulator or trackpoint!\n");
         OSSafeReleaseNULL(simulator);
         OSSafeReleaseNULL(trackpoint);
         return false;
     }
-    
+
     // Initialize simulator device
     if (!simulator->init(OSDynamicCast(OSDictionary, getProperty("MT1Props"))) || !simulator->attach(this)) {
         IOLog("VoodooInput could not attach simulator!\n");
@@ -62,6 +63,24 @@ bool VoodooInput::start(IOService *provider) {
         IOLog("VoodooInput could not start trackpoint!\n");
         trackpoint->detach(this);
         goto exit;
+    }
+    
+    // Actuator is only needed for pressure, which is only useful for newer macOS versions with force touch
+    if (isSierraOrNewer()) {
+        actuator = OSTypeAlloc(VoodooInputActuatorDevice);
+        
+        if (!actuator) {
+            IOLog("VoodooInput could not alloc actuator!\n");
+            goto exit;
+        } else if (!actuator->init(NULL) || !actuator->attach(this)) {
+            IOLog("VoodooInput could not init or attach actuator!\n");
+            goto exit;
+        }
+        else if (!actuator->start(this)) {
+            IOLog("VoodooInput could not start actuator!\n");
+            trackpoint->detach(this);
+            goto exit;
+        }
     }
     
     setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
@@ -90,6 +109,12 @@ void VoodooInput::stop(IOService *provider) {
         simulator->stop(this);
         simulator->detach(this);
         OSSafeReleaseNULL(simulator);
+    }
+    
+    if (actuator) {
+        actuator->stop(this);
+        actuator->detach(this);
+        OSSafeReleaseNULL(actuator);
     }
     
     if (trackpoint) {
@@ -140,6 +165,10 @@ UInt32 VoodooInput::getLogicalMaxX() {
 
 UInt32 VoodooInput::getLogicalMaxY() {
     return logicalMaxY;
+}
+
+bool VoodooInput::isSierraOrNewer() {
+    return version_major > 16;
 }
 
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
