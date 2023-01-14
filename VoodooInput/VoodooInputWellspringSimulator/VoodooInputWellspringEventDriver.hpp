@@ -16,8 +16,6 @@ class VoodooInputWellspringSimulator;
 class VoodooInputWellspringEventDriver : public IOHIDEventService {
     OSDeclareDefaultStructorsWithDispatch(VoodooInputWellspringEventDriver);
     friend class VoodooInputWellspringSimulator;
-public:
-    virtual IOReturn setSystemProperties(OSDictionary *) override;
 };
 
 #endif /* VoodooInputWellspringEventDriver_hpp */

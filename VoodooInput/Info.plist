@@ -269,6 +269,8 @@
 			<integer>26214400</integer>
 			<key>IOClass</key>
 			<string>VoodooInputWellspringEventDriver</string>
+			<key>IOProbeScore</key>
+			<integer>500</integer>
 			<key>IOProviderClass</key>
 			<string>IOHIDInterface</string>
 			<key>MTEventSource</key>
