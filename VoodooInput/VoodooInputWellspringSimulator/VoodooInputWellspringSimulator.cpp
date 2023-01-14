@@ -175,7 +175,7 @@ bool VoodooInputWellspringSimulator::start(IOService *provider) {
 }
 
 void VoodooInputWellspringSimulator::createEventDriverNotifiers() {
-    OSDictionary *matching = serviceMatching("AppleUSBMultitouchHIDEventDriver");
+    OSDictionary *matching = serviceMatching("VoodooInputWellspringEventDriver");
     propertyMatching(OSSymbol::withCString("LocationID"), newLocationIDNumber(), matching);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_6
@@ -207,7 +207,7 @@ void VoodooInputWellspringSimulator::notificationEventDriver(IOService * newServ
 
 void VoodooInputWellspringSimulator::notificationEventDriverPublished(IOService *newService) {
     if (eventDriver == nullptr) {
-        eventDriver = OSDynamicCast(AppleUSBMultitouchHIDEventDriver, newService);
+        eventDriver = OSDynamicCast(VoodooInputWellspringEventDriver, newService);
         if (eventDriver != nullptr) eventDriver->retain();
         else IOLog("%s is null!?!?!?!\n", getName());
     }
