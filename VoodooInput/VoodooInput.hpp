@@ -37,6 +37,7 @@ class EXPORT VoodooInput : public IOService {
     IOService* parentProvider;
     
     VoodooInputWellspringSimulator* simulator;
+    VoodooInputActuatorDevice* actuator;
     TrackpointDevice* trackpoint;
     
     UInt8 transformKey;
@@ -57,6 +58,8 @@ public:
 
     UInt32 getLogicalMaxX();
     UInt32 getLogicalMaxY();
+    
+    bool isSierraOrNewer();
 
     bool updateProperties();
 

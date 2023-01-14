@@ -43,19 +43,19 @@ OSNumber* VoodooInputActuatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
-    return OSNumber::withNumber(0x272, 32);
+    return OSNumber::withNumber(0x273, 32);
 }
 
 OSString* VoodooInputActuatorDevice::newProductString() const {
-    return OSString::withCString("Magic Trackpad 2");
+    return OSString::withCString("Wellspring Emulator");
 }
 
 OSString* VoodooInputActuatorDevice::newSerialNumberString() const {
-    return OSString::withCString("VoodooI2C Magic Trackpad 2 Actuator");
+    return OSString::withCString("Wellspring Actuator");
 }
 
 OSString* VoodooInputActuatorDevice::newTransportString() const {
-    return OSString::withCString("I2C");
+    return OSString::withCString("USB");
 }
 
 OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
@@ -63,7 +63,7 @@ OSNumber* VoodooInputActuatorDevice::newVendorIDNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newLocationIDNumber() const {
-    return OSNumber::withNumber(0x14400000, 32);
+    return OSNumber::withNumber(0x1d183000, 32);
 }
 
 OSNumber* VoodooInputActuatorDevice::newVersionNumber() const {

@@ -43,7 +43,7 @@ class EXPORT VoodooInputWellspringUserClient : public IOUserClient {
 
 public:
     virtual bool start(IOService *provider) override;
-    virtual void stop(IOService *provider) override;
+    virtual void free() override;
     
     virtual IOReturn registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) override;
     virtual IOReturn clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) override;
