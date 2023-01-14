@@ -265,8 +265,7 @@ OSNumber* VoodooInputWellspringSimulator::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputWellspringSimulator::newProductIDNumber() const {
-//    return OSNumber::withNumber(0x237, 32); // MacBookPro9,1
-    return OSNumber::withNumber(0x273, 32); // MacBookPro12,1
+    return OSNumber::withNumber(0x237, 32);
 }
 
 OSString* VoodooInputWellspringSimulator::newProductString() const {
