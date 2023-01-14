@@ -10,12 +10,12 @@
 #define AppleUSBMultitouchDriver_hpp
 
 #include <IOKit/hid/IOHIDDevice.h>
-#include <IOKit/hid/IOHIDEventService.h>
 #include <IOKit/IOLib.h>
 #include <IOKit/IOKitKeys.h>
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
 
+#include "VoodooInputWellspringEventDriver.hpp"
 #include "../VoodooInput.hpp"
 #include "../VoodooInputMultitouch/VoodooInputTransducer.h"
 #include "../VoodooInputMultitouch/VoodooInputEvent.h"
@@ -31,15 +31,7 @@
 #define MT2_TOUCH_STATE_BIT_NEAR (0x1 << 1)
 #define MT2_TOUCH_STATE_BIT_CONTACT (0x1 << 2)
 
-class VoodooInputWellspringSimulator;
 class VoodooInputWellspringUserClient;
-
-class AppleUSBMultitouchHIDEventDriver : public IOHIDEventService {
-    OSDeclareDefaultStructorsWithDispatch(AppleUSBMultitouchHIDEventDriver);
-    friend class VoodooInputWellspringSimulator;
-public:
-    virtual IOReturn setSystemProperties(OSDictionary *) override;
-};
 
 // This report does not come from the hardware, but instead comes from within AppleUSBMultitouch in 10.12+
 // This gets sent to userspace on any button presses
@@ -148,7 +140,7 @@ private:
     
     OSSet *userClients {nullptr};
     VoodooInput *engine {nullptr};
-    AppleUSBMultitouchHIDEventDriver *eventDriver {nullptr};
+    VoodooInputWellspringEventDriver *eventDriver {nullptr};
     
     AbsoluteTime startTimestamp {};
     size_t inputReportSize {};

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28783C5329733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */; };
+		28783C5429733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */; };
 		358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 358914F225798FA5007A0B58 /* TrackpointDevice.hpp */; };
 		358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 358914F325798FA5007A0B58 /* TrackpointDevice.cpp */; };
 		7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringEventDriver.cpp; sourceTree = "<group>"; };
+		28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringEventDriver.hpp; sourceTree = "<group>"; };
 		358914F225798FA5007A0B58 /* TrackpointDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TrackpointDevice.hpp; sourceTree = "<group>"; };
 		358914F325798FA5007A0B58 /* TrackpointDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackpointDevice.cpp; sourceTree = "<group>"; };
 		7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoodooInput.kext; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,6 +156,8 @@
 				EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */,
 				EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */,
 				EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */,
+				28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */,
+				28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */,
 			);
 			path = VoodooInputWellspringSimulator;
 			sourceTree = "<group>";
@@ -168,6 +174,7 @@
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
 				EE7EE280296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp in Headers */,
 				EE7EE284296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp in Headers */,
+				28783C5429733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 				EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */,
 			);
@@ -245,7 +252,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-      shellScript = "cd \"${TARGET_BUILD_DIR}\"\n\nstrip -S \"${EXECUTABLE_PATH}\"\n\ndist=(\"$FULL_PRODUCT_NAME\")\nif [ -d \"$DWARF_DSYM_FILE_NAME\" ]; then dist+=(\"$DWARF_DSYM_FILE_NAME\"); fi\n\narchive=\"${PRODUCT_NAME}-${MODULE_VERSION}-$(echo $CONFIGURATION | tr /a-z/ /A-Z/).zip\"\nrm -rf *.zip\nif [ \"$CONFIGURATION\" == \"Release\" ]; then\n  strip -x -T \"${EXECUTABLE_PATH}\" &>/dev/null || strip -x \"${EXECUTABLE_PATH}\"\nfi\n\nif [ -z \"${OVERRIDE_PYTHON3}\" ]; then\n  # Use whatever is in PATH\n  OVERRIDE_PYTHON3=python3\nfi\n\nif [[ \"$ARCHS\" == *\"ACID32\"* ]]; then\n  \"${OVERRIDE_PYTHON3}\" ${SRCROOT}/clang32/fix-macho32 \"${EXECUTABLE_PATH}\" || exit 1\nfi\nzip -qry -FS \"${archive}\" \"${dist[@]}\"\n";
+			shellScript = "cd \"${TARGET_BUILD_DIR}\"\n\nstrip -S \"${EXECUTABLE_PATH}\"\n\ndist=(\"$FULL_PRODUCT_NAME\")\nif [ -d \"$DWARF_DSYM_FILE_NAME\" ]; then dist+=(\"$DWARF_DSYM_FILE_NAME\"); fi\n\narchive=\"${PRODUCT_NAME}-${MODULE_VERSION}-$(echo $CONFIGURATION | tr /a-z/ /A-Z/).zip\"\nrm -rf *.zip\nif [ \"$CONFIGURATION\" == \"Release\" ]; then\n  strip -x -T \"${EXECUTABLE_PATH}\" &>/dev/null || strip -x \"${EXECUTABLE_PATH}\"\nfi\n\nif [ -z \"${OVERRIDE_PYTHON3}\" ]; then\n  # Use whatever is in PATH\n  OVERRIDE_PYTHON3=python3\nfi\n\nif [[ \"$ARCHS\" == *\"ACID32\"* ]]; then\n  \"${OVERRIDE_PYTHON3}\" ${SRCROOT}/clang32/fix-macho32 \"${EXECUTABLE_PATH}\" || exit 1\nfi\nzip -qry -FS \"${archive}\" \"${dist[@]}\"\n";
 		};
 		CEC086492439FD5D00F5B701 /* Copy SDK */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -291,6 +298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */,
+				28783C5329733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp in Sources */,
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
 				EE7EE283296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp in Sources */,
