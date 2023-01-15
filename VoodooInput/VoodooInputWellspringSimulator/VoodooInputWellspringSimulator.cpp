@@ -7,7 +7,7 @@
 //
 
 #include "VoodooInputWellspringSimulator.hpp"
-#include "VoodooInputWellspringUserClient.hpp"
+#include "IOHIDVoodooInputWellspringUserClient.hpp"
 #include "VoodooInputActuatorDevice.hpp"
 #include "VoodooInputMessages.h"
 
@@ -338,7 +338,7 @@ void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
         report.Unknown1 = 1;
         report.Timestamp = timestamp;
         OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
+        while (IOHIDVoodooInputWellspringUserClient *client = OSDynamicCast(IOHIDVoodooInputWellspringUserClient, iter->getNextObject())) {
             client->enqueueData(&report, sizeof(MTRelativePointerReport));
         }
         OSSafeReleaseNULL(iter);
@@ -511,7 +511,7 @@ void VoodooInputWellspringSimulator::enqueueData(WELLSPRING_REPORT *report, size
 #endif
     
     OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-    while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
+    while (IOHIDVoodooInputWellspringUserClient *client = OSDynamicCast(IOHIDVoodooInputWellspringUserClient, iter->getNextObject())) {
         client->enqueueData(report, dataLen);
     }
     OSSafeReleaseNULL(iter);

@@ -38,8 +38,8 @@ static_assert(VoodooInputMT1UserClientMethodsNumMethods == 11, "Invalid number o
 struct MTDeviceReportStruct;
 class VoodooInputWellspringSimulator;
 
-class EXPORT VoodooInputWellspringUserClient : public IOUserClient {
-    OSDeclareDefaultStructors(VoodooInputWellspringUserClient);
+class EXPORT IOHIDVoodooInputWellspringUserClient : public IOUserClient {
+    OSDeclareDefaultStructors(IOHIDVoodooInputWellspringUserClient);
 
 public:
     virtual bool start(IOService *provider) override;
@@ -49,9 +49,9 @@ public:
     virtual IOReturn clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) override;
     
     virtual IOExternalMethod *getTargetAndMethodForIndex(IOService **targetP, UInt32 index) override;
-    static IOReturn sSetSendFrames(VoodooInputWellspringUserClient *that, bool enableFrames);
-    static IOReturn sGetReport(VoodooInputWellspringUserClient *that, MTDeviceReportStruct *input, MTDeviceReportStruct *output);
-    static IOReturn sNoop(VoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
+    static IOReturn sSetSendFrames(IOHIDVoodooInputWellspringUserClient *that, bool enableFrames);
+    static IOReturn sGetReport(IOHIDVoodooInputWellspringUserClient *that, MTDeviceReportStruct *input, MTDeviceReportStruct *output);
+    static IOReturn sNoop(IOHIDVoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
     
     void enqueueData(void *data, size_t size);
 private:
