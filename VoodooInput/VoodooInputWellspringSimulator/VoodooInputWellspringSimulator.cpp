@@ -393,7 +393,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     for (int i = 0; i < event.contact_count; i++) {
         const VoodooInputTransducer &transducer = event.transducers[i];
 
-         if (!transducer.isValid)
+        if (!transducer.isValid)
             continue;
 
         if (transducer.type == VoodooInputTransducerType::STYLUS) {
@@ -471,6 +471,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     if (!input_active) {
         memset(touchActive, false, sizeof(touchActive));
         constructButtonReport(0);
+        inputReport->Button = 0;
         
         // Stop finger
         inputReport->Counter++;
