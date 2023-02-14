@@ -21,8 +21,8 @@
 		EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */; };
 		EE7EE27F296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */; };
 		EE7EE280296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */; };
-		EE7EE283296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE281296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.cpp */; };
-		EE7EE284296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE282296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.hpp */; };
+		EE7EE283296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */; };
+		EE7EE284296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +49,8 @@
 		EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputIDs.hpp; sourceTree = "<group>"; };
 		EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringSimulator.cpp; sourceTree = "<group>"; };
 		EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringSimulator.hpp; sourceTree = "<group>"; };
-		EE7EE281296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IOHIDVoodooInputWellspringUserClient.cpp; sourceTree = "<group>"; };
-		EE7EE282296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IOHIDVoodooInputWellspringUserClient.hpp; sourceTree = "<group>"; };
+		EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringUserClient.cpp; sourceTree = "<group>"; };
+		EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringUserClient.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,8 +154,8 @@
 			children = (
 				EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */,
 				EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */,
-				EE7EE281296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.cpp */,
-				EE7EE282296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.hpp */,
+				EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */,
+				EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */,
 				28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */,
 				28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */,
 			);
@@ -173,7 +173,7 @@
 				358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
 				EE7EE280296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp in Headers */,
-				EE7EE284296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.hpp in Headers */,
+				EE7EE284296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp in Headers */,
 				28783C5429733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 				EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */,
@@ -301,7 +301,7 @@
 				28783C5329733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp in Sources */,
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
-				EE7EE283296119AB005EFCC4 /* IOHIDVoodooInputWellspringUserClient.cpp in Sources */,
+				EE7EE283296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp in Sources */,
 				EE7EE27F296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
 			);

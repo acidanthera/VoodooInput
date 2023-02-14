@@ -31,7 +31,7 @@
 #define MT2_TOUCH_STATE_BIT_NEAR (0x1 << 1)
 #define MT2_TOUCH_STATE_BIT_CONTACT (0x1 << 2)
 
-class IOHIDVoodooInputWellspringUserClient;
+class VoodooInputWellspringUserClient;
 
 // This report does not come from the hardware, but instead comes from within AppleUSBMultitouch in 10.12+
 // This gets sent to userspace on any button presses
