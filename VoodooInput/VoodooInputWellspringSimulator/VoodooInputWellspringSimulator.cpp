@@ -7,7 +7,7 @@
 //
 
 #include "VoodooInputWellspringSimulator.hpp"
-#include "IOHIDVoodooInputWellspringUserClient.hpp"
+#include "VoodooInputWellspringUserClient.hpp"
 #include "VoodooInputActuatorDevice.hpp"
 #include "VoodooInputMessages.h"
 
@@ -17,17 +17,18 @@ OSDefineMetaClassAndStructors(VoodooInputWellspringSimulator, IOHIDDevice);
 // Reports come from a MacbookPro9,2/MacbookPro12,1
 static const UInt8 MTSensorParams[] = {0x00, 0x00, 0x03, 0x00, 0xD6, 0x01};
 
-// Region descriptor
-// {Num regions, [type (1 = multitouch, 2 = force), start row, rows, row skip, start col, cols, hardware coloffset]}
-static const UInt8 MTSensorDescOld[] = {
+/*
+ * Region Descriptor {
+ *   Num Regions
+ *   [{
+ *     type (1 = multitouch, 2 = force),
+ *     start row, rows, row skip, start col, cols, hardware coloffset
+ *   }]
+ * }
+ */
+static const UInt8 MTSensorDesc[] = {
     0x01,
     0x01, 0x00, 0x0c, 0x01, 0x00, 0x14, 0x00
-};
-
-static const UInt8 MTSensorDescSierra[] = {
-    0x02,
-    0x01, 0x00, 0x0c, 0x01, 0x00, 0x14, 0x00,
-    0x02, 0x0c, 0x02, 0x01, 0x09, 0x02, 0x00
 };
 
 static const unsigned char report_descriptor[] = {
@@ -108,25 +109,18 @@ void VoodooInputWellspringSimulator::setMTProperties() {
     setProperty("Family ID", 0x62, 8);
     setProperty("bcdVersion", 0x109, 16);
     setProperty("Max Packet Size", 0x200, 32);
+    setProperty("Sensor Region Descriptor", const_cast<UInt8 *>(MTSensorDesc), sizeof(MTSensorDesc));
     
-    if (engine->isSierraOrNewer()) {
-        setProperty("Sensor Region Descriptor", const_cast<UInt8 *>(MTSensorDescSierra), sizeof(MTSensorDescSierra));
-        
+    OSDictionary* trackpadPrefs = OSDictionary::withCapacity(1);
+    setProperty("TrackpadUserPreferences", trackpadPrefs);
+    
+    /*if (engine->isSierraOrNewer()) {
         setProperty("ApplePreferenceIdentifier", "com.apple.AppleMultitouchTrackpad");
-        setProperty("ApplePreferenceCapability", 2, 32);
+        setProperty("ApplePreferenceCapability", kOSBooleanTrue);
         setProperty("SupportsGestureScrolling", kOSBooleanTrue);
         setProperty("MT Built-in", kOSBooleanTrue);
         setProperty("TrackpadEmbedded", kOSBooleanTrue);
-        setProperty("ForceSupported", kOSBooleanTrue);
-        setProperty("ActuationSupported", kOSBooleanTrue);
-    } else {
-        setProperty("Sensor Region Descriptor", const_cast<UInt8 *>(MTSensorDescOld), sizeof(MTSensorDescOld));
-        
-        removeProperty("MultitouchPreferences");
-        OSDictionary* trackpadPrefs = OSDictionary::withCapacity(1);
-        setProperty("TrackpadUserPreferences", trackpadPrefs);
-        OSSafeReleaseNULL(trackpadPrefs);
-    }
+    }*/
 }
 
 bool VoodooInputWellspringSimulator::start(IOService *provider) {
@@ -338,7 +332,7 @@ void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
         report.Unknown1 = 1;
         report.Timestamp = timestamp;
         OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-        while (IOHIDVoodooInputWellspringUserClient *client = OSDynamicCast(IOHIDVoodooInputWellspringUserClient, iter->getNextObject())) {
+        while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
             client->enqueueData(&report, sizeof(MTRelativePointerReport));
         }
         OSSafeReleaseNULL(iter);
@@ -435,18 +429,14 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
         fingerData.Finger = transducer.fingerType;
 
         if (transducer.supportsPressure) {
-            fingerData.Pressure = transducer.currentCoordinates.pressure * 0xFF;
             fingerData.Size = transducer.currentCoordinates.width * 8;
             fingerData.ToolMajor = transducer.currentCoordinates.width * 16;
             fingerData.ToolMinor = transducer.currentCoordinates.width * 16;
         } else {
-            fingerData.Pressure = 100;
             fingerData.Size = 200;
             fingerData.ToolMajor = 800;
             fingerData.ToolMinor = 800;
         }
-        
-        fingerData.DensityMajor = fingerData.DensityMinor = fingerData.Size;
         
         if (!transducer.isTransducerActive && !transducer.isPhysicalButtonDown) {
             touchActive[touch_id] = false;
@@ -512,7 +502,7 @@ void VoodooInputWellspringSimulator::enqueueData(WELLSPRING_REPORT *report, size
 #endif
     
     OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-    while (IOHIDVoodooInputWellspringUserClient *client = OSDynamicCast(IOHIDVoodooInputWellspringUserClient, iter->getNextObject())) {
+    while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
         client->enqueueData(report, dataLen);
     }
     OSSafeReleaseNULL(iter);

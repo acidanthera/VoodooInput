@@ -60,15 +60,15 @@ struct __attribute__((__packed__)) WELLSPRING_FINGER {
     UInt16 ToolMinor;
     UInt16 Orientation;
     UInt16 Size;
-    UInt16 DensityMajor;
-    UInt16 DensityMinor;
-    UInt16 Unused[1];
-    UInt16 Pressure;
+    /*
+     * ContactDensity can be calculated in MultitouchSupport.plugin
+     * UInt16 ContactDensity;
+     * UInt16 Unused[2];
+     * UInt16 Pressure; // Not a thing on Wellspring3
+     */
 };
 
-// There's no finger field
-
-static_assert(sizeof(WELLSPRING_FINGER) == 28, "Unexpected WELLSPRING3_FINGER size");
+static_assert(sizeof(WELLSPRING_FINGER) == 20, "Unexpected WELLSPRING3_FINGER size");
 
 struct __attribute__((__packed__)) WELLSPRING_REPORT {
     UInt8 ReportID;

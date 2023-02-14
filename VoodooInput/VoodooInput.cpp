@@ -32,9 +32,13 @@ bool VoodooInput::start(IOService *provider) {
         IOLog("VoodooInput could not get provider properties!\n");
         return false;
     }
-
-    simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
+    
     trackpoint = OSTypeAlloc(TrackpointDevice);
+    if (isSierraOrNewer()) {
+        simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
+    } else {
+        simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
+    }
     
     if (!simulator || !trackpoint) {
         IOLog("VoodooInput could not alloc simulator or trackpoint!\n");
