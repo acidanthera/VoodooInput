@@ -33,17 +33,6 @@
 
 class VoodooInputWellspringUserClient;
 
-// This report does not come from the hardware, but instead comes from within AppleUSBMultitouch in 10.12+
-// This gets sent to userspace on any button presses
-struct __attribute__((__packed__)) MTRelativePointerReport {
-    UInt8 ReportID;
-    UInt8 Unknown1; // Always set to one
-    UInt16 Unknown2;
-    UInt32 Buttons;
-    UInt32 Unknown3[4]; // A dx/dy probably exists in here
-    AbsoluteTime Timestamp;
-};
-
 struct __attribute__((__packed__)) WELLSPRING_FINGER {
     UInt8 Id;
     UInt8 State;
@@ -101,6 +90,7 @@ public:
     virtual bool init(OSDictionary *) override;
     virtual bool start(IOService *provider) override;
     virtual void free() override;
+    virtual IOReturn message(UInt32 type, IOService *provider, void *argument) override;
     
     virtual bool setProperty(const char *aKey, OSObject *anObject) override;
     virtual bool setProperty(const char *aKey, unsigned long long aValue, unsigned int aNumberOfBits) override;

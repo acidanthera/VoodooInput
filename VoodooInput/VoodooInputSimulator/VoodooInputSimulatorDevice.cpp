@@ -8,6 +8,7 @@
 #include "VoodooInput.hpp"
 #include "VoodooInputSimulatorDevice.hpp"
 #include "../VoodooInputMultitouch/MultitouchHelpers.h"
+#include "../VoodooInputMultitouch/VoodooInputMessages.h"
 
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
@@ -526,4 +527,14 @@ OSNumber* VoodooInputSimulatorDevice::newLocationIDNumber() const {
 
 OSNumber* VoodooInputSimulatorDevice::newVersionNumber() const {
     return OSNumber::withNumber(0x804, 32);
+}
+
+IOReturn VoodooInputSimulatorDevice::message(UInt32 type, IOService *provider, void *argument) {
+    switch (type) {
+        case kIOMessageVoodooInputMessage:
+            if (argument) constructReport(*(VoodooInputEvent *) argument);
+            return kIOReturnSuccess;
+    }
+    
+    return super::message(type, provider, argument);
 }
