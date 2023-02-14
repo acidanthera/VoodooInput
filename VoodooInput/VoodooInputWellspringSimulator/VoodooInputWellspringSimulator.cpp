@@ -113,6 +113,7 @@ void VoodooInputWellspringSimulator::setMTProperties() {
     
     OSDictionary* trackpadPrefs = OSDictionary::withCapacity(1);
     setProperty("TrackpadUserPreferences", trackpadPrefs);
+    OSSafeReleaseNULL(trackpadPrefs);
     
     /*if (engine->isSierraOrNewer()) {
         setProperty("ApplePreferenceIdentifier", "com.apple.AppleMultitouchTrackpad");
@@ -314,7 +315,6 @@ IOReturn VoodooInputWellspringSimulator::getReport(MTDeviceReportStruct *toFill)
 // MARK: Create Reports
 
 void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
-    MTRelativePointerReport report;
     AbsoluteTime timestamp;
     
     clock_get_uptime(&timestamp);
@@ -322,21 +322,7 @@ void VoodooInputWellspringSimulator::constructButtonReport(UInt8 btnState) {
     if (btnState == lastButtonState) return;
     lastButtonState = btnState;
     
-    // macOS Sierra changed how button handling works
-    // There is now a hid report to send into the abyss of the MT stack directly
-    if (engine->isSierraOrNewer()) {
-        bzero(&report, sizeof(MTRelativePointerReport));
-        
-        report.Buttons = btnState;
-        report.ReportID = 0x82;
-        report.Unknown1 = 1;
-        report.Timestamp = timestamp;
-        OSCollectionIterator *iter = OSCollectionIterator::withCollection(userClients);
-        while (VoodooInputWellspringUserClient *client = OSDynamicCast(VoodooInputWellspringUserClient, iter->getNextObject())) {
-            client->enqueueData(&report, sizeof(MTRelativePointerReport));
-        }
-        OSSafeReleaseNULL(iter);
-    } else if (eventDriver != nullptr) {
+    if (eventDriver != nullptr) {
         // TODO: There is some weird logic to do with the "mapClick" property.
         // I'm not even sure this is ever set though, so this is a don't care for now!
         
@@ -354,7 +340,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     inputReport->Counter++;
     inputReport->unkown1 = 0x03;
     inputReport->HeaderSize = sizeof(WELLSPRING_REPORT);
-    inputReport->unk2[0] =  0x00; // Magic
+    inputReport->unk2[0] =  0x00;
     inputReport->unk2[1] =  0x17;
     inputReport->unk2[2] =  0x07;
     inputReport->unk2[3] =  0x97;
@@ -506,4 +492,14 @@ void VoodooInputWellspringSimulator::enqueueData(WELLSPRING_REPORT *report, size
         client->enqueueData(report, dataLen);
     }
     OSSafeReleaseNULL(iter);
+}
+
+IOReturn VoodooInputWellspringSimulator::message(UInt32 type, IOService *provider, void *argument) {
+    switch (type) {
+        case kIOMessageVoodooInputMessage:
+            if (argument) constructReport(*(VoodooInputEvent *) argument);
+            return kIOReturnSuccess;
+    }
+    
+    return super::message(type, provider, argument);
 }

@@ -179,7 +179,7 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
     switch (type) {
         case kIOMessageVoodooInputMessage:
             if (provider == parentProvider && argument && simulator)
-                simulator->constructReport(*(VoodooInputEvent*)argument);
+                simulator->message(kIOMessageVoodooInputMessage, this, argument);
             break;
             
         case kIOMessageVoodooInputUpdateDimensionsMessage:

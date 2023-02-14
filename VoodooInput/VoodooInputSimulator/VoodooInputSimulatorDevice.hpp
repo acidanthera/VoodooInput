@@ -107,6 +107,7 @@ public:
     bool start(IOService* provider) override;
     void stop(IOService* provider) override;
     void releaseResources();
+    virtual IOReturn message(UInt32 type, IOService *provider, void *argument) override;
 
 private:
     bool ready_for_reports {false};
