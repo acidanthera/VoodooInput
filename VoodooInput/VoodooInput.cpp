@@ -33,9 +33,11 @@ bool VoodooInput::start(IOService *provider) {
         return false;
     }
     
+    OSDictionary *simInitArg = nullptr;
     trackpoint = OSTypeAlloc(TrackpointDevice);
     if (isSierraOrNewer()) {
         simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
+        simInitArg = OSDynamicCast(OSDictionary, getProperty("MT1Props"));
     } else {
         simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
     }
@@ -46,9 +48,9 @@ bool VoodooInput::start(IOService *provider) {
         OSSafeReleaseNULL(trackpoint);
         return false;
     }
-
+    
     // Initialize simulator device
-    if (!simulator->init(OSDynamicCast(OSDictionary, getProperty("MT1Props"))) || !simulator->attach(this)) {
+    if (!simulator->init(simInitArg) || !simulator->attach(this)) {
         IOLog("VoodooInput could not attach simulator!\n");
         goto exit;
     }
@@ -69,7 +71,7 @@ bool VoodooInput::start(IOService *provider) {
         goto exit;
     }
     
-    // Actuator is only needed for pressure, which is only useful for newer macOS versions with force touch
+    // Actuator is only needed for Magic Trackpad 2 emulation
     if (isSierraOrNewer()) {
         actuator = OSTypeAlloc(VoodooInputActuatorDevice);
         
