@@ -6,11 +6,11 @@
 //  Copyright © 2022 Kishor Prins. All rights reserved.
 //
 
-#include "IOHIDVoodooInputWellspringUserClient.hpp"
+#include "VoodooInputWellspringUserClient.hpp"
 #include "VoodooInputWellspringSimulator.hpp"
 
 #define super IOUserClient
-OSDefineMetaClassAndStructors(IOHIDVoodooInputWellspringUserClient, IOUserClient);
+OSDefineMetaClassAndStructors(VoodooInputWellspringUserClient, IOUserClient);
 
 #if defined(__x86_64__)
 #define MTExternalMethod(method, flags, inputs, outputs) {0, method, kIOExternalMethodACIDPadding, flags, inputs, outputs}
@@ -20,27 +20,27 @@ OSDefineMetaClassAndStructors(IOHIDVoodooInputWellspringUserClient, IOUserClient
 #error "Invalid architecture"
 #endif
 
-IOExternalMethodACID IOHIDVoodooInputWellspringUserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
+IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1UserClientMethodsNumMethods] = {
     // VoodooInputMT1UserClientMethodsSetSendsFrames
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sSetSendFrames, kIOUCScalarIScalarO, 1, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sSetSendFrames, kIOUCScalarIScalarO, 1, 0),
     // VoodooInputMT1UserClientMethodsGetReport
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sGetReport, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sGetReport, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
     // VoodooInputMT1UserClientMethodsSetReport
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, sizeof(MTDeviceReportStruct), sizeof(MTDeviceReportStruct)),
     // VoodooInputMT1UserClientMethodsSetSendLogs
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),
     // VoodooInputMT1UserClientMethodsIssueDriverRequest
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x204, 0x204),
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Relative Mouse Movement
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Scroll Wheel
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 2, 0),    // Keyboard
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),    // Map Clicks
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x204, 0x204),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Relative Mouse Movement
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Scroll Wheel
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 2, 0),    // Keyboard
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),    // Map Clicks
     // VoodooInputMT1UserClientMethodsRecacheProperties
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 0, 0),
-    MTExternalMethod((IOMethodACID) &IOHIDVoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Momentum Scroll
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 0, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Momentum Scroll
 };
 
-bool IOHIDVoodooInputWellspringUserClient::start(IOService *provider) {
+bool VoodooInputWellspringUserClient::start(IOService *provider) {
     if (!super::start(provider)) return false;
     simulator = OSDynamicCast(VoodooInputWellspringSimulator, provider);
     
@@ -67,7 +67,7 @@ bool IOHIDVoodooInputWellspringUserClient::start(IOService *provider) {
     return true;
 }
 
-void IOHIDVoodooInputWellspringUserClient::free() {
+void VoodooInputWellspringUserClient::free() {
     OSSafeReleaseNULL(dataQueueDesc);
     OSSafeReleaseNULL(dataQueue);
     OSSafeReleaseNULL(logQueueDesc);
@@ -75,14 +75,14 @@ void IOHIDVoodooInputWellspringUserClient::free() {
     super::free();
 }
 
-IOReturn IOHIDVoodooInputWellspringUserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
+IOReturn VoodooInputWellspringUserClient::registerNotificationPort(mach_port_t port, UInt32 type, UInt32 refCon) {
     IOLog("%s client notif port\n", getName());
     dataQueue->setNotificationPort(port);
     logQueue->setNotificationPort(port);
     return kIOReturnSuccess;
 }
 
-IOReturn IOHIDVoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
+IOReturn VoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) {
     // The memory descriptors get released when being mapped in IOUserClient::mapClientMemory
     if (type != 0x10) {
         dataQueueDesc->retain();
@@ -96,7 +96,7 @@ IOReturn IOHIDVoodooInputWellspringUserClient::clientMemoryForType(UInt32 type, 
     return kIOReturnSuccess;
 }
 
-IOExternalMethod *IOHIDVoodooInputWellspringUserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
+IOExternalMethod *VoodooInputWellspringUserClient::getTargetAndMethodForIndex(IOService **targetP, UInt32 index) {
     IOLog("%s External Method %u\n", getName(), index);
     if (index >= VoodooInputMT1UserClientMethodsNumMethods) {
         return nullptr;
@@ -106,7 +106,7 @@ IOExternalMethod *IOHIDVoodooInputWellspringUserClient::getTargetAndMethodForInd
     return reinterpret_cast<IOExternalMethod *>(&sMethods[index]);
 }
 
-IOReturn IOHIDVoodooInputWellspringUserClient::sSetSendFrames(IOHIDVoodooInputWellspringUserClient *that, bool enableReports) {
+IOReturn VoodooInputWellspringUserClient::sSetSendFrames(VoodooInputWellspringUserClient *that, bool enableReports) {
     bool success = true;
     IOLog("%s Set Send Frames: %d\n", that->getName(), enableReports);
     
@@ -120,7 +120,7 @@ IOReturn IOHIDVoodooInputWellspringUserClient::sSetSendFrames(IOHIDVoodooInputWe
 }
 
 // I'm not really sure why they use two different structs here???
-IOReturn IOHIDVoodooInputWellspringUserClient::sGetReport(IOHIDVoodooInputWellspringUserClient *that, MTDeviceReportStruct *input, MTDeviceReportStruct *output) {
+IOReturn VoodooInputWellspringUserClient::sGetReport(VoodooInputWellspringUserClient *that, MTDeviceReportStruct *input, MTDeviceReportStruct *output) {
     if (input == nullptr || output == nullptr) {
         return kIOReturnBadArgument;
     }
@@ -136,12 +136,12 @@ IOReturn IOHIDVoodooInputWellspringUserClient::sGetReport(IOHIDVoodooInputWellsp
     return ret;
 }
 
-void IOHIDVoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
+void VoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
     if (dataQueue == nullptr) return;
     dataQueue->enqueue(data, (UInt32) size);
 }
 
-IOReturn IOHIDVoodooInputWellspringUserClient::sNoop(IOHIDVoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
+IOReturn VoodooInputWellspringUserClient::sNoop(VoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     IOLog("%s Noop was called!\n", that->getName());
     return kIOReturnSuccess; // noop
 }
