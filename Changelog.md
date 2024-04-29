@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.1.4
+- Added palm/invalid finger type
+
 #### v1.1.3
 - Added trackpoint logic improvements by @1Revenger1
 - Seperated X and Y axis
