@@ -11,6 +11,7 @@
 
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
+#include <libkern/version.h>
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputSimulatorDevice, IOHIDDevice);
@@ -501,7 +502,8 @@ OSNumber* VoodooInputSimulatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputSimulatorDevice::newProductIDNumber() const {
-    return OSNumber::withNumber(0x265, 32);
+    constexpr int Sequoia = 24;
+    return OSNumber::withNumber(version_major >= Sequoia ? 0x281 : 0x272, 32);
 }
 
 OSString* VoodooInputSimulatorDevice::newProductString() const {

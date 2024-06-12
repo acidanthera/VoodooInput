@@ -6,6 +6,7 @@
 //
 
 #include "VoodooInputActuatorDevice.hpp"
+#include <libkern/version.h>
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputActuatorDevice, IOHIDDevice);
@@ -43,7 +44,8 @@ OSNumber* VoodooInputActuatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
-    return OSNumber::withNumber(0x265, 32);
+    constexpr int Sequoia = 24;
+    return OSNumber::withNumber(version_major >= Sequoia ? 0x281 : 0x272, 32);
 }
 
 OSString* VoodooInputActuatorDevice::newProductString() const {
