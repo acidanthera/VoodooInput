@@ -501,7 +501,7 @@ OSNumber* VoodooInputSimulatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputSimulatorDevice::newProductIDNumber() const {
-    return OSNumber::withNumber(0x272, 32);
+    return OSNumber::withNumber(0x265, 32);
 }
 
 OSString* VoodooInputSimulatorDevice::newProductString() const {

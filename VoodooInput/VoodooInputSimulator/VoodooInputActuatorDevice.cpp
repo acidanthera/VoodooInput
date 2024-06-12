@@ -43,7 +43,7 @@ OSNumber* VoodooInputActuatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputActuatorDevice::newProductIDNumber() const {
-    return OSNumber::withNumber(0x272, 32);
+    return OSNumber::withNumber(0x265, 32);
 }
 
 OSString* VoodooInputActuatorDevice::newProductString() const {
