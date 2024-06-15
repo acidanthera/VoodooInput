@@ -16,6 +16,7 @@
 		7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BBAB21322E3AD0D00B2941A /* VoodooInputActuatorDevice.cpp */; };
 		7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21522E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp */; };
 		CE8DA19D2518354A008C44E8 /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8DA19C2518354A008C44E8 /* libkmod.a */; };
+		EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		CEFB081B239658DB00215B0B /* Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Changelog.md; sourceTree = SOURCE_ROOT; };
 		CEFB081D2397003600215B0B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		CEFB081E2397003600215B0B /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = SOURCE_ROOT; };
+		EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputIDs.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */,
 				7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */,
 				7BBAB1FE22E3A2F800B2941A /* VoodooInput.cpp */,
+				EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */,
 				7BBAB20022E3A2F800B2941A /* Info.plist */,
 			);
 			path = VoodooInput;
@@ -144,6 +147,7 @@
 				358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
+				EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
