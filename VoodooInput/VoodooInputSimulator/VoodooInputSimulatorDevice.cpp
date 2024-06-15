@@ -8,10 +8,10 @@
 #include "VoodooInput.hpp"
 #include "VoodooInputSimulatorDevice.hpp"
 #include "../VoodooInputMultitouch/MultitouchHelpers.h"
+#include "VoodooInputIDs.hpp"
 
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOCommandGate.h>
-#include <libkern/version.h>
 
 #define super IOHIDDevice
 OSDefineMetaClassAndStructors(VoodooInputSimulatorDevice, IOHIDDevice);
@@ -502,8 +502,7 @@ OSNumber* VoodooInputSimulatorDevice::newPrimaryUsagePageNumber() const {
 }
 
 OSNumber* VoodooInputSimulatorDevice::newProductIDNumber() const {
-    constexpr int Sequoia = 24;
-    return OSNumber::withNumber(version_major >= Sequoia ? 0x281 : 0x272, 32);
+    return OSNumber::withNumber(VoodooInputGetProductId(), 32);
 }
 
 OSString* VoodooInputSimulatorDevice::newProductString() const {
@@ -519,7 +518,7 @@ OSString* VoodooInputSimulatorDevice::newTransportString() const {
 }
 
 OSNumber* VoodooInputSimulatorDevice::newVendorIDNumber() const {
-    return OSNumber::withNumber(0x5ac, 16);
+    return OSNumber::withNumber(kVoodooInputVendorApple, 16);
 }
 
 OSNumber* VoodooInputSimulatorDevice::newLocationIDNumber() const {
