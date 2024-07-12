@@ -212,7 +212,7 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
 int VoodooInputGetProductId() {
     if (version_major >= kVoodooInputVersionSequoia) {
         return kVoodooInputProductMacbookAir10_1;
-    } else {
-        return kVoodooInputProductMacbook8_1;
     }
+    
+    return kVoodooInputProductMacbook8_1;
 }
