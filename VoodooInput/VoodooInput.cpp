@@ -7,10 +7,13 @@
 //
 
 #include "VoodooInput.hpp"
+#include "VoodooInputIDs.hpp"
 #include "VoodooInputMultitouch/VoodooInputMessages.h"
 #include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
 #include "Trackpoint/TrackpointDevice.hpp"
+
+#include "libkern/version.h"
 
 #define super IOService
 OSDefineMetaClassAndStructors(VoodooInput, IOService);
@@ -204,4 +207,12 @@ IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) 
     }
 
     return super::message(type, provider, argument);
+}
+
+int VoodooInputGetProductId() {
+    if (version_major >= kVoodooInputVersionMonterey) {
+        return kVoodooInputProductMacbookAir10_1;
+    }
+    
+    return kVoodooInputProductMacbook8_1;
 }
