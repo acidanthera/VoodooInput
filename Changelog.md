@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.1.5
+- Use MacbookAir10,1 ID instead of SPI touchpad ID on macOS 12+
+
 #### v1.1.4
 - Added palm/invalid finger type
 
