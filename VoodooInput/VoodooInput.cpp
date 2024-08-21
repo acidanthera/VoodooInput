@@ -11,7 +11,9 @@
 #include "VoodooInputMultitouch/VoodooInputMessages.h"
 #include "VoodooInputSimulator/VoodooInputActuatorDevice.hpp"
 #include "VoodooInputSimulator/VoodooInputSimulatorDevice.hpp"
+#include "VoodooInputWellspringSimulator/VoodooInputWellspringSimulator.hpp"
 #include "Trackpoint/TrackpointDevice.hpp"
+#include <libkern/version.h>
 
 #include "libkern/version.h"
 
@@ -30,39 +32,31 @@ bool VoodooInput::start(IOService *provider) {
         IOLog("VoodooInput could not get provider properties!\n");
         return false;
     }
-
-    // Allocate the simulator and actuator devices
-    simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
-    actuator = OSTypeAlloc(VoodooInputActuatorDevice);
-    trackpoint = OSTypeAlloc(TrackpointDevice);
     
-    if (!simulator || !actuator || !trackpoint) {
-        IOLog("VoodooInput could not alloc simulator, actuator or trackpoint!\n");
+    OSDictionary *simInitArg = nullptr;
+    trackpoint = OSTypeAlloc(TrackpointDevice);
+    if (isSierraOrNewer()) {
+        simulator = OSTypeAlloc(VoodooInputSimulatorDevice);
+        simInitArg = OSDynamicCast(OSDictionary, getProperty("MT1Props"));
+    } else {
+        simulator = OSTypeAlloc(VoodooInputWellspringSimulator);
+    }
+    
+    if (!simulator || !trackpoint) {
+        IOLog("VoodooInput could not alloc simulator or trackpoint!\n");
         OSSafeReleaseNULL(simulator);
-        OSSafeReleaseNULL(actuator);
         OSSafeReleaseNULL(trackpoint);
         return false;
     }
     
     // Initialize simulator device
-    if (!simulator->init(NULL) || !simulator->attach(this)) {
+    if (!simulator->init(simInitArg) || !simulator->attach(this)) {
         IOLog("VoodooInput could not attach simulator!\n");
         goto exit;
     }
     else if (!simulator->start(this)) {
         IOLog("VoodooInput could not start simulator!\n");
         simulator->detach(this);
-        goto exit;
-    }
-    
-    // Initialize actuator device
-    if (!actuator->init(NULL) || !actuator->attach(this)) {
-        IOLog("VoodooInput could not init or attach actuator!\n");
-        goto exit;
-    }
-    else if (!actuator->start(this)) {
-        IOLog("VoodooInput could not start actuator!\n");
-        actuator->detach(this);
         goto exit;
     }
     
@@ -75,6 +69,24 @@ bool VoodooInput::start(IOService *provider) {
         IOLog("VoodooInput could not start trackpoint!\n");
         trackpoint->detach(this);
         goto exit;
+    }
+    
+    // Actuator is only needed for Magic Trackpad 2 emulation
+    if (isSierraOrNewer()) {
+        actuator = OSTypeAlloc(VoodooInputActuatorDevice);
+        
+        if (!actuator) {
+            IOLog("VoodooInput could not alloc actuator!\n");
+            goto exit;
+        } else if (!actuator->init(NULL) || !actuator->attach(this)) {
+            IOLog("VoodooInput could not init or attach actuator!\n");
+            goto exit;
+        }
+        else if (!actuator->start(this)) {
+            IOLog("VoodooInput could not start actuator!\n");
+            trackpoint->detach(this);
+            goto exit;
+        }
     }
     
     setProperty(VOODOO_INPUT_IDENTIFIER, kOSBooleanTrue);
@@ -161,11 +173,15 @@ UInt32 VoodooInput::getLogicalMaxY() {
     return logicalMaxY;
 }
 
+bool VoodooInput::isSierraOrNewer() {
+    return version_major > 16;
+}
+
 IOReturn VoodooInput::message(UInt32 type, IOService *provider, void *argument) {
     switch (type) {
         case kIOMessageVoodooInputMessage:
             if (provider == parentProvider && argument && simulator)
-                simulator->constructReport(*(VoodooInputEvent*)argument);
+                simulator->message(kIOMessageVoodooInputMessage, this, argument);
             break;
             
         case kIOMessageVoodooInputUpdateDimensionsMessage:

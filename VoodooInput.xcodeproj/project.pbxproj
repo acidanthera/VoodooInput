@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28783C5329733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */; };
+		28783C5429733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */; };
 		358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 358914F225798FA5007A0B58 /* TrackpointDevice.hpp */; };
 		358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 358914F325798FA5007A0B58 /* TrackpointDevice.cpp */; };
 		7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB1FC22E3A2F800B2941A /* VoodooInput.hpp */; };
@@ -17,9 +19,15 @@
 		7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7BBAB21522E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp */; };
 		CE8DA19D2518354A008C44E8 /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8DA19C2518354A008C44E8 /* libkmod.a */; };
 		EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */; };
+		EE7EE27F296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */; };
+		EE7EE280296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */; };
+		EE7EE283296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */; };
+		EE7EE284296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp in Headers */ = {isa = PBXBuildFile; fileRef = EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringEventDriver.cpp; sourceTree = "<group>"; };
+		28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringEventDriver.hpp; sourceTree = "<group>"; };
 		358914F225798FA5007A0B58 /* TrackpointDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TrackpointDevice.hpp; sourceTree = "<group>"; };
 		358914F325798FA5007A0B58 /* TrackpointDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackpointDevice.cpp; sourceTree = "<group>"; };
 		7BBAB1F922E3A2F800B2941A /* VoodooInput.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoodooInput.kext; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,6 +47,10 @@
 		CEFB081D2397003600215B0B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		CEFB081E2397003600215B0B /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = SOURCE_ROOT; };
 		EEC13CEA2C1DFD270080F2D1 /* VoodooInputIDs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputIDs.hpp; sourceTree = "<group>"; };
+		EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringSimulator.cpp; sourceTree = "<group>"; };
+		EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringSimulator.hpp; sourceTree = "<group>"; };
+		EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoodooInputWellspringUserClient.cpp; sourceTree = "<group>"; };
+		EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoodooInputWellspringUserClient.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +96,7 @@
 		7BBAB1FB22E3A2F800B2941A /* VoodooInput */ = {
 			isa = PBXGroup;
 			children = (
+				EE7EE27C296116B1005EFCC4 /* VoodooInputWellspringSimulator */,
 				358914F125798FA5007A0B58 /* Trackpoint */,
 				CEC086442439FD3E00F5B701 /* VoodooInputMultitouch */,
 				7BBAB20F22E3AC7E00B2941A /* VoodooInputSimulator */,
@@ -136,6 +149,19 @@
 			path = VoodooInput;
 			sourceTree = "<group>";
 		};
+		EE7EE27C296116B1005EFCC4 /* VoodooInputWellspringSimulator */ = {
+			isa = PBXGroup;
+			children = (
+				EE7EE27D296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp */,
+				EE7EE27E296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp */,
+				EE7EE281296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp */,
+				EE7EE282296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp */,
+				28783C5129733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp */,
+				28783C5229733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp */,
+			);
+			path = VoodooInputWellspringSimulator;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -146,6 +172,9 @@
 				7BBAB21722E3AD0E00B2941A /* VoodooInputSimulatorDevice.hpp in Headers */,
 				358914F425798FA5007A0B58 /* TrackpointDevice.hpp in Headers */,
 				7BBAB21B22E3AD0E00B2941A /* VoodooInputActuatorDevice.hpp in Headers */,
+				EE7EE280296116D7005EFCC4 /* VoodooInputWellspringSimulator.hpp in Headers */,
+				EE7EE284296119AB005EFCC4 /* VoodooInputWellspringUserClient.hpp in Headers */,
+				28783C5429733DA7002025A5 /* VoodooInputWellspringEventDriver.hpp in Headers */,
 				7BBAB1FD22E3A2F800B2941A /* VoodooInput.hpp in Headers */,
 				EEC13CEB2C1DFD300080F2D1 /* VoodooInputIDs.hpp in Headers */,
 			);
@@ -162,6 +191,7 @@
 				7BBAB1F522E3A2F800B2941A /* Sources */,
 				7BBAB1F622E3A2F800B2941A /* Frameworks */,
 				CEC086492439FD5D00F5B701 /* Copy SDK */,
+				286BF99E296A122A00542FAA /* Post-process Binary */,
 				CEFB081C239659D000215B0B /* Archive */,
 			);
 			buildRules = (
@@ -206,6 +236,24 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		286BF99E296A122A00542FAA /* Post-process Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Post-process Binary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd \"${TARGET_BUILD_DIR}\"\n\nstrip -S \"${EXECUTABLE_PATH}\"\n\ndist=(\"$FULL_PRODUCT_NAME\")\nif [ -d \"$DWARF_DSYM_FILE_NAME\" ]; then dist+=(\"$DWARF_DSYM_FILE_NAME\"); fi\n\narchive=\"${PRODUCT_NAME}-${MODULE_VERSION}-$(echo $CONFIGURATION | tr /a-z/ /A-Z/).zip\"\nrm -rf *.zip\nif [ \"$CONFIGURATION\" == \"Release\" ]; then\n  strip -x -T \"${EXECUTABLE_PATH}\" &>/dev/null || strip -x \"${EXECUTABLE_PATH}\"\nfi\n\nif [ -z \"${OVERRIDE_PYTHON3}\" ]; then\n  # Use whatever is in PATH\n  OVERRIDE_PYTHON3=python3\nfi\n\nif [[ \"$ARCHS\" == *\"ACID32\"* ]]; then\n  \"${OVERRIDE_PYTHON3}\" ${SRCROOT}/clang32/fix-macho32 \"${EXECUTABLE_PATH}\" || exit 1\nfi\nzip -qry -FS \"${archive}\" \"${dist[@]}\"\n";
+		};
 		CEC086492439FD5D00F5B701 /* Copy SDK */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -250,8 +298,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				358914F525798FA5007A0B58 /* TrackpointDevice.cpp in Sources */,
+				28783C5329733DA7002025A5 /* VoodooInputWellspringEventDriver.cpp in Sources */,
 				7BBAB1FF22E3A2F800B2941A /* VoodooInput.cpp in Sources */,
 				7BBAB21922E3AD0E00B2941A /* VoodooInputActuatorDevice.cpp in Sources */,
+				EE7EE283296119AB005EFCC4 /* VoodooInputWellspringUserClient.cpp in Sources */,
+				EE7EE27F296116D7005EFCC4 /* VoodooInputWellspringSimulator.cpp in Sources */,
 				7BBAB21822E3AD0E00B2941A /* VoodooInputSimulatorDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,10 +315,12 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = x86_64;
+				CC = "$(inherited)";
+				"CC[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -292,8 +345,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				"COMPILER_INDEX_STORE_ENABLE[arch=ACID32]" = NO;
 				COPY_PHASE_STRIP = NO;
+				CXX = "$(inherited)";
+				"CXX[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -313,11 +371,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				KERNEL_EXTENSION_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/MacKernelSDK/Headers";
 				KERNEL_FRAMEWORK_HEADERS = "$(PROJECT_DIR)/MacKernelSDK/Headers";
+				LDPLUSPLUS = "$(inherited)";
+				"LDPLUSPLUS[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -326,10 +387,12 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = x86_64;
+				CC = "$(inherited)";
+				"CC[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -354,8 +417,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				COMPILER_INDEX_STORE_ENABLE = YES;
+				"COMPILER_INDEX_STORE_ENABLE[arch=ACID32]" = NO;
 				COPY_PHASE_STRIP = NO;
+				CXX = "$(inherited)";
+				"CXX[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -369,10 +438,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				KERNEL_EXTENSION_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/MacKernelSDK/Headers";
 				KERNEL_FRAMEWORK_HEADERS = "$(PROJECT_DIR)/MacKernelSDK/Headers";
+				LDPLUSPLUS = "$(inherited)";
+				"LDPLUSPLUS[arch=ACID32]" = "$(PROJECT_DIR)/clang32/clang-12";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -388,13 +460,58 @@
 				INFOPLIST_FILE = VoodooInput/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
+					"$(PROJECT_DIR)/MacKernelSDK/Library/universal",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ACID32]" = 10.5;
 				MODULE_NAME = me.kishorprins.VoodooInput;
 				MODULE_VERSION = 1.1.6;
+				OTHER_CFLAGS = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-msse3",
+					"-mfpmath=sse",
+					"-mssse3",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+				);
+				"OTHER_CFLAGS[arch=ACID32]" = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-mfpmath=sse",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+					"-static",
+					"-fallow-unsupported",
+					"-fno-jump-tables",
+					"-fno-stack-protector",
+					"-target",
+					"i386-apple-macos10.5",
+				);
+				OTHER_LDFLAGS = "-static";
+				"OTHER_LDFLAGS[arch=ACID32]" = (
+					"-static",
+					"-target",
+					"i386-apple-macos10.5",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALID_ARCHS = "x86_64 ACID32";
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Debug;
@@ -408,12 +525,57 @@
 				INFOPLIST_FILE = VoodooInput/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
+					"$(PROJECT_DIR)/MacKernelSDK/Library/universal",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ACID32]" = 10.5;
 				MODULE_NAME = me.kishorprins.VoodooInput;
 				MODULE_VERSION = 1.1.6;
+				OTHER_CFLAGS = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-msse3",
+					"-mfpmath=sse",
+					"-mssse3",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+				);
+				"OTHER_CFLAGS[arch=ACID32]" = (
+					"-mmmx",
+					"-msse",
+					"-msse2",
+					"-mfpmath=sse",
+					"-ftree-vectorize",
+					"-fno-non-call-exceptions",
+					"-fno-builtin",
+					"-fno-asynchronous-unwind-tables",
+					"-Wno-unknown-warning-option",
+					"-Wno-ossharedptr-misuse",
+					"-Wno-vla",
+					"-Wno-stdlibcxx-not-found",
+					"-static",
+					"-fallow-unsupported",
+					"-fno-jump-tables",
+					"-fno-stack-protector",
+					"-target",
+					"i386-apple-macos10.5",
+				);
+				OTHER_LDFLAGS = "-static";
+				"OTHER_LDFLAGS[arch=ACID32]" = (
+					"-static",
+					"-target",
+					"i386-apple-macos10.5",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "x86_64 ACID32";
 				WRAPPER_EXTENSION = kext;
 			};
 			name = Release;
