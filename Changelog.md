@@ -1,5 +1,8 @@
 VoodooInput Changelog
 =====================
+#### v1.1.6
+- Lowered macOS requirements to 10.10
+
 #### v1.1.5
 - Use MacbookAir10,1 ID instead of SPI touchpad ID on macOS 12+
 
