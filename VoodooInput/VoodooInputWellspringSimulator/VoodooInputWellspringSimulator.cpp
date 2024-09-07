@@ -494,6 +494,47 @@ void VoodooInputWellspringSimulator::enqueueData(WELLSPRING_REPORT *report, size
     OSSafeReleaseNULL(iter);
 }
 
+void VoodooInputWellspringSimulator::dispatchRelativePointerEvent(SInt32 dx, SInt32 dy, UInt32 buttonState) {
+    AbsoluteTime now;
+    clock_get_uptime(&now);
+    IOLog("%s Relative Pointer Event: %d %d %d\n", getName(), dx, dy, buttonState);
+    
+    if (eventDriver != nullptr) {
+        eventDriver->dispatchRelativePointerEvent(now, dx, dy, buttonState);
+    }
+}
+
+void VoodooInputWellspringSimulator::dispatchScrollWheelEvent(SInt32 dlt1, SInt32 dlt2, SInt32 dlt3) {
+    AbsoluteTime now;
+    clock_get_uptime(&now);
+    IOLog("%s Scroll Wheel Event: %d %d %d\n", getName(), dlt1, dlt2, dlt3);
+    
+    if (eventDriver != nullptr) {
+        eventDriver->dispatchScrollWheelEvent(now, dlt1, dlt2, dlt3);
+    }
+}
+
+void VoodooInputWellspringSimulator::dispatchKeyboardEvent(UInt32 UsagePage, UInt32 usage) {
+    AbsoluteTime now;
+    clock_get_uptime(&now);
+    IOLog("%s Keyboard Event: 0x%x 0x%x\n", getName(), UsagePage, usage);
+    
+    if (eventDriver != nullptr) {
+//        eventDriver->dispatchKeyboardEvent(now, 0, 0, 0);
+    }
+}
+
+void VoodooInputWellspringSimulator::dispatchMomentumScrollWheelEvent(SInt32 dlt1, SInt32 dlt2, SInt32 dlt3) {
+    AbsoluteTime now;
+    clock_get_uptime(&now);
+    IOLog("%s Momentum Scroll Event: %d %d %d\n", getName(), dlt1, dlt2, dlt3);
+    
+    if (eventDriver != nullptr) {
+        //kHIDDispatchOptionScrollMomentumContinue
+//        eventDriver->dispatchRelativePointerEvent(now, dx, dy, buttonState);
+    }
+}
+
 IOReturn VoodooInputWellspringSimulator::message(UInt32 type, IOService *provider, void *argument) {
     switch (type) {
         case kIOMessageVoodooInputMessage:

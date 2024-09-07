@@ -53,6 +53,11 @@ public:
     static IOReturn sGetReport(VoodooInputWellspringUserClient *that, MTDeviceReportStruct *input, MTDeviceReportStruct *output);
     static IOReturn sNoop(VoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6);
     
+    static IOReturn sPostRelativeMouse(VoodooInputWellspringUserClient *that, SInt32 dx, SInt32 dy, UInt32 buttonState);
+    static IOReturn sPostScrollWheel(VoodooInputWellspringUserClient *that, SInt32 dlt1, SInt32 dlt2, SInt32 dlt3);
+    static IOReturn sPostKeyboard(VoodooInputWellspringUserClient *that, UInt32 usagePage, UInt32 usage);
+    static IOReturn sMomentumScroll(VoodooInputWellspringUserClient *that, SInt32 dlt1, SInt32 dlt2, SInt32 dlt3);
+    
     void enqueueData(void *data, size_t size);
 private:
     VoodooInputWellspringSimulator *simulator {nullptr};

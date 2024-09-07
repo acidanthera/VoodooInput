@@ -122,6 +122,11 @@ public:
     void notificationEventDriverPublished(IOService *newService);
     void notificationEventDriverTerminated(IOService *terminatedService);
 
+    void dispatchRelativePointerEvent(SInt32 dx, SInt32 dy, UInt32 buttonState);
+    void dispatchScrollWheelEvent(SInt32 dlt1, SInt32 dlt2, SInt32 dlt3);
+    void dispatchKeyboardEvent(UInt32 UsagePage, UInt32 usage);
+    void dispatchMomentumScrollWheelEvent(SInt32 dlt1, SInt32 dlt2, SInt32 dlt3);
+
 private:
     bool touchActive[15] {false};
     

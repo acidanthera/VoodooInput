@@ -31,13 +31,13 @@ IOExternalMethodACID VoodooInputWellspringUserClient::sMethods[VoodooInputMT1Use
     MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),
     // VoodooInputMT1UserClientMethodsIssueDriverRequest
     MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCStructIStructO, 0x204, 0x204),
-    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Relative Mouse Movement
-    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Scroll Wheel
-    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 2, 0),    // Keyboard
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sPostRelativeMouse, kIOUCScalarIScalarO, 3, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sPostScrollWheel, kIOUCScalarIScalarO, 3, 0),
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sPostKeyboard, kIOUCScalarIScalarO, 2, 0),
     MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 1, 0),    // Map Clicks
     // VoodooInputMT1UserClientMethodsRecacheProperties
     MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 0, 0),
-    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sNoop, kIOUCScalarIScalarO, 3, 0),    // Momentum Scroll
+    MTExternalMethod((IOMethodACID) &VoodooInputWellspringUserClient::sMomentumScroll, kIOUCScalarIScalarO, 3, 0),
 };
 
 bool VoodooInputWellspringUserClient::start(IOService *provider) {
@@ -144,4 +144,25 @@ void VoodooInputWellspringUserClient::enqueueData(void *data, size_t size) {
 IOReturn VoodooInputWellspringUserClient::sNoop(VoodooInputWellspringUserClient *that, void *p1, void *p2, void *p3, void *p4, void *p5, void *p6) {
     IOLog("%s Noop was called!\n", that->getName());
     return kIOReturnSuccess; // noop
+}
+
+
+IOReturn VoodooInputWellspringUserClient::sPostRelativeMouse(VoodooInputWellspringUserClient *that, SInt32 dx, SInt32 dy, UInt32 buttonState) {
+    that->simulator->dispatchRelativePointerEvent(dx, dy, buttonState);
+    return kIOReturnSuccess;
+}
+
+IOReturn VoodooInputWellspringUserClient::sPostScrollWheel(VoodooInputWellspringUserClient *that, SInt32 dlt1, SInt32 dlt2, SInt32 dlt3) {
+    that->simulator->dispatchScrollWheelEvent(dlt1, dlt2, dlt3);
+    return kIOReturnSuccess;
+}
+
+IOReturn VoodooInputWellspringUserClient::sPostKeyboard(VoodooInputWellspringUserClient *that, UInt32 usagePage, UInt32 usage) {
+    that->simulator->dispatchKeyboardEvent(usagePage, usage);
+    return kIOReturnSuccess;
+}
+
+IOReturn VoodooInputWellspringUserClient::sMomentumScroll(VoodooInputWellspringUserClient *that, SInt32 dlt1, SInt32 dlt2, SInt32 dlt3) {
+    that->simulator->dispatchMomentumScrollWheelEvent(dlt1, dlt2, dlt3);
+    return kIOReturnSuccess;
 }
