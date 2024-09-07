@@ -63,7 +63,7 @@ struct __attribute__((__packed__)) WELLSPRING_REPORT {
     UInt8 ReportID;
     UInt8 Counter; // Unknown, always seems to count up though?
     UInt8 HeaderSize;
-    UInt8 unkown1; // Always 3
+    UInt8 Version; // Always 3
     UInt32 Timestamp;
     UInt8 unk2[4]; // 0x00, 0x17, 0x07, 0x97
     UInt16 TotalFingerDataSize;

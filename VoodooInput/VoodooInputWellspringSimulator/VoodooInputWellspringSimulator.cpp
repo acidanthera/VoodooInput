@@ -338,7 +338,7 @@ void VoodooInputWellspringSimulator::constructReport(VoodooInputEvent& event) {
     
     inputReport->ReportID = 0x74;
     inputReport->Counter++;
-    inputReport->unkown1 = 0x03;
+    inputReport->Version = 0x03;
     inputReport->HeaderSize = sizeof(WELLSPRING_REPORT);
     inputReport->unk2[0] =  0x00;
     inputReport->unk2[1] =  0x17;
