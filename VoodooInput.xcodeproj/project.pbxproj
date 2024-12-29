@@ -391,7 +391,7 @@
 					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.1.6;
+				MODULE_VERSION = 1.1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -411,7 +411,7 @@
 					"$(PROJECT_DIR)/MacKernelSDK/Library/x86_64",
 				);
 				MODULE_NAME = me.kishorprins.VoodooInput;
-				MODULE_VERSION = 1.1.6;
+				MODULE_VERSION = 1.1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.kishorprins.VoodooInput;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = kext;
